@@ -11,7 +11,84 @@ message CtrlPingRequest {
 message CtrlPingResponse {
 	string output = 1;
 }
-  
+
+message BalanceRequest{
+  string userName = 1;
+}
+
+message BalanceResponse{
+  int32 balance = 1;
+}
+
+message TopUpRequest{
+  string userName = 1;
+  int32 stake = 2;
+  int32 phoneNumber = 3;
+}
+
+message TopUpResponse{
+  int32 balance = 1;
+}
+
+message InfoStationRequest{
+  string stationId = 1;
+}
+
+message InfoStationResponse{
+  string name = 1;
+  float lat = 2;
+  float long = 3;
+  int32 dockCapacity = 4;
+  int32 prize = 5;
+  int32 availableBikes = 6;
+  int32 pickups = 7;
+  int32 returns = 8;
+}
+
+message LocateStationRequest{
+  float lat = 1;
+  float long = 2;
+  int32 numStations = 3;
+}
+
+
+message LocateStationResponse{
+  repeated string stationId = 1;
+}
+
+message BikeRequest{
+  string userName = 1;
+  float lat = 2;
+  float long = 3;
+  string stationId = 4;
+}
+
+message BikeResponse{
+  string status = 1;
+}
+
+enum SysStatusResult{
+  UP = 0;
+  DOWN = 1;
+}
+
+message SysStatusRequest{
+  // Doesn't require any stuff
+}
+
+message SysStatusResponse{
+  repeated string serverPath = 1;
+  repeated SysStatusResult status = 2;
+}
+
 service HubService {
   rpc ctrl_ping(CtrlPingRequest) returns (CtrlPingResponse);
+
+  rpc balance(BalanceRequest) returns (BalanceResponse);
+  rpc top_up(TopUpRequest) returns (TopUpResponse);
+  rpc info_station(InfoStationRequest) returns (InfoStationResponse);
+  rpc locate_station(LocateStationRequest) returns (LocateStationResponse);
+  rpc bike_up(BikeRequest) returns (BikeResponse);
+  rpc bike_down(BikeRequest) returns (BikeResponse);
+  rpc sys_status(SysStatusRequest) returns (SysStatusResponse);
 }

@@ -3,9 +3,8 @@
 
 ## Authors
 
-Group CXX
+Group T07
 
-*(fill-in line above with group identifier e.g. A07 or T22; and then delete this line)*
 
 ### Lead developer 
 

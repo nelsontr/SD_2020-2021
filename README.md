@@ -1,21 +1,19 @@
-# CXX-Bicloin
+# T07-Bicloin
 
 Distributed Systems 2020-2021, 2nd semester project
 
 
 ## Authors
 
-**Group CXX**
+**Group T07**
 
-*(fill-in line above with group identifier e.g. A07 or T22; and then delete this line)*
 
-... [...](mailto:...@tecnico.ulisboa.pt)
+78631 Maria Sbrancia [maria.sbrancia@tecnico.ulisboa.pt](mailto:maria.sbrancia@tecnico.ulisboa.pt)
 
-... [...](mailto:...@tecnico.ulisboa.pt)
+90732 João Lopes [joao.m.gaspar.lopes@tecnico.ulisboa.pt](mailto:joao.m.gaspar.lopes@tecnico.ulisboa.pt)
 
-... [...](mailto:...@tecnico.ulisboa.pt)
+93743 Nelson Trindade [nelson.trindade@tecnico.ulisboa.pt](mailto:nelson.trindade@tecnico.ulisboa.pt)
 
-*(fill-in lines above with student number, name, and email; and then delete this line)*
 
 ### Module leaders
 

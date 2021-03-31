@@ -26,8 +26,8 @@ message ReadResponse {
 message WriteRequest {
   string name = 1;
   oneof value {
-    string stringValue = 1;
-    int32 intValue = 2;
+    string stringValue = 2;
+    int32 intValue = 3;
   }
 }
 

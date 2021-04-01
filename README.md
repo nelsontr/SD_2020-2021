@@ -1,11 +1,11 @@
-# T07-Bicloin
+# CXX-Bicloin
 
 Distributed Systems 2020-2021, 2nd semester project
 
 
 ## Authors
 
-**Group T07**
+**Group CXX**
 
 
 78631 Maria Sbrancia [maria.sbrancia@tecnico.ulisboa.pt](mailto:maria.sbrancia@tecnico.ulisboa.pt)

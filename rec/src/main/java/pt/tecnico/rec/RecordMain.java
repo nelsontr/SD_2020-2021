@@ -1,5 +1,11 @@
 package pt.tecnico.rec;
 
+/*import pt.ulisboa.tecnico.sdis.zk.ZKNaming;
+import pt.ulisboa.tecnico.sdis.zk.ZKNamingException;*/
+import io.grpc.BindableService;
+import io.grpc.Server;
+import io.grpc.ServerBuilder;
+import pt.tecnico.bicloin.rec.*;
 
 public class RecordMain {
 
@@ -25,38 +31,17 @@ public class RecordMain {
 		final String port = args[3];
 		final int numberInstances = Integer.parseInt(args[4]);
 
-		ZKNaming zkNaming = null;
+		final BindableService impl = new RecordServiceImpl();
 
-		try {
-			zkNaming = new ZKNaming(zooHost, zooPort);
-			zkNaming.rebind(path, host, port);
+		Server server = ServerBuilder.forPort(port).addService(impl).build();
 
+		// Start the server
+		server.start();
 
-			final BindableService impl = new HubServiceImpl();
+		System.out.println("Server started");
 
-			Server server = ServerBuilder.forPort(port).addService(impl).build();
-
-			// Start the server
-			server.start();
-
-			System.out.println("Server started");
-
-			// Do not exit the main thread. Wait until server is terminated.
-			server.awaitTermination();
-
-		} catch (Exception e) {
-			System.out.println("Internal Server Error: " + e.getMessage());
-		} finally {
-			try {
-				if (zkNaming != null) {
-					zkNaming.unbind(path, host, port);
-				}
-			} catch (ZKNamingException zkne) {
-				System.out.println("ERROR : Unbind zknaming SiloServerApp");
-			}
-			System.exit(0);
-		}
+		// Do not exit the main thread. Wait until server is terminated.
+		server.awaitTermination();
 
 	}
-
 }

@@ -3,7 +3,7 @@
 
 ## Authors
 
-Group T07
+Group CXX
 
 
 

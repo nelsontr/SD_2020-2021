@@ -3,6 +3,7 @@
 //
 syntax = "proto3";
 package pt.tecnico.rec.grpc;
+option java_multiple_files = true;
 
 message CtrlPingRequest {
   string input = 1;
@@ -36,8 +37,8 @@ message WriteResponse {
   string response = 1;
 }
 
-service RecordService {
-  rpc ctrl_ping(CtrlPingRequest) returns (CtrlPingResponse);
-  rpc read(ReadRequest) returns (ReadResponse);
-  rpc write(WriteRequest) returns (WriteResponse);
+service Record {
+  rpc ctrl_ping (CtrlPingRequest) returns (CtrlPingResponse);
+  rpc read (ReadRequest) returns (ReadResponse);
+  rpc write (WriteRequest) returns (WriteResponse);
 }

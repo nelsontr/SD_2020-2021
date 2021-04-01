@@ -6,7 +6,7 @@ public class UserRec {
   private float _lat;
   private float _long;
 
-  public BikeRec(String id, int balance){
+  public UserRec(String id, int balance){
     _id = id;
     _balance = balance;
   }

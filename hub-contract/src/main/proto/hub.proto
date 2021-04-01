@@ -3,6 +3,7 @@
 //
 syntax = "proto3";
 package pt.tecnico.bicloin.hub.grpc;
+option java_multiple_files = true;
 
 message CtrlPingRequest {
   string input = 1;
@@ -81,9 +82,8 @@ message SysStatusResponse{
   repeated SysStatusResult status = 2;
 }
 
-service HubService {
+service Hub {
   rpc ctrl_ping(CtrlPingRequest) returns (CtrlPingResponse);
-
   rpc balance(BalanceRequest) returns (BalanceResponse);
   rpc top_up(TopUpRequest) returns (TopUpResponse);
   rpc info_station(InfoStationRequest) returns (InfoStationResponse);

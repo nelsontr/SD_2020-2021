@@ -1,4 +1,4 @@
-package pt.tecnico.bicloin.hub;
+package pt.tecnico.hub;
 
 public class Station {
   private String _name;
@@ -26,11 +26,11 @@ public class Station {
     return this._id;
   }
 
-  public int getLat(){
+  public float getLat(){
     return this._lat;
   }
 
-  public int getLong(){
+  public float getLong(){
     return this._long;
   }
 

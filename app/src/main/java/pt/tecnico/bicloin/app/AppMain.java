@@ -16,6 +16,7 @@ public class AppMain {
 			System.out.printf("arg[%d] = %s%n", i, args[i]);
 		}
 
+		/*
 		// check arguments
 		if (args.length < 6) {
 			System.err.println("Argument(s) missing!");
@@ -27,8 +28,8 @@ public class AppMain {
 		final String zooPort = args[1];
 		final String userId = args[2];
 		final int userPhone = Integer.parseInt(args[3]);
-		final float lat = Float.parseFloat(args[4]);
-		final float long = Float.parseFloat(args[5]);
+		//final float lat = Float.parseFloat(args[4]);
+		//final float long = Float.parseFloat(args[5]);
 
 		App frontend;
 
@@ -39,7 +40,7 @@ public class AppMain {
 		} catch (StatusRuntimeException e) {
 			System.out.println("Caught exception with description: " + e.getStatus().getDescription());
 		}
-
+		*/
 	}
 
 }

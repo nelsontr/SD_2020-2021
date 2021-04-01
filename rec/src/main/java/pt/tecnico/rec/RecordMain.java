@@ -5,11 +5,15 @@ import pt.ulisboa.tecnico.sdis.zk.ZKNamingException;*/
 import io.grpc.BindableService;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
-import pt.tecnico.bicloin.rec.*;
+import pt.tecnico.rec.*;
 
-public class RecordMain {
+import pt.tecnico.rec.RecordServiceImpl;
+import java.io.IOException;
+import java.lang.InterruptedException;
 
-	public static void main(String[] args) {
+public class RecordMain  {
+
+	public static void main(String[] args) throws IOException , InterruptedException{
 		System.out.println(RecordMain.class.getSimpleName());
 
 		// receive and print arguments
@@ -26,14 +30,14 @@ public class RecordMain {
 		}
 
 		final String zooHost = args[0];
-		final String zooPort = args[1];
+		final int zooPort = Integer.parseInt(args[1]);
 		final String host = args[2];
 		final String port = args[3];
 		final int numberInstances = Integer.parseInt(args[4]);
 
 		final BindableService impl = new RecordServiceImpl();
 
-		Server server = ServerBuilder.forPort(port).addService(impl).build();
+		Server server = ServerBuilder.forPort(zooPort).addService(impl).build();
 
 		// Start the server
 		server.start();

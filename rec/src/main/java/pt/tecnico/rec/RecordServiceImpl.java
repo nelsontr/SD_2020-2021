@@ -1,4 +1,4 @@
-package pt.tecnico.bicloin.rec;
+package pt.tecnico.rec;
 
 import io.grpc.stub.StreamObserver;
 
@@ -14,17 +14,18 @@ import pt.tecnico.rec.grpc.*;
 
 public class RecordServiceImpl extends RecordGrpc.RecordImplBase {
 
-  @Override
+
+  
   public void ctrl_ping(CtrlPingRequest request, StreamObserver<CtrlPingResponse> observerResponse) {
 
   }
 
-  @Override
+
   public void read(ReadRequest request, StreamObserver<ReadResponse> observerResponse) {
 
   }
 
-  @Override
+
   public void write(WriteRequest request, StreamObserver<WriteResponse> observerResponse) {
 
   }

@@ -1,9 +1,17 @@
-package pt.tecnico.bicloin.hub;
+package pt.tecnico.hub;
 
+import io.grpc.BindableService;
+import io.grpc.Server;
+import io.grpc.ServerBuilder;
+import pt.tecnico.hub.*;
+
+import pt.tecnico.hub.HubServiceImpl;
+import java.io.IOException;
+import java.lang.InterruptedException;
 
 public class HubMain {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException , InterruptedException {
 		System.out.println(HubMain.class.getSimpleName()); //
 
 		// receive and print arguments
@@ -20,7 +28,7 @@ public class HubMain {
 		}
 
 		final String zooHost = args[0];
-		final String zooPort = args[1];
+		final int zooPort = Integer.parseInt(args[1]);
 		final String host = args[2];
 		final String port = args[3];
 		final int numberInstances = Integer.parseInt(args[4]);
@@ -30,36 +38,16 @@ public class HubMain {
 			final String initOption = args[7];
 		}
 
-		ZKNaming zkNaming = null;
+		final BindableService impl = new HubServiceImpl();
 
-		try {
-			zkNaming = new ZKNaming(zooHost, zooPort);
-			zkNaming.rebind(path, host, port);
+		Server server = ServerBuilder.forPort(zooPort).addService(impl).build();
 
+		// Start the server
+		server.start();
 
-			final BindableService impl = new HubServiceImpl();
+		System.out.println("Server started");
 
-			Server server = ServerBuilder.forPort(port).addService(impl).build();
-
-			// Start the server
-			server.start();
-
-			System.out.println("Server started");
-
-			// Do not exit the main thread. Wait until server is terminated.
-			server.awaitTermination();
-
-		} catch (Exception e) {
-			System.out.println("Internal Server Error: " + e.getMessage());
-		} finally {
-			try {
-				if (zkNaming != null) {
-					zkNaming.unbind(path, host, port);
-				}
-			} catch (ZKNamingException zkne) {
-				System.out.println("ERROR : Unbind zknaming SiloServerApp");
-			}
-			System.exit(0);
-		}
+		// Do not exit the main thread. Wait until server is terminated.
+		server.awaitTermination();
 	}
 }

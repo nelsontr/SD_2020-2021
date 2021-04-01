@@ -6,12 +6,10 @@ import io.grpc.ManagedChannelBuilder;
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 
-import pt.ulisboa.tecnico.sdis.zk.ZKNaming;
-import pt.ulisboa.tecnico.sdis.zk.ZKNamingException;
-import pt.ulisboa.tecnico.sdis.zk.ZKRecord;
+
 
 public class App {
-
+  /*
   private final ZKNaming zkNaming;
 
   private final String hubPath = "/grpc/hub";
@@ -62,11 +60,11 @@ public class App {
 
   /* * * * CTRL_PING services * * * */
 
-
+/*
   public String ctrl_ping(String msg) {
       PingResponse response = ctrl_ping(PingRequest.newBuilder()
               .setText(msg)
-              .build();
+              .build());
 
       return response.getOutput();
   }
@@ -106,6 +104,6 @@ public class App {
   }
 
 
-
+*/
 
 }

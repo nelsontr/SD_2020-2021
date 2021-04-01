@@ -38,7 +38,7 @@ message WriteResponse {
 }
 
 service Record {
-  rpc ctrl_ping (CtrlPingRequest) returns (CtrlPingResponse);
-  rpc read (ReadRequest) returns (ReadResponse);
-  rpc write (WriteRequest) returns (WriteResponse);
+  rpc ctrl_ping(CtrlPingRequest) returns (CtrlPingResponse);
+  rpc read(ReadRequest) returns (ReadResponse);
+  rpc write(WriteRequest) returns (WriteResponse);
 }

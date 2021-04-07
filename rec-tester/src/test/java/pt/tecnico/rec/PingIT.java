@@ -11,10 +11,7 @@ import io.grpc.StatusRuntimeException;
 
 import static io.grpc.Status.INVALID_ARGUMENT;
 
-public class PingIT {
-
-  RecFrontend frontend = new RecFrontend("localhost", "8091");
-
+public class PingIT extends BaseIT {
 
   @Test
 	public void pingOKTest() {

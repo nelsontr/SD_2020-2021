@@ -1,4 +1,4 @@
-package pt.tecnico.hub;
+package pt.tecnico.bicloin.hub;
 
 public class Station {
   private String _name;

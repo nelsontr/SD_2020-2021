@@ -1,11 +1,11 @@
-package pt.tecnico.hub;
+package pt.tecnico.bicloin.hub;
 
 import io.grpc.BindableService;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
-import pt.tecnico.hub.*;
+import pt.tecnico.bicloin.hub.*;
 
-import pt.tecnico.hub.HubServiceImpl;
+import pt.tecnico.bicloin.hub.HubServiceImpl;
 import java.io.IOException;
 import java.lang.InterruptedException;
 
@@ -21,14 +21,13 @@ public class HubMain {
 		}
 
 		//Check arguments
-		if (args.length < 7) {
-		System.err.println("Argument(s) missing!");
+		//if (args.length < 7) {
+		//System.err.println("Argument(s) missing!");
 		//TODO EXCEPTION
-		return;
-		}
-
+		//return;
+		//}
+/*
 		final String zooHost = args[0];
-		final int zooPort = Integer.parseInt(args[1]);
 		final String host = args[2];
 		final int port = Integer.parseInt(args[3]);
 		final int numberInstances = Integer.parseInt(args[4]);
@@ -37,10 +36,11 @@ public class HubMain {
 		if (args.length == 8) {
 			final String initOption = args[7];
 		}
-
+		*/
+		final int zooPort = Integer.parseInt(args[0]);
 		final BindableService impl = new HubServiceImpl();
 
-		Server server = ServerBuilder.forPort(port).addService(impl).build();
+		Server server = ServerBuilder.forPort(zooPort).addService(impl).build();
 
 		// Start the server
 		server.start();

@@ -24,10 +24,10 @@ public class RecFrontend {
           final String target = host + ":" + port;
           this.channel = ManagedChannelBuilder.forTarget(target).usePlaintext().build();
           this.stub = RecordGrpc.newBlockingStub(this.channel);
-        } catch (StatusRuntimeException sre) {
-            System.out.println("ERROR : Frontend createNewChannel : Could not create channel\n"
-                    + sre.getStatus().getDescription());
-        }
+    } catch (StatusRuntimeException sre) {
+        System.out.println("ERROR : Frontend createNewChannel : Could not create channel\n"
+                + sre.getStatus().getDescription());
+    }
   }
 
   public CtrlPingResponse ping(CtrlPingRequest request) {

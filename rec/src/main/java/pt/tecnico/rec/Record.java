@@ -12,5 +12,19 @@ public class Record {
       _value = value;
     }
 
+    public String getName(){
+      return _name;
+    }
+    public Object getValue(){
+      return _value;
+    }
+
+    public void setName(String name){
+      _name = name;
+    }
+    public void setValue(Object value){
+      _value = value;
+    }
+
 
 }

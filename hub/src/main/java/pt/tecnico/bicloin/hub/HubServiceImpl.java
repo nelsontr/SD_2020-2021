@@ -1,4 +1,4 @@
-package pt.tecnico.hub;
+package pt.tecnico.bicloin.hub;
 
 import io.grpc.stub.StreamObserver;
 
@@ -19,17 +19,18 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
 
   @Override
   public void ping(CtrlPingRequest request, StreamObserver<CtrlPingResponse> responseObserver){
-
     String input = request.getInput();
 
-    if (input.isBlank()) {
-        responseObserver.onError(INVALID_ARGUMENT.withDescription("You must type an input").asRuntimeException());
-
-        return;
+    if (input == null || input.isBlank()) {
+          responseObserver.onError(INVALID_ARGUMENT.withDescription("Input cannot be empty!").asRuntimeException());
     }
-    CtrlPingResponse response = CtrlPingResponse.newBuilder().setOutput("Hi: " + input ).build();
 
+    String output = "Hello " + input + "!";
 
+    CtrlPingResponse response = CtrlPingResponse.newBuilder().setOutput(output).build();
+
+    responseObserver.onNext(response);
+    responseObserver.onCompleted();
   }
 
   @Override

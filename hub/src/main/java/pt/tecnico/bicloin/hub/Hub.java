@@ -1,4 +1,4 @@
-package pt.tecnico.hub;
+package pt.tecnico.bicloin.hub;
 
 import java.util.*;
 

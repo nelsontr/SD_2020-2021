@@ -83,12 +83,12 @@ message SysStatusResponse{
 }
 
 service Hub {
-  rpc ctrl_ping(CtrlPingRequest) returns (CtrlPingResponse);
+  rpc ping(CtrlPingRequest) returns (CtrlPingResponse);
   rpc balance(BalanceRequest) returns (BalanceResponse);
-  rpc top_up(TopUpRequest) returns (TopUpResponse);
-  rpc info_station(InfoStationRequest) returns (InfoStationResponse);
-  rpc locate_station(LocateStationRequest) returns (LocateStationResponse);
-  rpc bike_up(BikeRequest) returns (BikeResponse);
-  rpc bike_down(BikeRequest) returns (BikeResponse);
-  rpc sys_status(SysStatusRequest) returns (SysStatusResponse);
+  rpc topUp(TopUpRequest) returns (TopUpResponse);
+  rpc infoStation(InfoStationRequest) returns (InfoStationResponse);
+  rpc locateStation(LocateStationRequest) returns (LocateStationResponse);
+  rpc bikeUp(BikeRequest) returns (BikeResponse);
+  rpc bikeDown(BikeRequest) returns (BikeResponse);
+  rpc sysStatus(SysStatusRequest) returns (SysStatusResponse);
 }

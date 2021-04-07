@@ -16,9 +16,9 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
 
   Hub data = new Hub();
 
-  //OVERRIDES MISSING
-  //@Override RESOLVE
-  public void ctrl_ping(CtrlPingRequest request, StreamObserver<CtrlPingResponse> responseObserver){
+
+  @Override
+  public void ping(CtrlPingRequest request, StreamObserver<CtrlPingResponse> responseObserver){
 
     String input = request.getInput();
 
@@ -32,33 +32,33 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
 
   }
 
-
+  @Override
   public void balance(BalanceRequest request, StreamObserver<BalanceResponse> responseObserver){
 
   }
 
-
-  public void top_up(TopUpRequest request, StreamObserver<TopUpResponse> responseObserver){
-
-  }
-
-
-  public void info_station(InfoStationRequest request, StreamObserver<InfoStationResponse> responseObserver){
+  @Override
+  public void topUp(TopUpRequest request, StreamObserver<TopUpResponse> responseObserver){
 
   }
 
-
-  public void locate_station(LocateStationRequest request, StreamObserver<LocateStationResponse> responseObserver){
-
-  }
-
-
-  public void bike_up(BikeRequest request, StreamObserver<BikeResponse> responseObserver){
+  @Override
+  public void infoStation(InfoStationRequest request, StreamObserver<InfoStationResponse> responseObserver){
 
   }
 
+  @Override
+  public void locateStation(LocateStationRequest request, StreamObserver<LocateStationResponse> responseObserver){
 
-  public void bike_down(BikeRequest request, StreamObserver<BikeResponse> responseObserver){
+  }
+
+  @Override
+  public void bikeUp(BikeRequest request, StreamObserver<BikeResponse> responseObserver){
+
+  }
+
+  @Override
+  public void bikeDown(BikeRequest request, StreamObserver<BikeResponse> responseObserver){
 
   }
 

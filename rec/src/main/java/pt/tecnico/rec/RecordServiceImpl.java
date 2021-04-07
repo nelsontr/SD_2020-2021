@@ -32,12 +32,12 @@ public class RecordServiceImpl extends RecordGrpc.RecordImplBase {
     		responseObserver.onCompleted();
   }
 
-
+  @Override
   public void read(ReadRequest request, StreamObserver<ReadResponse> observerResponse) {
 
   }
 
-
+  @Override
   public void write(WriteRequest request, StreamObserver<WriteResponse> observerResponse) {
 
   }

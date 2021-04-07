@@ -23,17 +23,17 @@ public class RecordMain  {
 		}
 
 		//Check arguments
-		if (args.length < 5) {
+		/*if (args.length < 5) {
 		System.err.println("Argument(s) missing!");
 		//TODO EXCEPTION
 		return;
-		}
+	}*/
 
-		final String zooHost = args[0];
-		final int zooPort = Integer.parseInt(args[1]);
-		final String host = args[2];
-		final String port = args[3];
-		final int numberInstances = Integer.parseInt(args[4]);
+		//final String zooHost = args[0];
+		final int zooPort = Integer.parseInt(args[0]);
+		//final String host = args[2];
+		//final int port = Integer.parseInt(args[3]);
+		//final int numberInstances = Integer.parseInt(args[4]);
 
 		final BindableService impl = new RecordServiceImpl();
 

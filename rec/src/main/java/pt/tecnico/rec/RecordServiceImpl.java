@@ -15,9 +15,20 @@ import pt.tecnico.rec.grpc.*;
 public class RecordServiceImpl extends RecordGrpc.RecordImplBase {
 
 
-  
-  public void ctrl_ping(CtrlPingRequest request, StreamObserver<CtrlPingResponse> observerResponse) {
+  @Override
+  public void ctrlPing(CtrlPingRequest request, StreamObserver<CtrlPingResponse> responseObserver) {
+        String input = request.getInput();
 
+        if (input == null || input.isBlank()) {
+		          responseObserver.onError(INVALID_ARGUMENT.withDescription("Input cannot be empty!").asRuntimeException());
+	      }
+
+    		String output = "Hello " + input + "!";
+
+    		CtrlPingResponse response = CtrlPingResponse.newBuilder().setOutput(output).build();
+
+    		responseObserver.onNext(response);
+    		responseObserver.onCompleted();
   }
 
 

@@ -14,6 +14,7 @@ import pt.tecnico.rec.grpc.*;
 
 public class RecordServiceImpl extends RecordGrpc.RecordImplBase {
 
+  private Map<String, Record> _records = new HashMap<>();
 
   @Override
   public void ctrlPing(CtrlPingRequest request, StreamObserver<CtrlPingResponse> responseObserver) {

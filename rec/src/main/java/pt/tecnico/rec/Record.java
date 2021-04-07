@@ -5,13 +5,14 @@ import java.util.stream.Collectors;
 
 public class Record {
 
-    Set<UserRec> _users;
-    Set<StationRec> _stations;
+    String _name;
+    Object _value;
 
-    public Record() {
-      _users = new HashSet<>();
-      _stations = new HashSet<>();
+
+    public Record(String name, Object value) {
+      _name = name;
+      _value = value;
     }
 
-  
+
 }

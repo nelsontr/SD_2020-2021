@@ -14,6 +14,8 @@ import pt.tecnico.bicloin.hub.grpc.*;
 
 public class HubServiceImpl extends HubGrpc.HubImplBase {
 
+  Hub data = new Hub();
+
   //OVERRIDES MISSING
   //@Override RESOLVE
   public void ctrl_ping(CtrlPingRequest request, StreamObserver<CtrlPingResponse> responseObserver){

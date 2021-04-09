@@ -5,9 +5,9 @@ import java.util.stream.Collectors;
 
 public class Record {
     String _name;
-    Object _value;
+    int _value;
 
-    public Record(String name, Object value) {
+    public Record(String name, int value) {
       _name = name;
       _value = value;
     }
@@ -15,14 +15,14 @@ public class Record {
     public String getName(){
       return _name;
     }
-    public Object getValue(){
+    public int getValue(){
       return _value;
     }
 
     public void setName(String name){
       _name = name;
     }
-    public void setValue(Object value){
+    public void setValue(int value){
       _value = value;
     }
 

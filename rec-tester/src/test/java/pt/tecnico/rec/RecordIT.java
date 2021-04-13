@@ -55,7 +55,7 @@ public class RecordIT extends BaseIT {
 
 		ReadRequest request2 = ReadRequest.newBuilder().setName(NAME_1+REQUEST_1).build();
 		ReadResponse response2 = frontend.read(request2);
-		assertEquals(BALANCE_1, response2.getIntValue());
+		assertEquals(BALANCE_1, response2.getValue());
 	}
 
 	@Test

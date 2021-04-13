@@ -48,7 +48,7 @@ public class RecordServiceImpl extends RecordGrpc.RecordImplBase {
         }
 
         int output = _records.get(input);
-        ReadResponse response =  ReadResponse.newBuilder().setIntValue(output).build();
+        ReadResponse response =  ReadResponse.newBuilder().setValue(output).build();
 
         observerResponse.onNext(response);
         observerResponse.onCompleted();

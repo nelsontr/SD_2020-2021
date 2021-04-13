@@ -3,8 +3,8 @@ package pt.tecnico.bicloin.hub;
 public class Station {
   private String _name;
   private String _id;
-  private float _lat;
-  private float _long;
+  private double _lat;
+  private double _long;
   private int _dockCapacity;
   private int _prize;
 
@@ -26,11 +26,11 @@ public class Station {
     return this._id;
   }
 
-  public float getLat(){
+  public double getLat(){
     return this._lat;
   }
 
-  public float getLong(){
+  public double getLong(){
     return this._long;
   }
 

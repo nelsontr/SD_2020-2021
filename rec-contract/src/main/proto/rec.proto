@@ -4,39 +4,35 @@
 syntax = "proto3";
 package pt.tecnico.rec.grpc;
 option java_multiple_files = true;
-
-message CtrlPingRequest {
+message PingRequest {
   string input = 1;
 }
-
-message CtrlPingResponse {
+message PingResponse {
 	string output = 1;
 }
-
 message ReadRequest {
   string name = 1;
 }
-
 message ReadResponse {
-  oneof value {
-    string stringValue = 1;
-    int32 intValue = 2;
-  }
+  int32 value = 1;
 }
-
 message WriteRequest {
   string name = 1;
   int32 intValue = 2;
-
 }
-
 message WriteResponse {
   //this string will return the state of the write operation OK/ERROR
   string response = 1;
 }
-
+message ClearRequest {
+  int32 intValue = 1;
+}
+message ClearResponse {
+  int32 response = 1;
+}
 service Record {
-  rpc ctrl_ping (CtrlPingRequest) returns (CtrlPingResponse);
+  rpc ctrl_ping (PingRequest) returns (PingResponse);
   rpc read (ReadRequest) returns (ReadResponse);
   rpc write (WriteRequest) returns (WriteResponse);
+  rpc clearRecords (ClearRequest) returns (ClearResponse);
 }

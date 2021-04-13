@@ -42,9 +42,21 @@ public class HubFrontend {
 		}
 	}
 
+  public InfoStationResponse infoStation(InfoStationRequest request) {
+    //Uncertain about exceptions
+    return stub.infoStation(request);
+  }
+
+  public LocateStationResponse locateStation(LocateStationRequest request) {
+    //Still Uncertain about exceptions
+    return stub.locateStation(request);
+  }
+
+
+
 	public void closeChannel(){
 		this.channel.shutdownNow();
 	}
 
-	
+
 }

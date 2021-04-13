@@ -37,8 +37,8 @@ message InfoStationRequest{
 
 message InfoStationResponse{
   string name = 1;
-  float lat = 2;
-  float long = 3;
+  double lat = 2;
+  double long = 3;
   int32 dockCapacity = 4;
   int32 prize = 5;
   int32 availableBikes = 6;
@@ -47,20 +47,24 @@ message InfoStationResponse{
 }
 
 message LocateStationRequest{
-  float lat = 1;
-  float long = 2;
+  double lat = 1;
+  double long = 2;
   int32 numStations = 3;
 }
 
+message Scan {
+  repeated string stationId = 1;
+  repeated int32 distance = 2;
+}
 
 message LocateStationResponse{
-  repeated string stationId = 1;
+  repeated Scan scan = 1; 
 }
 
 message BikeRequest{
   string userName = 1;
-  float lat = 2;
-  float long = 3;
+  double lat = 2;
+  double long = 3;
   string stationId = 4;
 }
 

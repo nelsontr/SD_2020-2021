@@ -47,8 +47,6 @@ public class RecordServiceImpl extends RecordGrpc.RecordImplBase {
             observerResponse.onError(NOT_FOUND.withDescription("No "+input+" was found!").asRuntimeException());
         }
 
-        //WHAT IS STRINGVALUE?
-
         int output = _records.get(input);
         ReadResponse response =  ReadResponse.newBuilder().setIntValue(output).build();
 
@@ -71,6 +69,8 @@ public class RecordServiceImpl extends RecordGrpc.RecordImplBase {
 
         _records.remove(input); //if it doesn't exist, returns null
         _records.put(input, inputValue);
+
+        //WHERE ERROR IS?
 
         output = OK_RESPONSE;
         WriteResponse response = WriteResponse.newBuilder().setResponse(output).build();

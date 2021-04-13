@@ -22,7 +22,7 @@ public class RecordServiceImpl extends RecordGrpc.RecordImplBase {
     private final String INTEGER_BELOW_ZERO = "Request came with a inputValue lower than zero!";
 
     @Override
-    public void ctrlPing(CtrlPingRequest request, StreamObserver<CtrlPingResponse> responseObserver) {
+    public void ctrlPing(PingRequest request, StreamObserver<PingResponse> responseObserver) {
         String input = request.getInput();
 
         if (input == null || input.isBlank()) {
@@ -30,7 +30,7 @@ public class RecordServiceImpl extends RecordGrpc.RecordImplBase {
         }
 
         String output = "Hello " + input + "!";
-        CtrlPingResponse response = CtrlPingResponse.newBuilder().setOutput(output).build();
+        PingResponse response = PingResponse.newBuilder().setOutput(output).build();
 
         responseObserver.onNext(response);
         responseObserver.onCompleted();

@@ -22,5 +22,9 @@ public class Hub {
     return this._stations.get(id);
   }
 
+  public Map<String, Station> getStations() {
+    return this._stations;
+  }
+
 
 }

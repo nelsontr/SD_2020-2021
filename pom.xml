@@ -42,11 +42,11 @@
 		<!-- Add later, when needed... -->
 		<!--module>zknaming</module-->
 		<module>rec-contract</module>
-		<module>rec</module>
 		<module>rec-tester</module>
+		<module>rec</module>
 		<module>hub-contract</module>
-		<module>hub</module>
 		<module>hub-tester</module>
+		<module>hub</module>
 		<module>app</module>
 	</modules>
 

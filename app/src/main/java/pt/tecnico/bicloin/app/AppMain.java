@@ -1,7 +1,6 @@
 package pt.tecnico.bicloin.app;
 
 import java.util.Scanner;
-import pt.tecnico.bicloin.hub.HubFrontend;
 
 import io.grpc.StatusRuntimeException;
 
@@ -43,17 +42,18 @@ public class AppMain {
 		final String zooPort = args[1];
 		final String userId = args[2];
 		final int userPhone = Integer.parseInt(args[3]);
-		final float lat = Float.parseFloat(args[4]);
-		final float longi = Float.parseFloat(args[5]);
+		final double latitude = Double.parseDouble(args[4]);
+		final double longitude = Double.parseDouble(args[5]);
 
-		HubFrontend frontend = new HubFrontend(zooHost, zooPort);
-		// HubFronted(zooHost, zooPort, userId, userPhone, lat, longi);
+
+		App app = new App(zooHost, zooPort, userId, latitude, longitude);
 
 		Scanner scanner = new Scanner(System.in);
-
 		String input;
 		String[] tokens;
 		boolean close = false;
+
+
 		try{
 			while(!close){
 				System.out.print("> ");
@@ -67,37 +67,79 @@ public class AppMain {
 						System.out.println(help);
 						break;
 					case "ping":
-						System.out.println(help);
+						if(tokens.length != 2) {
+							System.out.println("ping Format is 'ping %message%'");
+							break;
+						}
+						app.ping(tokens[1]);
 						break;
 					case "balance":
+						if(tokens.length != 1) {
+							System.out.println("--balance Format is 'balance'\n");
+							break;
+						}
 						System.out.println(help);
 						break;
 					case "top-up":
+						if(tokens.length != 2) {
+							System.out.println("--top-up Format is 'top-up %int%'\n");
+							break;
+						}
 						System.out.println(help);
 						break;
 					case "tag":
-						System.out.println(help);
+						if(tokens.length != 3) {
+							System.out.println("--tag Format is 'tag %latitude% %longitude% %name%'\n");
+						}
 						break;
 					case "move":
+						if(tokens.length != 2 || tokens.length != 3) {
+							System.out.println("--move Format is 'move %name%' or 'move %latitude% %longitude%'\n" );
+							break;
+						}
 						System.out.println(help);
 						break;
 					case "at":
+						if(tokens.length != 1) {
+							System.out.println("--at Format is 'at'\n");
+							break;
+						}
 						System.out.println(help);
 						break;
 					case "scan":
-						System.out.println(help);
+						if(tokens.length != 2) {
+							System.out.println("--scan Format is 'scan %int%'\n");
+							break;
+						}
+						app.scan(Integer.parseInt(tokens[1]));
 						break;
 					case "info":
-						System.out.println(help);
+						if(tokens.length != 2) {
+							System.out.println("--info Format is 'info %id%'\n");
+							break;
+						}
+						app.info(tokens[1]);
 						break;
 					case "bike-up":
+						if(tokens.length != 2) {
+							System.out.println("--bike-up Format is 'bike-up %id%'\n");
+							break;
+						}
 						System.out.println(help);
 						break;
 					case "bike-down":
+						if(tokens.length != 2) {
+							System.out.println("--bike-down Format is 'bike-down %id%'\n");
+							break;
+						}
 						System.out.println(help);
 						break;
 					case "sys_status":
-						System.out.println(help);
+						if(tokens.length != 1) {
+							System.out.println("--sys_status Format is 'sys_status'\n");
+							break;
+						}
+						System.out.println("Not implemented in this state");
 						break;
 					default:
 						System.out.println("Command not recognized. Use --help for a list of commands.");
@@ -107,43 +149,7 @@ public class AppMain {
 		} catch(StatusRuntimeException e) {
 			System.out.println("Caught exception with description: " + e.getStatus().getDescription());
 		} finally{
-			frontend.closeChannel();
 			System.exit(0);
 		}
 	}
-
-	private static void ping(){
-		//TODO
-	}
-	private static void balance(){
-		//TODO
-	}
-	private static void top(){
-		//TODO
-	}
-	private static void tag(){
-		//TODO
-	}
-	private static void move(){
-		//TODO
-	}
-	private static void at(){
-		//TODO
-	}
-	private static void scan(){
-		//TODO
-	}
-	private static void info(){
-		//TODO
-	}
-	private static void bike_up(){
-		//TODO
-	}
-	private static void bike_down(){
-		//TODO
-	}
-	private static void sys_status(){
-		//TODO
-	}
-
 }

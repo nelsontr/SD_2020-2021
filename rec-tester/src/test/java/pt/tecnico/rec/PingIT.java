@@ -23,11 +23,9 @@ public class PingIT extends BaseIT {
   @Test
 	public void emptyPingTest() {
 		CtrlPingRequest request = CtrlPingRequest.newBuilder().setInput("").build();
-		assertEquals(
-		INVALID_ARGUMENT.getCode(),
-		assertThrows(
-		StatusRuntimeException.class, () -> frontend.ping(request))
-		.getStatus()
-		.getCode());
+		assertEquals(INVALID_ARGUMENT.getCode(), assertThrows(
+				StatusRuntimeException.class, () -> frontend.ping(request))
+				.getStatus()
+				.getCode());
 	}
 }

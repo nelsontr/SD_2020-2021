@@ -37,8 +37,17 @@ message WriteResponse {
   string response = 1;
 }
 
+message ClearRequest {
+  int32 intValue = 1;
+}
+
+message ClearResponse {
+  int32 response = 1;
+}
+
 service Record {
   rpc ctrl_ping (CtrlPingRequest) returns (CtrlPingResponse);
   rpc read (ReadRequest) returns (ReadResponse);
   rpc write (WriteRequest) returns (WriteResponse);
+  rpc clearRecords (ClearRequest) returns (ClearResponse);
 }

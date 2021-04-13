@@ -20,8 +20,8 @@ public class RecordTester {
 		RecFrontend frontend = new RecFrontend(host, port);
 
 		try {
-			CtrlPingRequest request = CtrlPingRequest.newBuilder().setInput("friend").build();
-			CtrlPingResponse response = frontend.ping(request);
+			PingRequest request = PingRequest.newBuilder().setInput("friend").build();
+			PingResponse response = frontend.ping(request);
 			System.out.println(response);
 		} catch (StatusRuntimeException e) {
 			System.out.println("Caught exception with description: " +

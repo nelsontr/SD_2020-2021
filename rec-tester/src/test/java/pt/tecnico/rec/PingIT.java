@@ -15,14 +15,14 @@ public class PingIT extends BaseIT {
 
   @Test
 	public void pingOKTest() {
-		CtrlPingRequest request = CtrlPingRequest.newBuilder().setInput("friend").build();
-		CtrlPingResponse response = frontend.ping(request);
+		PingRequest request = PingRequest.newBuilder().setInput("friend").build();
+		PingResponse response = frontend.ping(request);
 		assertEquals("Hello friend!", response.getOutput());
 	}
 
   @Test
 	public void emptyPingTest() {
-		CtrlPingRequest request = CtrlPingRequest.newBuilder().setInput("").build();
+		PingRequest request = PingRequest.newBuilder().setInput("").build();
 		assertEquals(
 		INVALID_ARGUMENT.getCode(),
 		assertThrows(

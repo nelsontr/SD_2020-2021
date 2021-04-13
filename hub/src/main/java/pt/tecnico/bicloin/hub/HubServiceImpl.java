@@ -11,13 +11,14 @@ import static io.grpc.Status.NOT_FOUND;
 import static io.grpc.Status.ALREADY_EXISTS;
 
 import pt.tecnico.bicloin.hub.grpc.*;
-import pt.tecnico.rec.RecFrontend;
+import pt.tecnico.rec.grpc.*;
+import pt.tecnico.rec.*;
 
 public class HubServiceImpl extends HubGrpc.HubImplBase {
 
   Hub data = new Hub();
   //Mal , estou forcing it mas para já....
-  RecFrontend _rec = new RecFrontend("localhost", "8081");
+  RecFrontend _rec = new RecFrontend("localhost", "8091");
 
   @Override
   public void ping(CtrlPingRequest request, StreamObserver<CtrlPingResponse> responseObserver){
@@ -60,9 +61,13 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
     int dockCapacity = station.getDockCapacity();
     int prize = station.getPrize();
     //VERIFICAR COMO FOI IMPLEMENTADO O READ + probably should have try catchs
-    int availableBikes = _rec.read("stationId" + "AvailableBikes");
-    int pickups = _rec.read("stationId" + "Pickups");
-    int returns = _rec.read("stationId" + "Returns");
+    //ADD MACROS
+    ReadRequest bikesRequest = ReadRequest.newBuilder().setName(stationId + "/station/AvailableBikes").build();
+    ReadRequest pickupsRequest = ReadRequest.newBuilder().setName(stationId + "/station/Pickups").build();
+    ReadRequest returnsRequest = ReadRequest.newBuilder().setName(stationId + "/station/Returns").build();
+    int availableBikes = _rec.read(bikesRequest).getValue();
+    int pickups = _rec.read(pickupsRequest).getValue();
+    int returns = _rec.read(returnsRequest).getValue();
 
     InfoStationResponse response = InfoStationResponse.newBuilder().setName(stationName).setLat(latitude).setLong(longitude).setDockCapacity(dockCapacity).setPrize(prize).setAvailableBikes(availableBikes).setPickups(pickups).setReturns(returns).build();
 
@@ -115,7 +120,6 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
 
     responseObserver.onNext(response);
     responseObserver.onCompleted();
-
 
   }
 

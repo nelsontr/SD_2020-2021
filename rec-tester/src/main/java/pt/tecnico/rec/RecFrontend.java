@@ -39,7 +39,7 @@ public class RecFrontend {
         }
     }
 
-    public CtrlPingResponse ping(CtrlPingRequest request) {
+    public PingResponse ping(PingRequest request) {
         int tries = 0;
 
         while (true) {

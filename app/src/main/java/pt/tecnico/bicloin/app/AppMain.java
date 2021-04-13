@@ -46,7 +46,6 @@ public class AppMain {
 		final double longitude = Double.parseDouble(args[5]);
 
 
-
 		App app = new App(zooHost, zooPort, userId, latitude, longitude);
 
 		Scanner scanner = new Scanner(System.in);
@@ -112,7 +111,7 @@ public class AppMain {
 							System.out.println("--scan Format is 'scan %int%'\n");
 							break;
 						}
-						app.scan(tokens[1]);
+						app.scan(Integer.parseInt(tokens[1]));
 						break;
 					case "info":
 						if(tokens.length != 2) {
@@ -150,7 +149,6 @@ public class AppMain {
 		} catch(StatusRuntimeException e) {
 			System.out.println("Caught exception with description: " + e.getStatus().getDescription());
 		} finally{
-			frontend.closeChannel();
 			System.exit(0);
 		}
 	}

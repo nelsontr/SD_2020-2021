@@ -129,14 +129,14 @@ public class AppMain {
 							System.out.println("--bike-up Format is 'bike-up %id%'\n");
 							break;
 						}
-						System.out.println(help);
+						app.bike_up(tokens[1]);
 						break;
 					case "bike-down":
 						if(tokens.length != 2) {
 							System.out.println("--bike-down Format is 'bike-down %id%'\n");
 							break;
 						}
-						System.out.println(help);
+						app.bike_down(tokens[1]);
 						break;
 					case "sys_status":
 						if(tokens.length != 1) {

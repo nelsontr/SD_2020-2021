@@ -132,12 +132,21 @@ public class App {
   }
 
 
-	void bike_up(){
-		//TODO
+	void bike_up(String stationId){
+		BikeRequest request = BikeRequest.newBuilder().setUserName(_userId).setLat(_latitude).setLong(_longitude).setStationId(stationId).build();
+    BikeResponse response = _hub.bikeUp(request);
+
+    String status = response.getStatus();
+    System.out.println(status);
+
 	}
 
-	void bike_down(){
-		//TODO
+	void bike_down(String stationId){
+		BikeRequest request = BikeRequest.newBuilder().setUserName(_userId).setLat(_latitude).setLong(_longitude).setStationId(stationId).build();
+    BikeResponse response = _hub.bikeDown(request);
+
+    String status = response.getStatus();
+    System.out.println(status);
 	}
 
 	void sys_status(){

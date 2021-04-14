@@ -60,11 +60,18 @@ public class HubFrontend {
 		return stub.locateStation(request);
 	}
 
+	public BikeResponse bikeUp(BikeRequest request){
+		return stub.bikeUp(request);
+	}
+
+	public BikeResponse bikeDown(BikeRequest request){
+		return stub.bikeDown(request);
+	}
 
 
-		public void closeChannel(){
-			this.channel.shutdownNow();
-		}
+	public void closeChannel(){
+		this.channel.shutdownNow();
+	}
 
 
 }

@@ -46,7 +46,7 @@ public class AppMain {
 		final double longitude = Double.parseDouble(args[5]);
 
 
-		App app = new App(zooHost, zooPort, userId, latitude, longitude);
+		App app = new App(zooHost, zooPort, userId, userPhone, latitude, longitude);
 
 		Scanner scanner = new Scanner(System.in);
 		String input;
@@ -78,33 +78,37 @@ public class AppMain {
 							System.out.println("--balance Format is 'balance'\n");
 							break;
 						}
-						System.out.println(help);
+						app.balance();
 						break;
 					case "top-up":
 						if(tokens.length != 2) {
 							System.out.println("--top-up Format is 'top-up %int%'\n");
 							break;
 						}
-						System.out.println(help);
+						app.top(Integer.parseInt(tokens[1]));
 						break;
 					case "tag":
-						if(tokens.length != 3) {
+						if(tokens.length != 4) {
 							System.out.println("--tag Format is 'tag %latitude% %longitude% %name%'\n");
 						}
+						app.tag(Double.parseDouble(tokens[1]), Double.parseDouble(tokens[2]),tokens[3]);
 						break;
 					case "move":
 						if(tokens.length != 2 || tokens.length != 3) {
 							System.out.println("--move Format is 'move %name%' or 'move %latitude% %longitude%'\n" );
 							break;
+						} else if (tokens.length == 2){ //providing tag
+							app.move(-1, -1 , tokens[1]);
+						} else { //providing coords
+							app.move(Double.parseDouble(tokens[1]), Double.parseDouble(tokens[2]), "-1");
 						}
-						System.out.println(help);
 						break;
 					case "at":
 						if(tokens.length != 1) {
 							System.out.println("--at Format is 'at'\n");
 							break;
 						}
-						System.out.println(help);
+						app.at();
 						break;
 					case "scan":
 						if(tokens.length != 2) {
@@ -139,7 +143,7 @@ public class AppMain {
 							System.out.println("--sys_status Format is 'sys_status'\n");
 							break;
 						}
-						System.out.println("Not implemented in this state");
+						app.sys_status();
 						break;
 					default:
 						System.out.println("Command not recognized. Use --help for a list of commands.");
@@ -149,6 +153,7 @@ public class AppMain {
 		} catch(StatusRuntimeException e) {
 			System.out.println("Caught exception with description: " + e.getStatus().getDescription());
 		} finally{
+			scanner.close();
 			System.exit(0);
 		}
 	}

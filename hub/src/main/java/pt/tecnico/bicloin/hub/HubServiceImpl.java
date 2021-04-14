@@ -2,15 +2,15 @@ package pt.tecnico.bicloin.hub;
 
 import io.grpc.stub.StreamObserver;
 
-import java.time.ZoneOffset;
+
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static io.grpc.Status.INVALID_ARGUMENT;
 import static io.grpc.Status.NOT_FOUND;
 import static io.grpc.Status.ALREADY_EXISTS;
 
 import pt.tecnico.bicloin.hub.grpc.*;
+import pt.tecnico.bicloin.hub.*;
 import pt.tecnico.rec.grpc.*;
 import pt.tecnico.rec.*;
 
@@ -18,7 +18,14 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
 
   Hub data = new Hub();
   //Mal , estou forcing it mas para já....
-  RecFrontend _rec = new RecFrontend("localhost", "8091");
+  RecFrontend _rec;
+  
+
+  HubServiceImpl() {
+    _rec = new RecFrontend("localhost", "8091");
+    Runtime.getRuntime().addShutdownHook(new CloseServer());
+  }
+  
 
   @Override
   public void ping(CtrlPingRequest request, StreamObserver<CtrlPingResponse> responseObserver){
@@ -162,5 +169,12 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
         temp.put(aa.getKey(), aa.getValue());
     }
     return temp;
+    }
+
+    private final class CloseServer extends Thread {
+      @Override
+      public void run() {
+        _rec.closeChannel();
+      }
     }
 }

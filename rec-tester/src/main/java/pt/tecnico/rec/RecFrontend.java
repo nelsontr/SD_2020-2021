@@ -13,6 +13,7 @@ public class RecFrontend {
     private static final int BEST_EFFORT = 3;
     private ManagedChannel channel;
     private RecordGrpc.RecordBlockingStub stub;
+   
 
     public RecFrontend(String host, String port) {
         try {
@@ -23,6 +24,7 @@ public class RecFrontend {
             System.out.println("ERROR : Frontend createNewChannel : Could not create channel\n"
                     + sre.getStatus().getDescription());
         }
+        
     }
 
     public void errorHandling(StatusRuntimeException sre, String function, int tries) {
@@ -89,6 +91,7 @@ public class RecFrontend {
 
     public void closeChannel(){
         this.channel.shutdownNow();
-    }
+    
+    }    
 
 }

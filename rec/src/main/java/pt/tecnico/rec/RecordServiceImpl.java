@@ -68,7 +68,6 @@ public class RecordServiceImpl extends RecordGrpc.RecordImplBase {
             observerResponse.onError(INVALID_ARGUMENT.withDescription(INTEGER_BELOW_ZERO).asRuntimeException());
         }
 
-        _records.remove(input); //if it doesn't exist, returns null
         _records.put(input, inputValue);
 
         //WHERE ERROR IS?

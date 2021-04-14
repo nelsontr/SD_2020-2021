@@ -2,7 +2,7 @@ package pt.tecnico.bicloin.hub;
 
 import io.grpc.StatusRuntimeException;
 import org.junit.jupiter.api.*;
-import pt.tecnico.bicloin.hub.*;
+
 import pt.tecnico.bicloin.hub.grpc.*;
 
 import java.io.File;

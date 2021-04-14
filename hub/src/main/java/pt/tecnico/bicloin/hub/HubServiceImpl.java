@@ -22,13 +22,13 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
   Hub data = new Hub();
   //Mal , estou forcing it mas para já....
   RecFrontend _rec;
-  
+
 
   HubServiceImpl() {
     _rec = new RecFrontend("localhost", "8091");
     Runtime.getRuntime().addShutdownHook(new CloseServer());
   }
-  
+
 
   @Override
   public void ping(CtrlPingRequest request, StreamObserver<CtrlPingResponse> responseObserver){
@@ -70,6 +70,10 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
     int stake = request.getStake();
     int phoneNumber = request.getPhoneNumber();
     int balance = -1;
+
+    if (stake < 1 || stake > 20){
+      responseObserver.onError(INVALID_ARGUMENT.withDescription("Stake has to be in range [1, 20]!").asRuntimeException());
+    }
 
     if (userName == null || userName.isBlank()) {
           responseObserver.onError(INVALID_ARGUMENT.withDescription("UserName cannot be empty!").asRuntimeException());
@@ -275,7 +279,7 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
       double rad = 6371;
       double c = 2 * Math.asin(Math.sqrt(a));
 
-      return ((int)((rad * c) * 1000)); //result in meters 
+      return ((int)((rad * c) * 1000)); //result in meters
     }
 
     private final class CloseServer extends Thread {

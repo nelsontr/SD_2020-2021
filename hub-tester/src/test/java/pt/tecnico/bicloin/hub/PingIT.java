@@ -2,6 +2,7 @@ package pt.tecnico.bicloin.hub;
 
 import io.grpc.StatusRuntimeException;
 import org.junit.jupiter.api.Test;
+import pt.tecnico.bicloin.hub.grpc.*;
 
 import static io.grpc.Status.INVALID_ARGUMENT;
 import static org.junit.jupiter.api.Assertions.assertEquals;

@@ -41,7 +41,7 @@ public class AppMain {
 		final String zooHost = args[0];
 		final String zooPort = args[1];
 		final String userId = args[2];
-		final int userPhone = Integer.parseInt(args[3]);
+		final String userPhone = args[3];
 		final double latitude = Double.parseDouble(args[4]);
 		final double longitude = Double.parseDouble(args[5]);
 

@@ -3,6 +3,7 @@ package pt.tecnico.bicloin.hub;
 import io.grpc.StatusRuntimeException;
 import org.junit.jupiter.api.*;
 import pt.tecnico.bicloin.hub.*;
+import pt.tecnico.bicloin.hub.grpc.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -68,9 +69,9 @@ public class BalanceIT extends BaseIT {
 	
 	@Test
 	public void getInicialBalance() {
-		BalanceRequest request1 = BalanceRequest.newBuilder().setUsername(USER_ID_1).build();
-		BalanceRequest request2 = BalanceRequest.newBuilder().setUsername(USER_ID_2).build();
-		BalanceRequest request3 = BalanceRequest.newBuilder().setUsername(USER_ID_3).build();
+		BalanceRequest request1 = BalanceRequest.newBuilder().setUserName(USER_ID_1).build();
+		BalanceRequest request2 = BalanceRequest.newBuilder().setUserName(USER_ID_2).build();
+		BalanceRequest request3 = BalanceRequest.newBuilder().setUserName(USER_ID_3).build();
 
 		int balance1 = frontend.balance(request1).getBalance();
 		int balance2 = frontend.balance(request2).getBalance();
@@ -83,19 +84,19 @@ public class BalanceIT extends BaseIT {
 
 	@Test
 	public void getBalanceFromUnregisteredUser() {
-		BalanceRequest request1 = BalanceRequest.newBuilder().setUsername(USER_ID_NOT_REGISTED).build();
+		BalanceRequest request1 = BalanceRequest.newBuilder().setUserName(USER_ID_NOT_REGISTED).build();
 
 		StatusRuntimeException sre = assertThrows(
 					StatusRuntimeException.class, () -> frontend.balance(request1));
 
 		assertEquals(NOT_FOUND.getCode(), sre.getStatus().getCode());
-		assertEquals("No " + request1.getUsername() + " was found!",
+		assertEquals("No " + request1.getUserName() + " was found!",
 				sre.getStatus().getDescription());
 	}
 
 	@Test
 	public void getBalanceFromEmptyUser() {
-		BalanceRequest request1 = BalanceRequest.newBuilder().setUsername(USER_ID_EMPTY).build();
+		BalanceRequest request1 = BalanceRequest.newBuilder().setUserName(USER_ID_EMPTY).build();
 
 		StatusRuntimeException sre = assertThrows(
 				StatusRuntimeException.class, () -> frontend.balance(request1));
@@ -106,8 +107,8 @@ public class BalanceIT extends BaseIT {
 
 	@Test
 	public void userAddsMoneyToAccount() {
-		BalanceRequest request1 = BalanceRequest.newBuilder().setUsername(USER_ID_1).build();
-		TopUpRequest topUpRequest = TopUpRequest.newBuilder().setUsername(USER_ID_1).setStake(10)
+		BalanceRequest request1 = BalanceRequest.newBuilder().setUserName(USER_ID_1).build();
+		TopUpRequest topUpRequest = TopUpRequest.newBuilder().setUserName(USER_ID_1).setStake(10)
 				.setPhoneNumber(USER_PHONE_1).build();
 
 		int topUpResponse = frontend.topUp(topUpRequest).getBalance();
@@ -118,15 +119,15 @@ public class BalanceIT extends BaseIT {
 
 	@Test
 	public void userDeliversBike() {
-		BalanceRequest requestBalance = BalanceRequest.newBuilder().setUsername(USER_ID_1).build();
+		BalanceRequest requestBalance = BalanceRequest.newBuilder().setUserName(USER_ID_1).build();
 
-		BikeRequest request1 = BikeRequest.newBuilder().setUsername(USER_ID_1).
+		BikeRequest request1 = BikeRequest.newBuilder().setUserName(USER_ID_1).
 				setLat(USER_LAT_1).setLong(USER_LONG_1).build();
 		BikeResponse response = frontend.bikeUp(request1);
 		int balanceBefore = frontend.balance(requestBalance).getBalance();
 
-		request1 = BikeRequest.newBuilder().setUsername(USER_ID_1).
-				setLat(USER_LAT_1).setLong(USER_LONG_1).getStationId(STATION_ID_1).build();
+		request1 = BikeRequest.newBuilder().setUserName(USER_ID_1).
+				setLat(USER_LAT_1).setLong(USER_LONG_1).setStationId(STATION_ID_1).build();
 		response = frontend.bikeDown(request1);
 
 		int balanceAfter = frontend.balance(requestBalance).getBalance();

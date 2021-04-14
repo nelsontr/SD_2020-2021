@@ -18,13 +18,13 @@ public class App {
    */
   private static final String GOOGLE_COM_MAPS = " em https://www.google.com/maps/place/";
   private String _userId;
-  private int _userPhone;
+  private String _userPhone;
   private double _latitude;
   private double _longitude;
   private Map<String, double[]> _tags;
   private HubFrontend _hub;
 
-  public App(String host, String port, String userId, int userPhone, double latitude, double longitude){
+  public App(String host, String port, String userId, String userPhone, double latitude, double longitude){
     _userId = userId;
     _userPhone = userPhone;
     _latitude = latitude;

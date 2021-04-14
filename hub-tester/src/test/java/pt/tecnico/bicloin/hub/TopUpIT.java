@@ -3,6 +3,7 @@ package pt.tecnico.bicloin.hub;
 import io.grpc.StatusRuntimeException;
 import org.junit.jupiter.api.*;
 import pt.tecnico.bicloin.hub.*;
+import pt.tecnico.bicloin.hub.grpc.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -73,8 +74,7 @@ public class TopUpIT extends BaseIT {
 		BalanceRequest request1 = BalanceRequest.newBuilder().setUserName(USER_ID_1).build();
 		int balanceBefore = frontend.balance(request1).getBalance();
 
-		TopUpRequest topUp1 = TopUpRequest.newBuilder().setUserName(USER_ID_1).
-				setStake(MONEY).setPhoneNumber(USER_PHONE_1);
+		TopUpRequest topUp1 = TopUpRequest.newBuilder().setUserName(USER_ID_1).setStake(MONEY).setPhoneNumber(USER_PHONE_1).build();
 		int balance = frontend.topUp(topUp1).getBalance();
 		int balanceAfter = frontend.balance(request1).getBalance();
 
@@ -90,7 +90,7 @@ public class TopUpIT extends BaseIT {
 		int balanceBefore = frontend.balance(request1).getBalance();
 
 		TopUpRequest topUp1 = TopUpRequest.newBuilder().setUserName(USER_ID_1).
-				setStake(MONEY).setPhoneNumber(USER_PHONE_1);
+				setStake(MONEY).setPhoneNumber(USER_PHONE_1).build();
 		int balance = frontend.topUp(topUp1).getBalance();
 		int balanceAfter = frontend.balance(request1).getBalance();
 
@@ -102,11 +102,11 @@ public class TopUpIT extends BaseIT {
 	public void addingTenBTCSForUnregisteredUser() {
 		int MONEY = 10;
 		TopUpRequest topUp1 = TopUpRequest.newBuilder().setUserName(USER_ID_NOT_REGISTED).
-				setStake(MONEY).setPhoneNumber(USER_PHONE_1);
+				setStake(MONEY).setPhoneNumber(USER_PHONE_1).build();
 		StatusRuntimeException sre = assertThrows(StatusRuntimeException.class, () -> frontend.topUp(topUp1));
 
 		assertEquals(NOT_FOUND.getCode(), sre.getStatus().getCode());
-		assertEquals("No " + request1.getUsername() + " was found!",
+		assertEquals("No " + topUp1.getUserName() + " was found!",
 				sre.getStatus().getDescription());
 	}
 
@@ -114,7 +114,7 @@ public class TopUpIT extends BaseIT {
 	public void addingTenBTCSForEmptyUser() {
 		int MONEY = 10;
 		TopUpRequest topUp1 = TopUpRequest.newBuilder().setUserName(USER_ID_NOT_REGISTED).
-				setStake(MONEY).setPhoneNumber(USER_PHONE_1);
+				setStake(MONEY).setPhoneNumber(USER_PHONE_1).build();
 		StatusRuntimeException sre = assertThrows(StatusRuntimeException.class, () -> frontend.topUp(topUp1));
 
 		assertEquals(INVALID_ARGUMENT.getCode(), sre.getStatus().getCode());
@@ -125,7 +125,7 @@ public class TopUpIT extends BaseIT {
 	public void addingMoreThanTwentyBTCS() {
 		int MONEY = 25;
 		TopUpRequest topUp1 = TopUpRequest.newBuilder().setUserName(USER_ID_NOT_REGISTED).
-				setStake(MONEY).setPhoneNumber(USER_PHONE_1);
+				setStake(MONEY).setPhoneNumber(USER_PHONE_1).build();
 		StatusRuntimeException sre = assertThrows(StatusRuntimeException.class, () -> frontend.topUp(topUp1));
 
 		assertEquals(INVALID_ARGUMENT.getCode(), sre.getStatus().getCode());
@@ -134,8 +134,8 @@ public class TopUpIT extends BaseIT {
 
 	@Test
 	public void addingTenBTCSWithWrongPhoneNumber() {
-		BalanceRequest request1 = BalanceRequest.newBuilder().setUsername(USER_ID_1).build();
-		TopUpRequest topUp1 = TopUpRequest.newBuilder().setUsername(USER_ID_1).setStake(10)
+		BalanceRequest request1 = BalanceRequest.newBuilder().setUserName(USER_ID_1).build();
+		TopUpRequest topUp1 = TopUpRequest.newBuilder().setUserName(USER_ID_1).setStake(10)
 				.setPhoneNumber(USER_PHONE_2).build();
 
 		StatusRuntimeException sre = assertThrows(StatusRuntimeException.class, () -> frontend.topUp(topUp1));

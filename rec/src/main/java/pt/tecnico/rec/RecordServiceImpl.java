@@ -18,6 +18,7 @@ public class RecordServiceImpl extends RecordGrpc.RecordImplBase {
 
     private final String OK_RESPONSE = "OK";
     private final String ERROR_RESPONSE = "ERROR";
+    private final String NO_INPUT_FOUND = "No {} was found!";
     private final String REQUEST_EMPTY = "Request cannot be empty!";
     private final String INTEGER_BELOW_ZERO = "Request came with a inputValue lower than zero!";
 
@@ -44,7 +45,7 @@ public class RecordServiceImpl extends RecordGrpc.RecordImplBase {
         if (input == null || input.isBlank()) {
             observerResponse.onError(INVALID_ARGUMENT.withDescription(REQUEST_EMPTY).asRuntimeException());
         } else if (!_records.containsKey(input)) {
-            observerResponse.onError(NOT_FOUND.withDescription("No "+input+" was found!").asRuntimeException());
+            observerResponse.onError(NOT_FOUND.withDescription(String.format(NO_INPUT_FOUND, input)).asRuntimeException());
         }
 
         int output = _records.get(input);

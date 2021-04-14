@@ -10,63 +10,67 @@ import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 
 public class HubFrontend {
-  private ManagedChannel channel;
-  private HubGrpc.HubBlockingStub stub;
+	private ManagedChannel channel;
+	private HubGrpc.HubBlockingStub stub;
 
-  private static final int BEST_EFFORT = 3;
+	private static final int BEST_EFFORT = 3;
 
-  public HubFrontend(String host, String port) {
-    try {
-			final String target = host + ":" + port;
-			this.channel = ManagedChannelBuilder.forTarget(target).usePlaintext().build();
-			this.stub = HubGrpc.newBlockingStub(this.channel);
-    } catch (StatusRuntimeException sre) {
-			System.out.println("ERROR : Frontend createNewChannel : Could not create channel\n"
-					+ sre.getStatus().getDescription());
-    }
-  }
-
-  public CtrlPingResponse ping(CtrlPingRequest request) {
-		int tries = 0;
-
-		while (true) {
-			try {
-				System.out.println("Ping " + (tries + 1) + "...");
-				return stub.ping(request);
-			} catch (StatusRuntimeException sre) {
-				if (sre.getStatus().getCode() == Status.Code.INVALID_ARGUMENT || ++tries == BEST_EFFORT) {
-						System.out.println("WARN : Cant connect to server!");
-						throw sre;
-				}
-			}
+	public HubFrontend(String host, String port) {
+		try {
+				final String target = host + ":" + port;
+				this.channel = ManagedChannelBuilder.forTarget(target).usePlaintext().build();
+				this.stub = HubGrpc.newBlockingStub(this.channel);
+		} catch (StatusRuntimeException sre) {
+				System.out.println("ERROR : Frontend createNewChannel : Could not create channel\n"
+						+ sre.getStatus().getDescription());
 		}
 	}
 
-  public BalanceResponse balance(BalanceRequest request){
-    return stub.balance(request);
-  }
+	public CtrlPingResponse ping(CtrlPingRequest request) {
+			int tries = 0;
 
-  public TopUpResponse topUp(TopUpRequest request){
-    return stub.topUp(request);
-  }
+			while (true) {
+				try {
+					System.out.println("Ping " + (tries + 1) + "...");
+					return stub.ping(request);
+				} catch (StatusRuntimeException sre) {
+					if (sre.getStatus().getCode() == Status.Code.INVALID_ARGUMENT || ++tries == BEST_EFFORT) {
+							System.out.println("WARN : Cant connect to server!");
+							throw sre;
+					}
+				}
+			}
+		}
 
-  public InfoStationResponse infoStation(InfoStationRequest request) {
-    //Uncertain about exceptions
-    return stub.infoStation(request);
-  }
+	
 
-  public LocateStationResponse locateStation(LocateStationRequest request) {
-    //Still Uncertain about exceptions
-    return stub.locateStation(request);
-  }
 
-  public BikeResponse bikeUp(BikeRequest request){
-    return stub.bikeUp(request);
-  }
+	public BalanceResponse balance(BalanceRequest request){
+		return stub.balance(request);
+	}
 
-  public BikeResponse bikeDown(BikeRequest request){
-    return stub.bikeDown(request);
-  }
+	public TopUpResponse topUp(TopUpRequest request){
+		return stub.topUp(request);
+	}
+
+	public InfoStationResponse infoStation(InfoStationRequest request) {
+		//Uncertain about exceptions
+		return stub.infoStation(request);
+	}
+
+	public LocateStationResponse locateStation(LocateStationRequest request) {
+		//Still Uncertain about exceptions
+		return stub.locateStation(request);
+	}
+
+
+	public BikeResponse bikeUp(BikeRequest request){
+		return stub.bikeUp(request);
+	}
+
+	public BikeResponse bikeDown(BikeRequest request){
+		return stub.bikeDown(request);
+	}
 
 	public void closeChannel(){
 		this.channel.shutdownNow();

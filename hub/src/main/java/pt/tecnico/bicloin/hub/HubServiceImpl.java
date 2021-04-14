@@ -48,8 +48,8 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
           responseObserver.onError(INVALID_ARGUMENT.withDescription("UserName cannot be empty!").asRuntimeException());
     }
 
-    ReadRequest balanceRequest = ReadRequest.newBuilder().setUserName(userName + "/user/Balance").build();
-    balance = = _rec.read(balanceRequest).getValue();
+    ReadRequest balanceRequest = ReadRequest.newBuilder().setName(userName + "/user/Balance").build();
+    balance = _rec.read(balanceRequest).getValue();
 
     BalanceResponse response = BalanceResponse.newBuilder().setBalance(balance).build();
 
@@ -67,19 +67,13 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
     if (userName == null || userName.isBlank()) {
           responseObserver.onError(INVALID_ARGUMENT.withDescription("UserName cannot be empty!").asRuntimeException());
     }
-    if (stake == null || stake.isBlank()) {
-          responseObserver.onError(INVALID_ARGUMENT.withDescription("Stake cannot be empty!").asRuntimeException());
-    }
-    if (phoneNumber == null || phoneNumber.isBlank()) {
-          responseObserver.onError(INVALID_ARGUMENT.withDescription("PhoneNumber cannot be empty!").asRuntimeException());
-    }
 
     if(data.getUser(userName).getPhoneNumber() != phoneNumber){
       responseObserver.onError(INVALID_ARGUMENT.withDescription("UserName has a different PhoneNumber linked than the one provided!").asRuntimeException());
     }
 
     ReadRequest balanceRequest = ReadRequest.newBuilder().setName(userName + "/user/Balance").build();
-    balance = = _rec.read(balanceRequest).getValue();
+    balance = _rec.read(balanceRequest).getValue();
 
     balance = balance + stake*10;
     WriteRequest newBalanceRequest = WriteRequest.newBuilder().setName(userName + "/user/Balance").setIntValue(balance).build();
@@ -161,6 +155,7 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
 
   @Override
   public void bikeUp(BikeRequest request, StreamObserver<BikeResponse> responseObserver){
+    BikeResponse response;
     String userName = request.getUserName();
     double latitude = request.getLat();
     double longitude = request.getLong();
@@ -175,7 +170,7 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
     int availableBikes = _rec.read(availableBikesRequest).getValue();
 
     if (distance >= 200 || availableBikes == 0){
-      BikeResponse response = BikeResponse.newBuilder().setStatus(ERROR).build();
+      response = BikeResponse.newBuilder().setStatus(ERROR).build();
     }
     else{
       WriteRequest newAvailableBikesRequest = WriteRequest.newBuilder().setName(stationId + "/station/AvailableBikes").setIntValue(availableBikes - 1).build();
@@ -184,7 +179,7 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
 
       WriteRequest newPickupsRequest = WriteRequest.newBuilder().setName(stationId + "station/Pickups").setIntValue(pickups).build();
 
-      BikeResponse response = BikeResponse.newBuilder().setStatus(OK).build();
+      response = BikeResponse.newBuilder().setStatus(OK).build();
     }
 
     responseObserver.onNext(response);
@@ -193,6 +188,7 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
 
   @Override
   public void bikeDown(BikeRequest request, StreamObserver<BikeResponse> responseObserver){
+    BikeResponse response;
     String userName = request.getUserName();
     double latitude = request.getLat();
     double longitude = request.getLong();
@@ -204,25 +200,25 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
     int distance = getDistance(latitude, longitude, stationLat, stationLong);
 
     if (distance >= 200){
-      BikeResponse response = BikeResponse.newBuilder().setStatus(ERROR).build();
+      response = BikeResponse.newBuilder().setStatus(ERROR).build();
     }
     else{
       int prize = station.getPrize();
 
       ReadRequest returnsRequest = ReadRequest.newBuilder().setName(stationId + "/station/Returns").build();
-      returns = _rec.read(returnsRequest).getValue() + 1;
+      int returns = _rec.read(returnsRequest).getValue() + 1;
 
       ReadRequest balanceRequest = ReadRequest.newBuilder().setName(userName + "/user/Balance").build();
-      balance = _rec.read(balanceRequest).getValue() + prize;
+      int balance = _rec.read(balanceRequest).getValue() + prize;
 
       ReadRequest availableBikesRequest = ReadRequest.newBuilder().setName(stationId + "/station/AvailableBikes").build();
-      availableBikes = _rec.read(availableBikesRequest).getValue() + 1;
+      int availableBikes = _rec.read(availableBikesRequest).getValue() + 1;
 
       WriteRequest newReturnsRequest = WriteRequest.newBuilder().setName(stationId + "/station/Returns").build();
       WriteRequest newBalanceRequest = WriteRequest.newBuilder().setName(userName + "/user/Balance").build();
       WriteRequest newAvailableBikesRequest = WriteRequest.newBuilder().setName(stationId + "station/AvailableBikes").build();
 
-      BikeResponse response = BikeResponse.newBuilder().setStatus(OK).build();
+      response = BikeResponse.newBuilder().setStatus(OK).build();
     }
 
     responseObserver.onNext(response);

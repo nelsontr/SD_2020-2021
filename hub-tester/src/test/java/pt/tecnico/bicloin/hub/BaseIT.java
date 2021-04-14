@@ -2,6 +2,8 @@ package pt.tecnico.bicloin.hub;
 
 import java.io.IOException;
 import java.util.Properties;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.*;
 

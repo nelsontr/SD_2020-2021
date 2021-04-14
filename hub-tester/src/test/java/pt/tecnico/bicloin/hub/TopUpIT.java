@@ -2,8 +2,7 @@ package pt.tecnico.bicloin.hub;
 
 import org.junit.jupiter.api.*;
 
-
-public class HubIT extends BaseIT {
+public class TopUpIT extends BaseIT {
 	
 	// static members
 	// TODO	

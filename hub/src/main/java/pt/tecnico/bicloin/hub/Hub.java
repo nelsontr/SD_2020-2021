@@ -1,6 +1,7 @@
 package pt.tecnico.bicloin.hub;
 
 import java.util.*;
+import static io.grpc.Status.INVALID_ARGUMENT;
 
 public class Hub {
   private Map<String, User> _users = new HashMap<>();
@@ -27,4 +28,48 @@ public class Hub {
   }
 
 
+  public synchronized void ctrl_init_user(String input) {
+      if (input.isBlank()) {
+        throw new IllegalArgumentException("Input is Blank!");
+      }
+
+      String[] lines = input.split("\n");
+      String[] tokens;
+
+      for (String line : lines) {
+        if (line.startsWith("#")) {
+          continue;
+        }
+
+        tokens = line.split(",");
+        if (tokens.length!=3){
+          throw new IllegalArgumentException("Users must have 3 elements");
+        }
+
+        _users.put(tokens[0],new User(tokens[0], tokens[1], tokens[2]));
+      }
+  }
+
+  public synchronized void ctrl_init_station(String input) {
+    if (input.isBlank()) {
+      throw new IllegalArgumentException("Input is Blank!");
+    }
+
+    String[] lines = input.split("\n");
+    String[] tokens;
+
+    for (String line : lines) {
+      if (line.startsWith("#")) {
+        continue;
+      }
+
+      tokens = line.split(",");
+      if (tokens.length!=7){
+        throw new IllegalArgumentException("Stations must have 7 elements");
+      }
+
+      _stations.put(tokens[1],new Station(tokens[0], tokens[1], Float.parseFloat(tokens[2]),
+              Float.parseFloat(tokens[3]), Integer.parseInt(tokens[4]), Integer.parseInt(tokens[6])));
+    }
+  }
 }

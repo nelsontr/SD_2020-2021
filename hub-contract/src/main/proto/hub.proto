@@ -24,7 +24,7 @@ message BalanceResponse{
 message TopUpRequest{
   string userName = 1;
   int32 stake = 2;
-  int32 phoneNumber = 3;
+  string phoneNumber = 3;
 }
 
 message TopUpResponse{
@@ -86,7 +86,20 @@ message SysStatusResponse{
   repeated SysStatusResult status = 2;
 }
 
+message CtrlClearRequest {
+}
+message CtrlClearResponse {
+}
+
+message CtrlInitRequest {
+  string input = 1;
+}
+message CtrlInitResponse {
+}
+
 service Hub {
+  rpc ctrlInit(CtrlInitRequest) returns (CtrlInitResponse);
+  rpc ctrlClear(CtrlClearRequest) returns (CtrlClearResponse);
   rpc ping(CtrlPingRequest) returns (CtrlPingResponse);
   rpc balance(BalanceRequest) returns (BalanceResponse);
   rpc topUp(TopUpRequest) returns (TopUpResponse);

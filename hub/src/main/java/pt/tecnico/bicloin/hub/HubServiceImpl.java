@@ -6,8 +6,6 @@ import io.grpc.stub.StreamObserver;
 import java.util.*;
 
 import static io.grpc.Status.INVALID_ARGUMENT;
-import static io.grpc.Status.FAILED_PRECONDITION;
-import static io.grpc.Status.CANCELLED;
 
 import pt.tecnico.bicloin.hub.grpc.*;
 import pt.tecnico.bicloin.hub.*;
@@ -68,7 +66,7 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
   public void topUp(TopUpRequest request, StreamObserver<TopUpResponse> responseObserver){
     String userName = request.getUserName();
     int stake = request.getStake();
-    int phoneNumber = request.getPhoneNumber();
+    String phoneNumber = request.getPhoneNumber();
     int balance = -1;
 
     if (stake < 1 || stake > 20){
@@ -79,7 +77,7 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
           responseObserver.onError(INVALID_ARGUMENT.withDescription("UserName cannot be empty!").asRuntimeException());
     }
 
-    if(data.getUser(userName).getPhoneNumber() != phoneNumber){
+    if(!data.getUser(userName).getPhoneNumber().equals(phoneNumber)){
       responseObserver.onError(INVALID_ARGUMENT.withDescription("UserName has a different PhoneNumber linked than the one provided!").asRuntimeException());
     }
 
@@ -241,6 +239,12 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
 
   }
 
+  public void ctrlInit(CtrlInitRequest request, StreamObserver<CtrlInitResponse> responseObserver){
+    //TODO
+  }
+  public void ctrlClear(CtrlClearRequest request, StreamObserver<CtrlClearResponse> responseObserver){
+    //TODO
+  }
 
   private LinkedHashMap<String, Integer> orderedResults(HashMap<String, Integer> toOrder, int number){
 

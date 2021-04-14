@@ -18,6 +18,7 @@ public class RecordServiceImpl extends RecordGrpc.RecordImplBase {
 
     private final String OK_RESPONSE = "OK";
     private final String ERROR_RESPONSE = "ERROR";
+    private final String NO_INPUT_FOUND = "No {} was found!";
     private final String REQUEST_EMPTY = "Request cannot be empty!";
     private final String INTEGER_BELOW_ZERO = "Request came with a inputValue lower than zero!";
 
@@ -44,10 +45,9 @@ public class RecordServiceImpl extends RecordGrpc.RecordImplBase {
         if (input == null || input.isBlank()) {
             observerResponse.onError(INVALID_ARGUMENT.withDescription(REQUEST_EMPTY).asRuntimeException());
         } else if (!_records.containsKey(input)) {
-            observerResponse.onError(NOT_FOUND.withDescription("No "+input+" was found!").asRuntimeException());
+            observerResponse.onError(NOT_FOUND.withDescription(String.format(NO_INPUT_FOUND, input)).asRuntimeException());
         }
 
-        //WHAT IS STRINGVALUE?
         int output = _records.get(input);
         ReadResponse response =  ReadResponse.newBuilder().setValue(output).build();
 
@@ -71,6 +71,8 @@ public class RecordServiceImpl extends RecordGrpc.RecordImplBase {
         _records.remove(input); //if it doesn't exist, returns null
         _records.put(input, inputValue);
 
+        //WHERE ERROR IS?
+
         output = OK_RESPONSE;
         WriteResponse response = WriteResponse.newBuilder().setResponse(output).build();
 
@@ -80,17 +82,10 @@ public class RecordServiceImpl extends RecordGrpc.RecordImplBase {
 
     @Override
     public void clearRecords(ClearRequest request, StreamObserver<ClearResponse> observerResponse) {
-        Integer inputValue = request.getIntValue();
-
-        if ( inputValue == null ) {
-            observerResponse.onError(INVALID_ARGUMENT.withDescription(REQUEST_EMPTY).asRuntimeException());
-        } else if ( inputValue<0 ) {
-            observerResponse.onError(INVALID_ARGUMENT.withDescription(INTEGER_BELOW_ZERO).asRuntimeException());
-        }
 
         _records.clear();
 
-        ClearResponse response = ClearResponse.newBuilder().setResponse(1).build();
+        ClearResponse response = ClearResponse.newBuilder().build();
 
         observerResponse.onNext(response);
         observerResponse.onCompleted();

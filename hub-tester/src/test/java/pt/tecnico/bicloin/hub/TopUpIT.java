@@ -7,6 +7,8 @@ import pt.tecnico.bicloin.hub.grpc.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Scanner;
 
 import static io.grpc.Status.INVALID_ARGUMENT;
@@ -15,15 +17,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TopUpIT extends BaseIT {
-/*
+
 	private static String data = "";
-	private static final String USER_DATA_FILE = "users.cvs";
-	private static final String STATION_DATA_FILE = "stations.cvs";
+	private static final String USER_DATA_FILE = "/users.csv";
+	private static final String STATION_DATA_FILE = "/stations.csv";
 
 	@BeforeAll
-	public static void oneTimeSetUp() throws FileNotFoundException {
+	public static void oneTimeSetUp() throws FileNotFoundException, URISyntaxException {
 		//users
-		try (Scanner fileScanner = new Scanner(new File(USER_DATA_FILE))) {
+		URI uri = BalanceIT.class.getResource(USER_DATA_FILE).toURI();
+		try (Scanner fileScanner = new Scanner(new File(uri))) {
 			while (fileScanner.hasNextLine()) {
 				data = data.concat(fileScanner.nextLine() + "\n");
 			}
@@ -31,9 +34,10 @@ public class TopUpIT extends BaseIT {
 			System.out.println(String.format("Could not find file '%s'", USER_DATA_FILE));
 			throw fife;
 		}
-
+		data = data.concat("---\n");
 		//stations
-		try (Scanner fileScanner = new Scanner(new File(STATION_DATA_FILE))) {
+		uri = BalanceIT.class.getResource(STATION_DATA_FILE).toURI();
+		try (Scanner fileScanner = new Scanner(new File(uri))) {
 			while (fileScanner.hasNextLine()) {
 				data = data.concat(fileScanner.nextLine() + "\n");
 			}
@@ -61,25 +65,26 @@ public class TopUpIT extends BaseIT {
 
 	@AfterEach
 	public void tearDown() {
-		CtrlClearRequest request = CtrlClearRequest.newBuilder(CtrlClearRequest.getDefaultInstance()).build();
+		CtrlClearRequest request = CtrlClearRequest.newBuilder().build();
 		frontend.ctrlClear(request);
 	}
 
 	// -------- Tests --------
-
+/*
 	@Test
 	public void addingTenBTCS() {
 		int MONEY = 10;
-
+		//ERROR
 		BalanceRequest request1 = BalanceRequest.newBuilder().setUserName(USER_ID_1).build();
 		int balanceBefore = frontend.balance(request1).getBalance();
 
-		TopUpRequest topUp1 = TopUpRequest.newBuilder().setUserName(USER_ID_1).setStake(MONEY).setPhoneNumber(USER_PHONE_1).build();
+		TopUpRequest topUp1 = TopUpRequest.newBuilder().setUserName(USER_ID_1)
+				.setStake(MONEY).setPhoneNumber(USER_PHONE_1).build();
 		int balance = frontend.topUp(topUp1).getBalance();
 		int balanceAfter = frontend.balance(request1).getBalance();
 
 		assertEquals(balance, balanceAfter);
-		assertEquals(balanceBefore+MONEY, balanceAfter);
+		assertEquals((balanceBefore+MONEY), balanceAfter);
 	}
 
 	@Test

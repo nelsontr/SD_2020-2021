@@ -1,11 +1,11 @@
-package pt.tecnico.bicloin.hub;
+package pt.tecnico.bicloin.hub.data;
 
 public class User {
   private String _id;
   private String _name;
-  private int _phoneNumber;
+  private String _phoneNumber;
 
-  public User(String id, String name, int phoneNumber){
+  public User(String id, String name, String phoneNumber){
     _id = id;
     _name = name;
     _phoneNumber = phoneNumber;
@@ -19,7 +19,7 @@ public class User {
     return this._name;
   }
 
-  public int getPhoneNumber(){
+  public String getPhoneNumber(){
     return this._phoneNumber;
   }
 }

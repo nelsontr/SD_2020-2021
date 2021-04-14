@@ -7,14 +7,17 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static io.grpc.Status.INVALID_ARGUMENT;
-import static io.grpc.Status.NOT_FOUND;
-import static io.grpc.Status.ALREADY_EXISTS;
+import static io.grpc.Status.FAILED_PRECONDITION;
+import static io.grpc.Status.CANCELLED;
 
 import pt.tecnico.bicloin.hub.grpc.*;
 import pt.tecnico.rec.grpc.*;
 import pt.tecnico.rec.*;
 
 public class HubServiceImpl extends HubGrpc.HubImplBase {
+
+  final static String OK = "OK";
+  final static String ERROR = "ERRO fora de alcance";
 
   Hub data = new Hub();
   //Mal , estou forcing it mas para já....
@@ -38,12 +41,47 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
 
   @Override
   public void balance(BalanceRequest request, StreamObserver<BalanceResponse> responseObserver){
+    String userName = request.getUserName();
+    int balance = -1;
 
+    if (userName == null || userName.isBlank()) {
+          responseObserver.onError(INVALID_ARGUMENT.withDescription("UserName cannot be empty!").asRuntimeException());
+    }
+
+    ReadRequest balanceRequest = ReadRequest.newBuilder().setName(userName + "/user/Balance").build();
+    balance = _rec.read(balanceRequest).getValue();
+
+    BalanceResponse response = BalanceResponse.newBuilder().setBalance(balance).build();
+
+    responseObserver.onNext(response);
+    responseObserver.onCompleted();
   }
 
   @Override
   public void topUp(TopUpRequest request, StreamObserver<TopUpResponse> responseObserver){
+    String userName = request.getUserName();
+    int stake = request.getStake();
+    int phoneNumber = request.getPhoneNumber();
+    int balance = -1;
 
+    if (userName == null || userName.isBlank()) {
+          responseObserver.onError(INVALID_ARGUMENT.withDescription("UserName cannot be empty!").asRuntimeException());
+    }
+
+    if(data.getUser(userName).getPhoneNumber() != phoneNumber){
+      responseObserver.onError(INVALID_ARGUMENT.withDescription("UserName has a different PhoneNumber linked than the one provided!").asRuntimeException());
+    }
+
+    ReadRequest balanceRequest = ReadRequest.newBuilder().setName(userName + "/user/Balance").build();
+    balance = _rec.read(balanceRequest).getValue();
+
+    balance = balance + stake*10;
+    WriteRequest newBalanceRequest = WriteRequest.newBuilder().setName(userName + "/user/Balance").setIntValue(balance).build();
+
+    TopUpResponse response = TopUpResponse.newBuilder().setBalance(balance).build();
+
+    responseObserver.onNext(response);
+    responseObserver.onCompleted();
   }
 
   @Override
@@ -93,16 +131,8 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
       double lt = station.getLat();
       double lg = station.getLong();
       //distante between latitudes and longitudes
-      double dLat = Math.toRadians(lt - latitude);
-      double dLong = Math.toRadians(lg - longitude);
-      //formula
-      double a = Math.pow(Math.sin(dLat / 2), 2) +
-                  Math.pow(Math.sin(dLong / 2), 2) *
-                  Math.cos(latitude) *
-                  Math.cos(lt);
-      double rad = 6371;
-      double c = 2 * Math.asin(Math.sqrt(a));
-      int distance = (int)((rad * c) * 1000); //result in meters
+      int distance = this.getDistance(latitude, longitude, lt, lg);
+
       results.put(station.getId(), distance);
     }
 
@@ -125,12 +155,74 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
 
   @Override
   public void bikeUp(BikeRequest request, StreamObserver<BikeResponse> responseObserver){
+    BikeResponse response;
+    String userName = request.getUserName();
+    double latitude = request.getLat();
+    double longitude = request.getLong();
+    String stationId = request.getStationId();
 
+    Station station = data.getStation(stationId);
+    double stationLat = station.getLat();
+    double stationLong = station.getLong();
+    int distance = getDistance(latitude, longitude, stationLat, stationLong);
+
+    ReadRequest availableBikesRequest = ReadRequest.newBuilder().setName(stationId + "/station/AvailableBikes").build();
+    int availableBikes = _rec.read(availableBikesRequest).getValue();
+
+    if (distance >= 200 || availableBikes == 0){
+      response = BikeResponse.newBuilder().setStatus(ERROR).build();
+    }
+    else{
+      WriteRequest newAvailableBikesRequest = WriteRequest.newBuilder().setName(stationId + "/station/AvailableBikes").setIntValue(availableBikes - 1).build();
+      ReadRequest pickupsRequest = ReadRequest.newBuilder().setName(stationId + "/station/Pickups").build();
+      int pickups = _rec.read(pickupsRequest).getValue() + 1;
+
+      WriteRequest newPickupsRequest = WriteRequest.newBuilder().setName(stationId + "station/Pickups").setIntValue(pickups).build();
+
+      response = BikeResponse.newBuilder().setStatus(OK).build();
+    }
+
+    responseObserver.onNext(response);
+    responseObserver.onCompleted();
   }
 
   @Override
   public void bikeDown(BikeRequest request, StreamObserver<BikeResponse> responseObserver){
+    BikeResponse response;
+    String userName = request.getUserName();
+    double latitude = request.getLat();
+    double longitude = request.getLong();
+    String stationId = request.getStationId();
 
+    Station station = data.getStation(stationId);
+    double stationLat = station.getLat();
+    double stationLong = station.getLong();
+    int distance = getDistance(latitude, longitude, stationLat, stationLong);
+
+    if (distance >= 200){
+      response = BikeResponse.newBuilder().setStatus(ERROR).build();
+    }
+    else{
+      int prize = station.getPrize();
+
+      ReadRequest returnsRequest = ReadRequest.newBuilder().setName(stationId + "/station/Returns").build();
+      int returns = _rec.read(returnsRequest).getValue() + 1;
+
+      ReadRequest balanceRequest = ReadRequest.newBuilder().setName(userName + "/user/Balance").build();
+      int balance = _rec.read(balanceRequest).getValue() + prize;
+
+      ReadRequest availableBikesRequest = ReadRequest.newBuilder().setName(stationId + "/station/AvailableBikes").build();
+      int availableBikes = _rec.read(availableBikesRequest).getValue() + 1;
+
+      WriteRequest newReturnsRequest = WriteRequest.newBuilder().setName(stationId + "/station/Returns").build();
+      WriteRequest newBalanceRequest = WriteRequest.newBuilder().setName(userName + "/user/Balance").build();
+      WriteRequest newAvailableBikesRequest = WriteRequest.newBuilder().setName(stationId + "station/AvailableBikes").build();
+
+      response = BikeResponse.newBuilder().setStatus(OK).build();
+    }
+
+    responseObserver.onNext(response);
+    responseObserver.onCompleted();
   }
 
 
@@ -162,5 +254,19 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
         temp.put(aa.getKey(), aa.getValue());
     }
     return temp;
+    }
+
+    public int getDistance(double latitude, double longitude, double stationLat, double stationLong){
+      double dLat = Math.toRadians(stationLat - latitude);
+      double dLong = Math.toRadians(stationLong - longitude);
+      //formula
+      double a = Math.pow(Math.sin(dLat / 2), 2) +
+                  Math.pow(Math.sin(dLong / 2), 2) *
+                  Math.cos(latitude) *
+                  Math.cos(stationLat);
+      double rad = 6371;
+      double c = 2 * Math.asin(Math.sqrt(a));
+
+      return ((int)((rad * c) * 1000)); //result in meters
     }
 }

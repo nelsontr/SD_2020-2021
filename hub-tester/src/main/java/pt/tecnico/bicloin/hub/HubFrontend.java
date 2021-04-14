@@ -42,6 +42,14 @@ public class HubFrontend {
 		}
 	}
 
+  public BalanceResponse balance(BalanceRequest request){
+    return stub.balance(request);
+  }
+
+  public TopUpResponse topUp(TopUpRequest request){
+    return stub.topUp(request);
+  }
+
   public InfoStationResponse infoStation(InfoStationRequest request) {
     //Uncertain about exceptions
     return stub.infoStation(request);
@@ -52,7 +60,13 @@ public class HubFrontend {
     return stub.locateStation(request);
   }
 
+  public BikeResponse bikeUp(BikeRequest request){
+    return stub.bikeUp(request);
+  }
 
+  public BikeResponse bikeDown(BikeRequest request){
+    return stub.bikeDown(request);
+  }
 
 	public void closeChannel(){
 		this.channel.shutdownNow();

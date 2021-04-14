@@ -1,4 +1,4 @@
-package pt.tecnico.bicloin.hub.data;
+package pt.tecnico.bicloin.hub;
 
 public class User {
   private String _id;

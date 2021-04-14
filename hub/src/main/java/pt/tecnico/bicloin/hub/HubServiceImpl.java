@@ -2,13 +2,9 @@ package pt.tecnico.bicloin.hub;
 
 import io.grpc.stub.StreamObserver;
 
-import java.time.ZoneOffset;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static io.grpc.Status.INVALID_ARGUMENT;
-import static io.grpc.Status.NOT_FOUND;
-import static io.grpc.Status.ALREADY_EXISTS;
 
 import pt.tecnico.bicloin.hub.grpc.*;
 import pt.tecnico.rec.grpc.*;

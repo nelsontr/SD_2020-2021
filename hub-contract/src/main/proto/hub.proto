@@ -58,7 +58,7 @@ message Scan {
 }
 
 message LocateStationResponse{
-  repeated Scan scan = 1; 
+  repeated Scan scan = 1;
 }
 
 message BikeRequest{

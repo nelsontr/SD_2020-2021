@@ -7,14 +7,17 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static io.grpc.Status.INVALID_ARGUMENT;
-import static io.grpc.Status.NOT_FOUND;
-import static io.grpc.Status.ALREADY_EXISTS;
+import static io.grpc.Status.FAILED_PRECONDITION;
+import static io.grpc.Status.CANCELLED;
 
 import pt.tecnico.bicloin.hub.grpc.*;
 import pt.tecnico.rec.grpc.*;
 import pt.tecnico.rec.*;
 
 public class HubServiceImpl extends HubGrpc.HubImplBase {
+
+  final static String OK = "OK";
+  final static String ERROR = "ERRO fora de alcance";
 
   Hub data = new Hub();
   //Mal , estou forcing it mas para já....
@@ -86,12 +89,6 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
     responseObserver.onNext(response);
     responseObserver.onCompleted();
   }
-  /*
-  top_up -- recebe o identificador do utilizador, o montante a carregar e o número de telemóvel para ativar a
-  aplicação de pagamentos. Devolve o saldo após o carregamento. O número fornecido deve corresponder ao número
-  associado ao utilizador. Por simplificação, assume-se que o carregamento é sempre bem sucedido e não existe
-  necessidade de contactar um serviço de pagamentos;
-  */
 
   @Override
   public void infoStation(InfoStationRequest request, StreamObserver<InfoStationResponse> responseObserver){
@@ -140,16 +137,8 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
       double lt = station.getLat();
       double lg = station.getLong();
       //distante between latitudes and longitudes
-      double dLat = Math.toRadians(lt - latitude);
-      double dLong = Math.toRadians(lg - longitude);
-      //formula
-      double a = Math.pow(Math.sin(dLat / 2), 2) +
-                  Math.pow(Math.sin(dLong / 2), 2) *
-                  Math.cos(latitude) *
-                  Math.cos(lt);
-      double rad = 6371;
-      double c = 2 * Math.asin(Math.sqrt(a));
-      int distance = (int)((rad * c) * 1000); //result in meters
+      int distance = this.getDistance(latitude, longitude, lt, lg);
+
       results.put(station.getId(), distance);
     }
 
@@ -170,9 +159,48 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
 
   }
 
+  /*
+  bike_up e bike_down -- recebem o identificador do utilizador, as suas coordenadas atuais,
+  e a estação de onde se pretende levantar (bike_up) ou entregar (bike_down) uma bicicleta.
+  O utilizador deve estar na proximidade da estação (a menos de 200 metros). Um utilizador
+  apenas pode levantar uma bicicleta de cada vez;
+  */
+
   @Override
   public void bikeUp(BikeRequest request, StreamObserver<BikeResponse> responseObserver){
+    String userName = request.getUserName();
+    double latitude = request.getLat();
+    double longitude = request.getLong();
+    String stationId = request.getStationId();
 
+    Station station = data.getStation(stationId);
+    double stationLat = station.getLat();
+    double stationLong = station.getLong();
+    int distance = getDistance(latitude, longitude, stationLat, stationLong);
+
+    if (distance >= 200){
+      responseObserver.onError(FAILED_PRECONDITION.withDescription("User isn't in the 200 meters required radius!").asRuntimeException());
+    }
+
+    ReadRequest availableBikesRequest = ReadRequest.newBuilder().setName(stationId + "/station/AvailableBikes").build();
+    int availableBikes = _rec.read(availableBikesRequest).getValue();
+
+    if (availableBikes == 0){
+      BikeResponse response = BikeResponse.newBuilder().setStatus(ERROR).build();
+    }
+
+    WriteRequest newAvailableBikesRequest = WriteRequest.newBuilder().setName(stationId + "/station/AvailableBikes").setIntValue(availableBikes - 1).build();
+    ReadRequest pickupsRequest = ReadRequest.newBuilder().setName(stationId + "/station/Pickups").build();
+    int pickups = _rec.read(pickupsRequest).getValue() + 1;
+
+    WriteRequest newPickupsRequest = WriteRequest.newBuilder().setName(stationId + "station/Pickups").setIntValue(pickups).build();
+
+    if (availableBikes != 0){
+      BikeResponse response = BikeResponse.newBuilder().setStatus(OK).build();
+    }
+
+    responseObserver.onNext(response);
+    responseObserver.onCompleted();
   }
 
   @Override
@@ -209,5 +237,19 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
         temp.put(aa.getKey(), aa.getValue());
     }
     return temp;
+    }
+
+    public int getDistance(double latitude, double longitude, double stationLat, double stationLong){
+      double dLat = Math.toRadians(stationLat - latitude);
+      double dLong = Math.toRadians(stationLong - longitude);
+      //formula
+      double a = Math.pow(Math.sin(dLat / 2), 2) +
+                  Math.pow(Math.sin(dLong / 2), 2) *
+                  Math.cos(latitude) *
+                  Math.cos(stationLat);
+      double rad = 6371;
+      double c = 2 * Math.asin(Math.sqrt(a));
+
+      return ((int)((rad * c) * 1000)); //result in meters
     }
 }

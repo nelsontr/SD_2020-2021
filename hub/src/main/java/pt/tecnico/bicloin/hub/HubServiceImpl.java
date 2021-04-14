@@ -41,7 +41,11 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
     String userName = request.getUserName();
     int balance = -1;
 
-    ReadRequest balanceRequest = ReadRequest.newBuilder().setUserName(userName + "/user/balance").build();
+    if (userName == null || userName.isBlank()) {
+          responseObserver.onError(INVALID_ARGUMENT.withDescription("UserName cannot be empty!").asRuntimeException());
+    }
+
+    ReadRequest balanceRequest = ReadRequest.newBuilder().setUserName(userName + "/user/Balance").build();
     balance = = _rec.read(balanceRequest).getValue();
 
     BalanceResponse response = BalanceResponse.newBuilder().setBalance(balance).build();
@@ -52,8 +56,42 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
 
   @Override
   public void topUp(TopUpRequest request, StreamObserver<TopUpResponse> responseObserver){
+    String userName = request.getUserName();
+    int stake = request.getStake();
+    int phoneNumber = request.getPhoneNumber();
+    int balance = -1;
 
+    if (userName == null || userName.isBlank()) {
+          responseObserver.onError(INVALID_ARGUMENT.withDescription("UserName cannot be empty!").asRuntimeException());
+    }
+    if (stake == null || stake.isBlank()) {
+          responseObserver.onError(INVALID_ARGUMENT.withDescription("Stake cannot be empty!").asRuntimeException());
+    }
+    if (phoneNumber == null || phoneNumber.isBlank()) {
+          responseObserver.onError(INVALID_ARGUMENT.withDescription("PhoneNumber cannot be empty!").asRuntimeException());
+    }
+
+    if(data.getUser(userName).getPhoneNumber() != phoneNumber){
+      responseObserver.onError(INVALID_ARGUMENT.withDescription("UserName has a different PhoneNumber linked than the one provided!").asRuntimeException());
+    }
+
+    ReadRequest balanceRequest = ReadRequest.newBuilder().setName(userName + "/user/Balance").build();
+    balance = = _rec.read(balanceRequest).getValue();
+
+    balance = balance + stake*10;
+    WriteRequest newBalanceRequest = WriteRequest.newBuilder().setName(userName + "/user/Balance").setIntValue(balance).build();
+
+    TopUpResponse response = TopUpResponse.newBuilder().setBalance(balance).build();
+
+    responseObserver.onNext(response);
+    responseObserver.onCompleted();
   }
+  /*
+  top_up -- recebe o identificador do utilizador, o montante a carregar e o número de telemóvel para ativar a
+  aplicação de pagamentos. Devolve o saldo após o carregamento. O número fornecido deve corresponder ao número
+  associado ao utilizador. Por simplificação, assume-se que o carregamento é sempre bem sucedido e não existe
+  necessidade de contactar um serviço de pagamentos;
+  */
 
   @Override
   public void infoStation(InfoStationRequest request, StreamObserver<InfoStationResponse> responseObserver){

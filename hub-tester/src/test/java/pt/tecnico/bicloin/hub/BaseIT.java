@@ -25,6 +25,7 @@ public class BaseIT {
 	public static final String STATION_NAME_3 = "Oceanário";
 
 	public static final String USER_PHONE_1 = "+35191102030";
+	public static final String USER_PHONE_2 = "+35191102031";
 	public static final Double USER_LAT_1 = 38.7372;
 	public static final Double USER_LONG_1 =  -9.3023;
 	public static final int COMPENSATION_1 = 4;

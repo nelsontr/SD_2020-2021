@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class BalanceIT extends BaseIT {
-
+/*
 	private static final String USER_DATA_FILE = "users.cvs";
 	private static final String STATION_DATA_FILE = "stations.cvs";
 	private static String data = "";
@@ -134,5 +134,5 @@ public class BalanceIT extends BaseIT {
 
 		assertEquals(balanceBefore, balanceAfter+COMPENSATION_1);
 	}
-
+*/
 }

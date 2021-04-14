@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TopUpIT extends BaseIT {
-
+/*
 	private static String data = "";
 	private static final String USER_DATA_FILE = "users.cvs";
 	private static final String STATION_DATA_FILE = "stations.cvs";
@@ -143,5 +143,5 @@ public class TopUpIT extends BaseIT {
 		assertEquals(INVALID_ARGUMENT.getCode(), sre.getStatus().getCode());
 		assertEquals("Request cannot!",sre.getStatus().getDescription());
 	}
-
+*/
 }

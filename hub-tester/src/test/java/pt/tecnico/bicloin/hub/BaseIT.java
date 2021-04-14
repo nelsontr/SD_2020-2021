@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Properties;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import pt.tecnico.rec.RecFrontend;
 
 import org.junit.jupiter.api.*;
 
@@ -56,7 +55,7 @@ public class BaseIT {
 	
 	@AfterAll
 	public static void cleanup() {
-		
+		frontend.closeChannel();
 	}
 
 }

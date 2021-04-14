@@ -159,13 +159,6 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
 
   }
 
-  /*
-  bike_up e bike_down -- recebem o identificador do utilizador, as suas coordenadas atuais,
-  e a estação de onde se pretende levantar (bike_up) ou entregar (bike_down) uma bicicleta.
-  O utilizador deve estar na proximidade da estação (a menos de 200 metros). Um utilizador
-  apenas pode levantar uma bicicleta de cada vez;
-  */
-
   @Override
   public void bikeUp(BikeRequest request, StreamObserver<BikeResponse> responseObserver){
     String userName = request.getUserName();
@@ -178,24 +171,19 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
     double stationLong = station.getLong();
     int distance = getDistance(latitude, longitude, stationLat, stationLong);
 
-    if (distance >= 200){
-      responseObserver.onError(FAILED_PRECONDITION.withDescription("User isn't in the 200 meters required radius!").asRuntimeException());
-    }
-
     ReadRequest availableBikesRequest = ReadRequest.newBuilder().setName(stationId + "/station/AvailableBikes").build();
     int availableBikes = _rec.read(availableBikesRequest).getValue();
 
-    if (availableBikes == 0){
+    if (distance >= 200 || availableBikes == 0){
       BikeResponse response = BikeResponse.newBuilder().setStatus(ERROR).build();
     }
+    else{
+      WriteRequest newAvailableBikesRequest = WriteRequest.newBuilder().setName(stationId + "/station/AvailableBikes").setIntValue(availableBikes - 1).build();
+      ReadRequest pickupsRequest = ReadRequest.newBuilder().setName(stationId + "/station/Pickups").build();
+      int pickups = _rec.read(pickupsRequest).getValue() + 1;
 
-    WriteRequest newAvailableBikesRequest = WriteRequest.newBuilder().setName(stationId + "/station/AvailableBikes").setIntValue(availableBikes - 1).build();
-    ReadRequest pickupsRequest = ReadRequest.newBuilder().setName(stationId + "/station/Pickups").build();
-    int pickups = _rec.read(pickupsRequest).getValue() + 1;
+      WriteRequest newPickupsRequest = WriteRequest.newBuilder().setName(stationId + "station/Pickups").setIntValue(pickups).build();
 
-    WriteRequest newPickupsRequest = WriteRequest.newBuilder().setName(stationId + "station/Pickups").setIntValue(pickups).build();
-
-    if (availableBikes != 0){
       BikeResponse response = BikeResponse.newBuilder().setStatus(OK).build();
     }
 
@@ -205,7 +193,40 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
 
   @Override
   public void bikeDown(BikeRequest request, StreamObserver<BikeResponse> responseObserver){
+    String userName = request.getUserName();
+    double latitude = request.getLat();
+    double longitude = request.getLong();
+    String stationId = request.getStationId();
 
+    Station station = data.getStation(stationId);
+    double stationLat = station.getLat();
+    double stationLong = station.getLong();
+    int distance = getDistance(latitude, longitude, stationLat, stationLong);
+
+    if (distance >= 200){
+      BikeResponse response = BikeResponse.newBuilder().setStatus(ERROR).build();
+    }
+    else{
+      int prize = station.getPrize();
+
+      ReadRequest returnsRequest = ReadRequest.newBuilder().setName(stationId + "/station/Returns").build();
+      returns = _rec.read(returnsRequest).getValue() + 1;
+
+      ReadRequest balanceRequest = ReadRequest.newBuilder().setName(userName + "/user/Balance").build();
+      balance = _rec.read(balanceRequest).getValue() + prize;
+
+      ReadRequest availableBikesRequest = ReadRequest.newBuilder().setName(stationId + "/station/AvailableBikes").build();
+      availableBikes = _rec.read(availableBikesRequest).getValue() + 1;
+
+      WriteRequest newReturnsRequest = WriteRequest.newBuilder().setName(stationId + "/station/Returns").build();
+      WriteRequest newBalanceRequest = WriteRequest.newBuilder().setName(userName + "/user/Balance").build();
+      WriteRequest newAvailableBikesRequest = WriteRequest.newBuilder().setName(stationId + "station/AvailableBikes").build();
+
+      BikeResponse response = BikeResponse.newBuilder().setStatus(OK).build();
+    }
+
+    responseObserver.onNext(response);
+    responseObserver.onCompleted();
   }
 
 

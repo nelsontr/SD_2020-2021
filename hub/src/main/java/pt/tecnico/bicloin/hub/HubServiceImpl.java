@@ -38,7 +38,16 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
 
   @Override
   public void balance(BalanceRequest request, StreamObserver<BalanceResponse> responseObserver){
+    String userName = request.getUserName();
+    int balance = -1;
 
+    ReadRequest balanceRequest = ReadRequest.newBuilder().setUserName(userName + "/user/balance").build();
+    balance = = _rec.read(balanceRequest).getValue();
+
+    BalanceResponse response = BalanceResponse.newBuilder().setBalance(balance).build();
+
+    responseObserver.onNext(response);
+    responseObserver.onCompleted();
   }
 
   @Override

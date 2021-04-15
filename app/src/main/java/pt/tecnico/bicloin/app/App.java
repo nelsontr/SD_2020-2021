@@ -39,7 +39,9 @@ public class App {
 	void ping(String message){
     try {
       CtrlPingRequest request = CtrlPingRequest.newBuilder().setInput(message).build();
-			_hub.ping(request);
+			CtrlPingResponse response = _hub.ping(request);
+
+      System.out.println(response.getOutput());
 		} catch (StatusRuntimeException e) {
 			System.out.println("Caught exception with description: " + e.getStatus().getDescription());
 		}
@@ -62,7 +64,7 @@ public class App {
 	}
 
 	void tag(double lt, double lg, String tag){
-    
+
     if(_tags.containsKey(tag)){
       throw new IllegalArgumentException(String.format("Existing tag, Introduce different name"));
     }
@@ -73,7 +75,7 @@ public class App {
 	}
 
 	void move(double lt, double lg, String tag){
-		if (lt == -1 && lg == -1 ) {//tag provided 
+		if (lt == -1 && lg == -1 ) {//tag provided
       if(!_tags.containsKey(tag)){
         throw new IllegalArgumentException(String.format("Tag does not exist"));
       }
@@ -87,7 +89,7 @@ public class App {
     String lat = Double.toString(_latitude);
     String longi = Double.toString(_longitude);
     System.out.println(_userId + GOOGLE_COM_MAPS + lat + "," + longi);
-    
+
 	}
 
 	void at(){
@@ -109,7 +111,7 @@ public class App {
       String prize = String.valueOf(scan.getPrize());
       String availableBikes = String.valueOf(scan.getAvailableBikes());
       String distance = String.valueOf(scan.getDistance());
-      System.out.println(stationId + ", lat" + lt + ", " + lg + " long, " + dockCapacity + " docas, " + prize + " BIC prémio," + availableBikes + " bicicletas, a " + distance + " metros");
+      System.out.println(stationId + ", lat" + lt + ", " + lg + " long, " + dockCapacity + " docas, " + prize + " BIC prémio, " + availableBikes + " bicicletas, a " + distance + " metros");
     }
 	}
 

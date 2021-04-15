@@ -43,7 +43,7 @@ public class RecordServiceImpl extends RecordGrpc.RecordImplBase {
         if (input.isBlank()) {
             observerResponse.onError(INVALID_ARGUMENT.withDescription(REQUEST_EMPTY).asRuntimeException());
         } else if (!_records.containsKey(input)) {
-            response = ReadResponse.newBuilder().setValue(-1).build();
+            response = ReadResponse.newBuilder().setValue(0).build();
             observerResponse.onNext(response);
             observerResponse.onCompleted();
         } else {

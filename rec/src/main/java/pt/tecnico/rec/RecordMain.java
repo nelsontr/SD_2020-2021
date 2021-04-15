@@ -29,7 +29,7 @@ public class RecordMain  {
 		}
 
 		final String zooHost = args[0];
-		final int zooPort = Integer.parseInt(args[0]);
+		final int zooPort = Integer.parseInt(args[1]);
 		final String host = args[2];
 		final int port = Integer.parseInt(args[3]);
 		final int numberInstances = Integer.parseInt(args[4]);

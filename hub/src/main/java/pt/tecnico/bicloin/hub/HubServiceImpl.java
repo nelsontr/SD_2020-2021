@@ -266,8 +266,8 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
     }
 
 
-    public void sys_status(SysStatusRequest request, StreamObserver<SysStatusResponse> responseObserver) {
-      
+    public void sysStatus(SysStatusRequest request, StreamObserver<SysStatusResponse> responseObserver) {
+
       SysStatRequest recRequest = SysStatRequest.newBuilder().build();
       SysStatResponse recResponse = _rec.sysStat(recRequest);
       String recStatus = recResponse.getStatus();

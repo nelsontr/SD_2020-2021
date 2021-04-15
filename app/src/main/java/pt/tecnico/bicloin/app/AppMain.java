@@ -36,7 +36,7 @@ public class AppMain {
 			System.out.printf("arg[%d] = %s%n", i, args[i]);
 		}
 
-		if (args.length != 6 || args.length != 8) {
+		if (!(args.length == 6 || args.length == 8)) {
 			System.err.println("Argument(s) missing!");
 			return;
 		}

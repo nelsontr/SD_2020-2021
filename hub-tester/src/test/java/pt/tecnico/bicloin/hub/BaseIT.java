@@ -44,7 +44,7 @@ public class BaseIT {
 
 	@BeforeEach
 	public void setUp() {
-		CtrlInitRequest request = CtrlInitRequest.newBuilder().setInput(initialData).setRecInitOption(false).build();
+		CtrlInitRequest request = CtrlInitRequest.newBuilder().setInput(initialData).setRecInitOption(true).build();
 
 		try {
 			frontend.ctrlInit(request);

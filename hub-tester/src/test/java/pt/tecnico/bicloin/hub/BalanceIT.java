@@ -50,17 +50,17 @@ public class BalanceIT extends BaseIT {
             assertEquals("UserName cannot be empty!",sre.getStatus().getDescription());
         }
 */
-	@Test
-	public void userAddsMoneyToAccount() {
-		BalanceRequest request1 = BalanceRequest.newBuilder().setUserName(USER_ID_1).build();
-		TopUpRequest topUpRequest = TopUpRequest.newBuilder().setUserName(USER_ID_1)
-				.setStake(10).setPhoneNumber(USER_PHONE_1).build();
+        @Test
+        public void userAddsMoneyToAccount() {
+            BalanceRequest request1 = BalanceRequest.newBuilder().setUserName(USER_ID_1).build();
+            TopUpRequest topUpRequest = TopUpRequest.newBuilder().setUserName(USER_ID_1)
+					.setStake(10).setPhoneNumber(USER_PHONE_1).build();
 
-		int topUpResponse = frontend.topUp(topUpRequest).getBalance();
-		int balanceAfter = frontend.balance(request1).getBalance();
+            int topUpResponse = frontend.topUp(topUpRequest).getBalance();
+            int balanceAfter = frontend.balance(request1).getBalance();
 
-		assertEquals(balanceAfter,topUpResponse);
-	}
+            assertEquals(balanceAfter,topUpResponse);
+        }
 
 	@Test
 	public void userDeliversBike() {

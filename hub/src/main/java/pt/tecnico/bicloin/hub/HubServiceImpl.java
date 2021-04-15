@@ -228,9 +228,13 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
       ReadRequest availableBikesRequest = ReadRequest.newBuilder().setName(stationId + "/station/AvailableBikes").build();
       int availableBikes = _rec.read(availableBikesRequest).getValue() + 1;
 
-      WriteRequest newReturnsRequest = WriteRequest.newBuilder().setName(stationId + "/station/Returns").build();
-      WriteRequest newBalanceRequest = WriteRequest.newBuilder().setName(userName + "/user/Balance").build();
-      WriteRequest newAvailableBikesRequest = WriteRequest.newBuilder().setName(stationId + "station/AvailableBikes").build();
+      WriteRequest newReturnsRequest = WriteRequest.newBuilder().setName(stationId + "/station/Returns").setIntValue(returns).build();
+      _rec.write(newReturnsRequest);
+      WriteRequest newBalanceRequest = WriteRequest.newBuilder().setName(userName + "/user/Balance").setIntValue(balance).build();
+      _rec.write(newBalanceRequest);
+      WriteRequest newAvailableBikesRequest = WriteRequest.newBuilder().setName(stationId + "/station/AvailableBikes")
+              .setIntValue(availableBikes).build();
+      _rec.write(newAvailableBikesRequest);
 
       response = BikeResponse.newBuilder().setStatus(OK).build();
     }
@@ -260,7 +264,12 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
   }
 
   public void ctrlClear(CtrlClearRequest request, StreamObserver<CtrlClearResponse> responseObserver){
+
     data.clearAll();
+
+    ClearRequest request1 = ClearRequest.newBuilder().build();
+    _rec.clear(request1);
+
     CtrlClearResponse response = CtrlClearResponse.newBuilder().build();
     responseObserver.onNext(response);
     responseObserver.onCompleted();

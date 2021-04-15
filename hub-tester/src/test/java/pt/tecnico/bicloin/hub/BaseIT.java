@@ -42,6 +42,18 @@ public class BaseIT {
 	protected static Properties testProps;
 	static HubFrontend frontend;
 
+	@BeforeEach
+	public void setUp() {
+		CtrlInitRequest request = CtrlInitRequest.newBuilder().setInput(data).setRecInitOption(false).build();
+
+		try {
+			frontend.ctrlInit(request);
+		} catch (Exception e) {
+			System.out.println(String.format("Exception<ctrl_init>: %s", e.getMessage()));
+			throw e;
+		}
+	}
+
 	@BeforeAll
 	public static void oneTimeSetup () throws IOException {
 		testProps = new Properties();
@@ -83,6 +95,12 @@ public class BaseIT {
 
 		CtrlInitRequest request = CtrlInitRequest.newBuilder().setInput(data).setRecInitOption(false).build();
 		frontend.ctrlInit(request);
+	}
+
+	@AfterEach
+	public void tearDown() {
+		/*CtrlClearRequest request = CtrlClearRequest.newBuilder().build();
+		frontend.ctrlClear(request);*/
 	}
 
 	@AfterAll

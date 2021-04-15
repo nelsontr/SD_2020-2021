@@ -65,8 +65,8 @@ public class TopUpIT extends BaseIT {
 
 	@AfterEach
 	public void tearDown() {
-		CtrlClearRequest request = CtrlClearRequest.newBuilder().build();
-		frontend.ctrlClear(request);
+		/*CtrlClearRequest request = CtrlClearRequest.newBuilder().build();
+		frontend.ctrlClear(request);*/
 	}
 
 	// -------- Tests --------

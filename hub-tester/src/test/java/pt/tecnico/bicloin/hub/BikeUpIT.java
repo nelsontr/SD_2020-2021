@@ -49,20 +49,20 @@ public class BikeUpIT extends BaseIT {
 
 	@BeforeEach
 	public void setUp() {
-		CtrlInitRequest request = CtrlInitRequest.newBuilder().setInput(data).build();
+		/*CtrlInitRequest request = CtrlInitRequest.newBuilder().setInput(data).build();
 
 		try {
 			frontend.ctrlInit(request);
 		} catch (Exception e) {
 			System.out.println(String.format("Exception<ctrl_init>: %s", e.getMessage()));
 			throw e;
-		}
+		}*/
 	}
 
 	@AfterEach
 	public void tearDown() {
-		CtrlClearRequest request = CtrlClearRequest.newBuilder().build();
-		frontend.ctrlClear(request);
+		/*CtrlClearRequest request = CtrlClearRequest.newBuilder().build();
+		frontend.ctrlClear(request);*/
 	}
 
 	// -------- Tests --------

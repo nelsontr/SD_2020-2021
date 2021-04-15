@@ -93,8 +93,11 @@ message CtrlClearResponse {
 
 message CtrlInitRequest {
   string input = 1;
+  bool recInitOption = 2;
 }
+
 message CtrlInitResponse {
+
 }
 
 service Hub {

@@ -240,8 +240,20 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
   }
 
   public void ctrlInit(CtrlInitRequest request, StreamObserver<CtrlInitResponse> responseObserver){
-    //TODO
+    String inputData = request.getInput();
+
+    if (request.getRecInitOption()){
+      this.initData(inputData, true);
+    }
+    else{
+      this.initData(inputData, false);
+    }
+
+    CtrlInitResponse response = CtrlInitResponse.newBuilder().build();
+    responseObserver.onNext(response);
+    responseObserver.onCompleted();
   }
+
   public void ctrlClear(CtrlClearRequest request, StreamObserver<CtrlClearResponse> responseObserver){
     //TODO
   }
@@ -284,6 +296,48 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
       double c = 2 * Math.asin(Math.sqrt(a));
 
       return ((int)((rad * c) * 1000)); //result in meters
+    }
+
+    public synchronized void initData(String inputData, boolean initRecOption){
+      if (inputData.isBlank()) {
+        throw new IllegalArgumentException("Input is Blank!");
+      }
+
+      String[] lines = inputData.split("\n");
+      String[] tokens;
+
+      for (String line : lines) {
+        tokens = line.split(",");
+        if (tokens.length==3 && !initRecOption){
+          data.addUser(tokens[0], tokens[1], tokens[2]);
+        }
+        else if(tokens.length==3 && initRecOption){
+          data.addUser(tokens[0], tokens[1], tokens[2]);
+          WriteRequest balanceRequest = WriteRequest.newBuilder().setName(tokens[0] + "/user/Balance").setIntValue(0).build();
+          _rec.write(balanceRequest);
+        }
+        else if(tokens.length==7 && !initRecOption){
+          data.addStation(tokens[0], tokens[1], Double.parseDouble(tokens[2]),
+                  Double.parseDouble(tokens[3]), Integer.parseInt(tokens[4]), Integer.parseInt(tokens[6]));
+
+          WriteRequest availableBikesRequest = WriteRequest.newBuilder().setName(tokens[1] + "/station/AvailableBikes").setIntValue(Integer.parseInt(tokens[5])).build();
+          _rec.write(availableBikesRequest);
+        }
+        else if(tokens.length==7 && initRecOption){
+          data.addStation(tokens[0], tokens[1], Double.parseDouble(tokens[2]),
+                  Double.parseDouble(tokens[3]), Integer.parseInt(tokens[4]), Integer.parseInt(tokens[6]));
+
+          WriteRequest availableBikesRequest = WriteRequest.newBuilder().setName(tokens[1] + "/station/AvailableBikes").setIntValue(Integer.parseInt(tokens[5])).build();
+          _rec.write(availableBikesRequest);
+
+          WriteRequest pickupsRequest = WriteRequest.newBuilder().setName(tokens[1] + "/station/Pickups").setIntValue(0).build();
+          _rec.write(pickupsRequest);
+
+          WriteRequest returnsRequest = WriteRequest.newBuilder().setName(tokens[1] + "/station/Returns").setIntValue(0).build();
+          _rec.write(returnsRequest);
+        }
+
+      }
     }
 
     private final class CloseServer extends Thread {

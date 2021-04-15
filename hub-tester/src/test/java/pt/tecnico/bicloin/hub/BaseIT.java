@@ -5,11 +5,19 @@ import java.util.Properties;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import pt.tecnico.rec.RecFrontend;
+import pt.tecnico.bicloin.hub.grpc.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
 
 import org.junit.jupiter.api.*;
 
 
 public class BaseIT {
+
+	private static final String USER_DATA_FILE = "src/test/resources/users.csv";
+	private static final String STATION_DATA_FILE = "src/test/resources/stations.csv";
+	private static String data = "";
 
 	//STRING VARIABLES FOR TEST
 	public static final String USER_ID_1 = "joao";
@@ -34,11 +42,11 @@ public class BaseIT {
 	private static final String TEST_PROP_FILE = "/test.properties";
 	protected static Properties testProps;
 	static HubFrontend frontend;
-	
+
 	@BeforeAll
 	public static void oneTimeSetup () throws IOException {
 		testProps = new Properties();
-		
+
 		try {
 			testProps.load(BaseIT.class.getResourceAsStream(TEST_PROP_FILE));
 			System.out.println("Test properties:");
@@ -47,16 +55,40 @@ public class BaseIT {
 			final String host = testProps.getProperty("server.host");
 			final String port = testProps.getProperty("server.port");
 			frontend = new HubFrontend(host, port);
+
 		}catch (IOException e) {
 			final String msg = String.format("Could not load properties file {}", TEST_PROP_FILE);
 			System.out.println(msg);
 			throw e;
 		}
+
+		//users
+		try (Scanner fileScanner = new Scanner(new File(USER_DATA_FILE))) {
+			while (fileScanner.hasNextLine()) {
+				data = data.concat(fileScanner.nextLine() + "\n");
+			}
+		} catch (FileNotFoundException fife) {
+			System.out.println(String.format("Could not find file '%s'", USER_DATA_FILE));
+			throw fife;
+		}
+
+		//stations
+		try (Scanner fileScanner = new Scanner(new File(STATION_DATA_FILE))) {
+			while (fileScanner.hasNextLine()) {
+				data = data.concat(fileScanner.nextLine() + "\n");
+			}
+		} catch (FileNotFoundException fife) {
+			System.out.println(String.format("Could not find file '%s'", STATION_DATA_FILE));
+			throw fife;
+		}
+
+		CtrlInitRequest request = CtrlInitRequest.newBuilder().setInput(data).setRecInitOption(false).build();
+		frontend.ctrlInit(request);
 	}
-	
+
 	@AfterAll
 	public static void cleanup() {
-		
+
 	}
 
 }

@@ -9,7 +9,7 @@ public class Station {
   private int _prize;
 
 
-  public Station(String name, String id, float lat, float lg, int dockCapacity, int prize){
+  public Station(String name, String id, double lat, double lg, int dockCapacity, int prize){
     _name = name;
     _id = id;
     _lat = lat;

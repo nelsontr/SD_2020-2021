@@ -20,7 +20,7 @@ public class TopUpIT extends BaseIT {
 	private static final String USER_DATA_FILE = "users.cvs";
 	private static final String STATION_DATA_FILE = "stations.cvs";
 
-	@BeforeAll
+	/*@BeforeAll
 	public static void oneTimeSetUp() throws FileNotFoundException {
 		//users
 		try (Scanner fileScanner = new Scanner(new File(USER_DATA_FILE))) {
@@ -41,7 +41,7 @@ public class TopUpIT extends BaseIT {
 			System.out.println(String.format("Could not find file '%s'", STATION_DATA_FILE));
 			throw fife;
 		}
-	}
+	}*/
 
 	@AfterAll
 	public static void oneTimeTearDown() {

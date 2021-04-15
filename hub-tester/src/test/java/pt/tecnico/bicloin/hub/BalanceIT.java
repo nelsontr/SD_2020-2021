@@ -16,13 +16,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class BalanceIT extends BaseIT {
 
-	private static final String USER_DATA_FILE = "users.cvs";
-	private static final String STATION_DATA_FILE = "stations.cvs";
+	private static final String USER_DATA_FILE = "src/test/resources/users.csv";
+	private static final String STATION_DATA_FILE = "src/test/resources/stations.csv";
 	private static String data = "";
 
-	@BeforeAll
+	/*@BeforeAll
 	public static void oneTimeSetUp() throws FileNotFoundException {
 		//users
+
 		try (Scanner fileScanner = new Scanner(new File(USER_DATA_FILE))) {
 			while (fileScanner.hasNextLine()) {
 				data = data.concat(fileScanner.nextLine() + "\n");
@@ -41,15 +42,15 @@ public class BalanceIT extends BaseIT {
 			System.out.println(String.format("Could not find file '%s'", STATION_DATA_FILE));
 			throw fife;
 		}
-	}
-	
+	}*/
+
 	@AfterAll
 	public static void oneTimeTearDown() {
 	}
 
 	@BeforeEach
 	public void setUp() {
-		CtrlInitRequest request = CtrlInitRequest.newBuilder().setInput(data).build();
+		CtrlInitRequest request = CtrlInitRequest.newBuilder().setInput(data).setRecInitOption(false).build();
 
 		try {
 			frontend.ctrlInit(request);
@@ -58,7 +59,7 @@ public class BalanceIT extends BaseIT {
 			throw e;
 		}
 	}
-	
+
 	@AfterEach
 	public void tearDown() {
 		CtrlClearRequest request = CtrlClearRequest.newBuilder(CtrlClearRequest.getDefaultInstance()).build();
@@ -66,7 +67,7 @@ public class BalanceIT extends BaseIT {
 	}
 
 	// -------- Tests --------
-	
+
 	@Test
 	public void getInicialBalance() {
 		BalanceRequest request1 = BalanceRequest.newBuilder().setUserName(USER_ID_1).build();

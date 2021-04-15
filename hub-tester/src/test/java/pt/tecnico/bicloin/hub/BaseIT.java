@@ -88,7 +88,7 @@ public class BaseIT {
 
 	@AfterAll
 	public static void cleanup() {
-
+		frontend.closeChannel();
 	}
 
 }

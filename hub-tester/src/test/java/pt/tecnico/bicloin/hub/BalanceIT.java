@@ -2,11 +2,12 @@ package pt.tecnico.bicloin.hub;
 
 import io.grpc.StatusRuntimeException;
 import org.junit.jupiter.api.*;
-import pt.tecnico.bicloin.hub.*;
 import pt.tecnico.bicloin.hub.grpc.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Scanner;
 
 import static io.grpc.Status.INVALID_ARGUMENT;
@@ -16,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class BalanceIT extends BaseIT {
 
+<<<<<<< HEAD
 	private static final String USER_DATA_FILE = "src/test/resources/users.csv";
 	private static final String STATION_DATA_FILE = "src/test/resources/stations.csv";
 	private static String data = "";
@@ -25,6 +27,17 @@ public class BalanceIT extends BaseIT {
 		//users
 
 		try (Scanner fileScanner = new Scanner(new File(USER_DATA_FILE))) {
+=======
+	private static final String USER_DATA_FILE = "/users.csv";
+	private static final String STATION_DATA_FILE = "/stations.csv";
+	private static String data = "";
+
+	@BeforeAll
+	public static void oneTimeSetUp() throws FileNotFoundException, URISyntaxException {
+		//users
+		URI uri = BalanceIT.class.getResource(USER_DATA_FILE).toURI();
+		try (Scanner fileScanner = new Scanner(new File(uri))) {
+>>>>>>> d2389eb68a228bc4e767972be98d243e0140b7a4
 			while (fileScanner.hasNextLine()) {
 				data = data.concat(fileScanner.nextLine() + "\n");
 			}
@@ -32,9 +45,10 @@ public class BalanceIT extends BaseIT {
 			System.out.println(String.format("Could not find file '%s'", USER_DATA_FILE));
 			throw fife;
 		}
-
+		data = data.concat("---\n");
 		//stations
-		try (Scanner fileScanner = new Scanner(new File(STATION_DATA_FILE))) {
+		uri = BalanceIT.class.getResource(STATION_DATA_FILE).toURI();
+		try (Scanner fileScanner = new Scanner(new File(uri))) {
 			while (fileScanner.hasNextLine()) {
 				data = data.concat(fileScanner.nextLine() + "\n");
 			}
@@ -42,8 +56,14 @@ public class BalanceIT extends BaseIT {
 			System.out.println(String.format("Could not find file '%s'", STATION_DATA_FILE));
 			throw fife;
 		}
+<<<<<<< HEAD
 	}*/
 
+=======
+		System.out.println(data);
+	}
+	
+>>>>>>> d2389eb68a228bc4e767972be98d243e0140b7a4
 	@AfterAll
 	public static void oneTimeTearDown() {
 	}
@@ -62,12 +82,16 @@ public class BalanceIT extends BaseIT {
 
 	@AfterEach
 	public void tearDown() {
-		CtrlClearRequest request = CtrlClearRequest.newBuilder(CtrlClearRequest.getDefaultInstance()).build();
+		CtrlClearRequest request = CtrlClearRequest.newBuilder().build();
 		frontend.ctrlClear(request);
 	}
 
 	// -------- Tests --------
+<<<<<<< HEAD
 
+=======
+/*
+>>>>>>> d2389eb68a228bc4e767972be98d243e0140b7a4
 	@Test
 	public void getInicialBalance() {
 		BalanceRequest request1 = BalanceRequest.newBuilder().setUserName(USER_ID_1).build();
@@ -83,7 +107,7 @@ public class BalanceIT extends BaseIT {
 		assertEquals(0, balance3);
 	}
 
-	@Test
+/*	@Test
 	public void getBalanceFromUnregisteredUser() {
 		BalanceRequest request1 = BalanceRequest.newBuilder().setUserName(USER_ID_NOT_REGISTED).build();
 
@@ -135,5 +159,5 @@ public class BalanceIT extends BaseIT {
 
 		assertEquals(balanceBefore, balanceAfter+COMPENSATION_1);
 	}
-
+*/
 }

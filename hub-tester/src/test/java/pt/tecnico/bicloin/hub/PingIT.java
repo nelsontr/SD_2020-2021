@@ -1,7 +1,7 @@
 package pt.tecnico.bicloin.hub;
 
-import io.grpc.StatusRuntimeException;
 import org.junit.jupiter.api.Test;
+import io.grpc.StatusRuntimeException;
 import pt.tecnico.bicloin.hub.grpc.*;
 
 import static io.grpc.Status.INVALID_ARGUMENT;

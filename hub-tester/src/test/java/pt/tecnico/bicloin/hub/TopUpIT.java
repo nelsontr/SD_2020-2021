@@ -22,14 +22,9 @@ public class TopUpIT extends BaseIT {
 	private static final String USER_DATA_FILE = "/users.csv";
 	private static final String STATION_DATA_FILE = "/stations.csv";
 
-<<<<<<< HEAD
-	/*@BeforeAll
-	public static void oneTimeSetUp() throws FileNotFoundException {
-=======
 	@BeforeAll
-	public static void oneTimeSetUp() throws FileNotFoundException, URISyntaxException {
->>>>>>> d2389eb68a228bc4e767972be98d243e0140b7a4
-		//users
+	public static void oneTimeSetUp() throws FileNotFoundException {
+		/*//users
 		URI uri = BalanceIT.class.getResource(USER_DATA_FILE).toURI();
 		try (Scanner fileScanner = new Scanner(new File(uri))) {
 			while (fileScanner.hasNextLine()) {
@@ -49,8 +44,8 @@ public class TopUpIT extends BaseIT {
 		} catch (FileNotFoundException fife) {
 			System.out.println(String.format("Could not find file '%s'", STATION_DATA_FILE));
 			throw fife;
-		}
-	}*/
+		}*/
+	}
 
 	@AfterAll
 	public static void oneTimeTearDown() {

@@ -17,27 +17,15 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class BalanceIT extends BaseIT {
 
-<<<<<<< HEAD
 	private static final String USER_DATA_FILE = "src/test/resources/users.csv";
 	private static final String STATION_DATA_FILE = "src/test/resources/stations.csv";
 	private static String data = "";
 
-	/*@BeforeAll
+	@BeforeAll
 	public static void oneTimeSetUp() throws FileNotFoundException {
-		//users
+		/*//users
 
 		try (Scanner fileScanner = new Scanner(new File(USER_DATA_FILE))) {
-=======
-	private static final String USER_DATA_FILE = "/users.csv";
-	private static final String STATION_DATA_FILE = "/stations.csv";
-	private static String data = "";
-
-	@BeforeAll
-	public static void oneTimeSetUp() throws FileNotFoundException, URISyntaxException {
-		//users
-		URI uri = BalanceIT.class.getResource(USER_DATA_FILE).toURI();
-		try (Scanner fileScanner = new Scanner(new File(uri))) {
->>>>>>> d2389eb68a228bc4e767972be98d243e0140b7a4
 			while (fileScanner.hasNextLine()) {
 				data = data.concat(fileScanner.nextLine() + "\n");
 			}
@@ -55,15 +43,9 @@ public class BalanceIT extends BaseIT {
 		} catch (FileNotFoundException fife) {
 			System.out.println(String.format("Could not find file '%s'", STATION_DATA_FILE));
 			throw fife;
-		}
-<<<<<<< HEAD
-	}*/
-
-=======
-		System.out.println(data);
+		}*/
 	}
-	
->>>>>>> d2389eb68a228bc4e767972be98d243e0140b7a4
+
 	@AfterAll
 	public static void oneTimeTearDown() {
 	}
@@ -87,11 +69,7 @@ public class BalanceIT extends BaseIT {
 	}
 
 	// -------- Tests --------
-<<<<<<< HEAD
-
-=======
 /*
->>>>>>> d2389eb68a228bc4e767972be98d243e0140b7a4
 	@Test
 	public void getInicialBalance() {
 		BalanceRequest request1 = BalanceRequest.newBuilder().setUserName(USER_ID_1).build();

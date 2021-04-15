@@ -19,7 +19,7 @@ public class BikeUpIT extends BaseIT {
 
 	@BeforeAll
 	public static void oneTimeSetUp() throws FileNotFoundException, URISyntaxException {
-		//users
+		/*//users
 		URI uri = BalanceIT.class.getResource(USER_DATA_FILE).toURI();
 		try (Scanner fileScanner = new Scanner(new File(uri))) {
 			while (fileScanner.hasNextLine()) {
@@ -40,7 +40,7 @@ public class BikeUpIT extends BaseIT {
 			System.out.println(String.format("Could not find file '%s'", STATION_DATA_FILE));
 			throw fife;
 		}
-		System.out.println(data);
+		System.out.println(data);*/
 	}
 
 	@AfterAll

@@ -21,12 +21,11 @@ public class HubMain {
 		}
 
 		//Check arguments
-		//if (args.length < 7) {
-		//System.err.println("Argument(s) missing!");
-		//TODO EXCEPTION
-		//return;
-		//}
-/*
+		if (args.length != 7 || args.length != 8) {
+			System.err.println("Argument(s) missing!");
+			return;
+		}
+
 		final String zooHost = args[0];
 		final String host = args[2];
 		final int port = Integer.parseInt(args[3]);
@@ -36,7 +35,7 @@ public class HubMain {
 		if (args.length == 8) {
 			final String initOption = args[7];
 		}
-		*/
+
 		final int zooPort = Integer.parseInt(args[0]);
 		final BindableService impl = new HubServiceImpl();
 

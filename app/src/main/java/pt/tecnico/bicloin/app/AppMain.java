@@ -35,14 +35,10 @@ public class AppMain {
 			System.out.printf("arg[%d] = %s%n", i, args[i]);
 		}
 
-		/*
-		// check arguments
-		if (args.length < 6) {
+		if (args.length != 6 || args.length != 8) {
 			System.err.println("Argument(s) missing!");
-			//TODO
 			return;
 		}
-		*/
 
 		final String zooHost = args[0];
 		final String zooPort = args[1];
@@ -50,7 +46,6 @@ public class AppMain {
 		final String userPhone = args[3];
 		final double latitude = Double.parseDouble(args[4]);
 		final double longitude = Double.parseDouble(args[5]);
-
 
 		app = new App(zooHost, zooPort, userId, userPhone, latitude, longitude);
 
@@ -64,6 +59,8 @@ public class AppMain {
 					while (scanner.hasNextLine()) {
 						processCommands(scanner.nextLine(), close);
 					}
+					scanner.close();
+					System.exit(0);
 			} catch (FileNotFoundException fife) {
 					System.out.println(String.format("Could not find file '%s'", args[7]));
 					throw fife;

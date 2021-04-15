@@ -35,7 +35,7 @@ public class BikeUpIT extends BaseIT {
 		int balanceAfter = frontend.balance(balanceRequest).getBalance();
 		String response = frontend.bikeUp(bikeRequest1).getStatus();
 
-		assertEquals("ERRO fora de alcance", response);
+		assertEquals("ERRO Out of Reach", response);
 		assertEquals(balanceAfter, balanceBefore);
 	}
 
@@ -49,7 +49,7 @@ public class BikeUpIT extends BaseIT {
 		String response = frontend.bikeUp(bikeRequest1).getStatus();
 		int balanceAfter = frontend.balance(balanceRequest).getBalance();
 
-		assertEquals("ERRO fora de alcance", response);
+		assertEquals("ERRO No Money Available", response);
 		assertEquals(balanceAfter, balanceBefore);
 	}
 

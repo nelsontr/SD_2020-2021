@@ -30,7 +30,7 @@ public class BikeDownIT extends BaseIT {
         int balanceAfter = frontend.balance(balanceRequest).getBalance();
         String response = frontend.bikeDown(bikeRequest1).getStatus();
 
-        assertEquals("ERRO fora de alcance", response);
+        assertEquals("ERRO Out of Reach", response);
         assertEquals(balanceAfter, balanceBefore);
     }
 

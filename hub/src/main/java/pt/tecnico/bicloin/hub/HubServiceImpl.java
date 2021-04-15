@@ -16,7 +16,8 @@ import pt.tecnico.rec.*;
 public class HubServiceImpl extends HubGrpc.HubImplBase {
 
     final static String OK = "OK";
-    final static String ERROR = "ERRO fora de alcance";
+    final static String ERROR = "ERRO Out of Reach";
+    final static String ERROR_NO_MONEY = "ERRO No Money Available";
     final static String USER_BALANCE = "/user/Balance";
     final static String STATION_BIKES_AVAILABLE = "/station/AvailableBikes";
     final static String STATION_PICKUPS = "/station/Pickups";
@@ -216,7 +217,7 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
                 WriteRequest newBalanceRequest = WriteRequest.newBuilder().setName(userName + USER_BALANCE).setIntValue(balance).build();
                 _rec.write(newBalanceRequest);
                 response = BikeResponse.newBuilder().setStatus(OK).build();
-            } else response = BikeResponse.newBuilder().setStatus(ERROR).build();
+            } else response = BikeResponse.newBuilder().setStatus(ERROR_NO_MONEY).build();
         }
 
         responseObserver.onNext(response);

@@ -7,6 +7,7 @@ import io.grpc.StatusRuntimeException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
+import java.lang.Thread;
 
 public class AppMain {
 
@@ -26,7 +27,7 @@ public class AppMain {
 		"--bike-down Format is 'bike-down %id%'\n"+
 		"--sys_status Format is 'sys_status'\n";
 
-	public static void main(String[] args) throws FileNotFoundException {
+	public static void main(String[] args) throws FileNotFoundException, InterruptedException {
 		System.out.println(AppMain.class.getSimpleName());
 
 		// receive and print arguments
@@ -175,6 +176,19 @@ public class AppMain {
 					break;
 				}
 				app.sys_status();
+				break;
+			case "#":
+				System.out.println("Read a comment: " + input);
+				break;
+			case "zzz":
+				try {
+				    Thread.sleep(Integer.parseInt(tokens[1]));
+					}
+				catch(InterruptedException e){
+				    System.out.println("Interrupted Exception!");
+				} finally {
+					System.out.println("Slept for: " + tokens[1] + " ms");
+				}
 				break;
 			case "quit":
 				close = true;

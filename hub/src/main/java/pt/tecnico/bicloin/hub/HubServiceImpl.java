@@ -5,14 +5,10 @@ import io.grpc.stub.StreamObserver;
 
 import java.util.*;
 
-import static io.grpc.Status.INVALID_ARGUMENT;
-import static io.grpc.Status.UNKNOWN;
-
 import pt.tecnico.bicloin.hub.grpc.*;
 import pt.tecnico.bicloin.hub.*;
 import pt.tecnico.rec.grpc.*;
 import pt.tecnico.rec.*;
-
 
 
 public class HubServiceImpl extends HubGrpc.HubImplBase {
@@ -110,6 +106,10 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
         }
 
         Station station = data.getStation(stationId);
+        if (station == null){
+            responseObserver.onError(NOT_FOUND.withDescription("Station Id not found").asRuntimeException());
+        }
+
         String stationName = station.getName();
         double latitude = station.getLat();
         double longitude = station.getLong();

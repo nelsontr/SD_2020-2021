@@ -1,30 +1,27 @@
 package pt.tecnico.rec;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
 public class Record {
     String _name;
     int _value;
 
     public Record(String name, int value) {
-      _name = name;
-      _value = value;
+        _name = name;
+        _value = value;
     }
 
-    public String getName(){
-      return _name;
-    }
-    public int getValue(){
-      return _value;
+    public String getName() {
+        return _name;
     }
 
-    public void setName(String name){
-      _name = name;
-    }
-    public void setValue(int value){
-      _value = value;
+    public int getValue() {
+        return _value;
     }
 
+    public void setName(String name) {
+        _name = name;
+    }
 
+    public void setValue(int value) {
+        _value = value;
+    }
 }

@@ -1,8 +1,9 @@
 package pt.tecnico.bicloin.hub;
 
-import io.grpc.StatusRuntimeException;
-import org.junit.jupiter.api.*;
 import pt.tecnico.bicloin.hub.grpc.*;
+
+import org.junit.jupiter.api.Test;
+import io.grpc.StatusRuntimeException;
 
 import static io.grpc.Status.INVALID_ARGUMENT;
 import static io.grpc.Status.NOT_FOUND;
@@ -17,14 +18,9 @@ public class BalanceIT extends BaseIT {
         BalanceRequest request2 = BalanceRequest.newBuilder().setUserName(USER_ID_2).build();
         BalanceRequest request3 = BalanceRequest.newBuilder().setUserName(USER_ID_3).build();
 
-        int balance1 = frontend.balance(request1).getBalance();
-        assertEquals(0, balance1);
-
-        int balance2 = frontend.balance(request2).getBalance();
-        assertEquals(0, balance2);
-
-        int balance3 = frontend.balance(request3).getBalance();
-        assertEquals(0, balance3);
+        assertEquals(0, frontend.balance(request1).getBalance());
+        assertEquals(0, frontend.balance(request2).getBalance());
+        assertEquals(0, frontend.balance(request3).getBalance());
     }
 
     @Test
@@ -41,7 +37,7 @@ public class BalanceIT extends BaseIT {
 
     @Test
     public void getBalanceFromEmptyUser() {
-        BalanceRequest request1 = BalanceRequest.newBuilder().setUserName(USER_ID_EMPTY).build();
+        BalanceRequest request1 = BalanceRequest.newBuilder().setUserName("").build();
 
         StatusRuntimeException sre = assertThrows(
                 StatusRuntimeException.class, () -> frontend.balance(request1));
@@ -74,16 +70,14 @@ public class BalanceIT extends BaseIT {
 
         BikeRequest request1 = BikeRequest.newBuilder().setUserName(USER_ID_1).
                 setLat(USER_LAT_1).setLong(USER_LONG_1).setStationId(STATION_ID_1).build();
-        //BikeResponse response = frontend.bikeUp(request1);
+        BikeResponse response = frontend.bikeUp(request1);
         int balanceBefore = frontend.balance(requestBalance).getBalance();
 
         request1 = BikeRequest.newBuilder().setUserName(USER_ID_1).
                 setLat(USER_LAT_1).setLong(USER_LONG_1).setStationId(STATION_ID_1).build();
-        BikeResponse response = frontend.bikeDown(request1);
-
+        frontend.bikeDown(request1);
         int balanceAfter = frontend.balance(requestBalance).getBalance();
 
         assertEquals(balanceBefore + STATION_COMPENSATION_1, balanceAfter);
     }
-
 }

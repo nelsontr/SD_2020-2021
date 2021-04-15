@@ -1,10 +1,9 @@
 package pt.tecnico.bicloin.hub;
 
-import org.junit.jupiter.api.*;
-
+import org.junit.jupiter.api.Test;
 import pt.tecnico.bicloin.hub.grpc.*;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class BikeUpIT extends BaseIT {
 
@@ -52,5 +51,4 @@ public class BikeUpIT extends BaseIT {
 		assertEquals("ERRO No Money Available", response);
 		assertEquals(balanceAfter, balanceBefore);
 	}
-
 }

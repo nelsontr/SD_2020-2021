@@ -1,16 +1,12 @@
 package pt.tecnico.rec;
 
+import pt.tecnico.rec.grpc.*;
 import io.grpc.stub.StreamObserver;
 
-import java.time.ZoneOffset;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Map;
+import java.util.HashMap;
 
 import static io.grpc.Status.INVALID_ARGUMENT;
-import static io.grpc.Status.NOT_FOUND;
-import static io.grpc.Status.ALREADY_EXISTS;
-
-import pt.tecnico.rec.grpc.*;
 
 public class RecordServiceImpl extends RecordGrpc.RecordImplBase {
 
@@ -27,7 +23,7 @@ public class RecordServiceImpl extends RecordGrpc.RecordImplBase {
         String input = request.getInput();
 
         if (input == null || input.isBlank()) {
-        responseObserver.onError(INVALID_ARGUMENT.withDescription(REQUEST_EMPTY).asRuntimeException());
+            responseObserver.onError(INVALID_ARGUMENT.withDescription(REQUEST_EMPTY).asRuntimeException());
         }
 
         String output = "Hello " + input + "!";
@@ -47,16 +43,15 @@ public class RecordServiceImpl extends RecordGrpc.RecordImplBase {
         if (input.isBlank()) {
             observerResponse.onError(INVALID_ARGUMENT.withDescription(REQUEST_EMPTY).asRuntimeException());
         } else if (!_records.containsKey(input)) {
-            response =  ReadResponse.newBuilder().setValue(-1).build();
+            response = ReadResponse.newBuilder().setValue(-1).build();
             observerResponse.onNext(response);
             observerResponse.onCompleted();
         } else {
             int output = _records.get(input);
-            response =  ReadResponse.newBuilder().setValue(output).build();
+            response = ReadResponse.newBuilder().setValue(output).build();
             observerResponse.onNext(response);
             observerResponse.onCompleted();
         }
-    
     }
 
     @Override
@@ -68,13 +63,11 @@ public class RecordServiceImpl extends RecordGrpc.RecordImplBase {
 
         if (input == null || input.isBlank()) {
             observerResponse.onError(INVALID_ARGUMENT.withDescription(REQUEST_EMPTY).asRuntimeException());
-        } else if ( inputValue<0 ) {
+        } else if (inputValue < 0) {
             observerResponse.onError(INVALID_ARGUMENT.withDescription(INTEGER_BELOW_ZERO).asRuntimeException());
         }
 
         _records.put(input, inputValue);
-
-        //WHERE ERROR IS?
 
         output = OK_RESPONSE;
         WriteResponse response = WriteResponse.newBuilder().setResponse(output).build();
@@ -96,7 +89,7 @@ public class RecordServiceImpl extends RecordGrpc.RecordImplBase {
 
     @Override
     public void sysStat(SysStatRequest request, StreamObserver<SysStatResponse> observerResponse) {
-        
+
         SysStatResponse response = SysStatResponse.newBuilder().setStatus("UP").build();
 
         observerResponse.onNext(response);

@@ -1,18 +1,16 @@
 package pt.tecnico.bicloin.hub;
 
-import io.grpc.ManagedChannel;
-import io.grpc.ManagedChannelBuilder;
-import com.google.protobuf.GeneratedMessageV3;
-
 import pt.tecnico.bicloin.hub.grpc.*;
 
 import io.grpc.Status;
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
 import io.grpc.StatusRuntimeException;
 
 public class HubFrontend {
+
 	private ManagedChannel channel;
 	private HubGrpc.HubBlockingStub stub;
-
 	private static final int BEST_EFFORT = 3;
 
 	public HubFrontend(String host, String port) {
@@ -27,14 +25,14 @@ public class HubFrontend {
 	}
 
 	public void errorHandling(StatusRuntimeException sre, String function, int tries) {
-		if (tries==BEST_EFFORT) {
-			System.out.println("WARN <"+ function + " " + tries +"> : Max tries reached!");
+		if (tries == BEST_EFFORT) {
+			System.out.println("WARN <" + function + " " + tries + "> : Max tries reached!");
 			throw sre;
 		}
 
 		if (sre.getStatus().getCode() == Status.Code.UNAVAILABLE) {
-			System.out.println("WARN <"+ function + " " + tries +"> : Cant connect to server!");
-		} else{
+			System.out.println("WARN <" + function + " " + tries + "> : Cant connect to server!");
+		} else {
 			System.out.println(sre);
 			throw sre;
 		}
@@ -136,7 +134,7 @@ public class HubFrontend {
 		}
 	}
 
-	public CtrlInitResponse ctrlInit(CtrlInitRequest request){
+	public CtrlInitResponse ctrlInit(CtrlInitRequest request) {
 		int tries = 0;
 
 		while (true) {
@@ -147,7 +145,8 @@ public class HubFrontend {
 			}
 		}
 	}
-	public CtrlClearResponse ctrlClear(CtrlClearRequest request){
+
+	public CtrlClearResponse ctrlClear(CtrlClearRequest request) {
 		int tries = 0;
 
 		while (true) {
@@ -159,9 +158,7 @@ public class HubFrontend {
 		}
 	}
 
-	public void closeChannel(){
+	public void closeChannel() {
 		this.channel.shutdownNow();
 	}
-
-
 }

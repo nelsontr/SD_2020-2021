@@ -3,15 +3,14 @@ package pt.tecnico.bicloin.hub;
 import io.grpc.stub.StreamObserver;
 
 import java.util.*;
-import static io.grpc.Status.INVALID_ARGUMENT;
 import static io.grpc.Status.UNKNOWN;
 import static io.grpc.Status.NOT_FOUND;
+import static io.grpc.Status.INVALID_ARGUMENT;
 
-import pt.tecnico.bicloin.hub.grpc.*;
-import pt.tecnico.bicloin.hub.*;
-import pt.tecnico.rec.grpc.*;
 import pt.tecnico.rec.*;
-
+import pt.tecnico.rec.grpc.*;
+import pt.tecnico.bicloin.hub.*;
+import pt.tecnico.bicloin.hub.grpc.*;
 
 public class HubServiceImpl extends HubGrpc.HubImplBase {
 

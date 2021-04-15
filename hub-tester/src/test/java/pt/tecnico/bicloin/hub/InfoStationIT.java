@@ -1,8 +1,7 @@
 package pt.tecnico.bicloin.hub;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Test;
 import pt.tecnico.bicloin.hub.grpc.*;
-
 import io.grpc.StatusRuntimeException;
 
 import static io.grpc.Status.NOT_FOUND;

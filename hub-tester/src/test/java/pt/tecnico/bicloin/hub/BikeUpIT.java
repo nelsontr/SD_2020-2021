@@ -10,8 +10,13 @@ public class BikeUpIT extends BaseIT {
 
 	@Test
 	public void bikeUpInTheSameLocation() {
+		TopUpRequest topUp1 = TopUpRequest.newBuilder().setUserName(USER_ID_1)
+				.setStake(10).setPhoneNumber(USER_PHONE_1).build();
+		frontend.topUp(topUp1);
+
 		BalanceRequest balanceRequest = BalanceRequest.newBuilder().setUserName(USER_ID_1).build();
 		int balanceBefore = frontend.balance(balanceRequest).getBalance();
+
 		BikeRequest bikeRequest1 = BikeRequest.newBuilder().setUserName(USER_ID_1)
 				.setLat(USER_LAT_1).setLong(USER_LONG_1).setStationId(STATION_ID_1).build();
 
@@ -44,7 +49,7 @@ public class BikeUpIT extends BaseIT {
 		String response = frontend.bikeUp(bikeRequest1).getStatus();
 		int balanceAfter = frontend.balance(balanceRequest).getBalance();
 
-		assertEquals("ERROR", response);
+		assertEquals("ERRO fora de alcance", response);
 		assertEquals(balanceAfter, balanceBefore);
 	}
 

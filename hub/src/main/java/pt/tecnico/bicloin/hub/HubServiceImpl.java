@@ -83,6 +83,10 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
             responseObserver.onError(INVALID_ARGUMENT.withDescription("UserName cannot be empty!").asRuntimeException());
         }
 
+        if (data.getUser(userName) == null) {
+            responseObserver.onError(NOT_FOUND.withDescription("UserName not registered!").asRuntimeException());
+        }
+
         if (!data.getUser(userName).getPhoneNumber().equals(phoneNumber)) {
             responseObserver.onError(INVALID_ARGUMENT.withDescription("UserName has a different PhoneNumber linked than the one provided!").asRuntimeException());
         }
@@ -187,7 +191,6 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
         double latitude = request.getLat();
         double longitude = request.getLong();
         String stationId = request.getStationId();
-
         Station station = data.getStation(stationId);
         double stationLat = station.getLat();
         double stationLong = station.getLong();
@@ -199,7 +202,7 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
         if (distance >= 200 || availableBikes == 0) {
             response = BikeResponse.newBuilder().setStatus(ERROR).build();
         } else {
-            ReadRequest balanceRequest = ReadRequest.newBuilder().setName(stationId + USER_BALANCE).build();
+            ReadRequest balanceRequest = ReadRequest.newBuilder().setName(userName + USER_BALANCE).build();
             int balance = _rec.read(balanceRequest).getValue() - 10;
             if (balance >= 0) {
                 WriteRequest newAvailableBikesRequest = WriteRequest.newBuilder().setName(stationId + STATION_BIKES_AVAILABLE).setIntValue(availableBikes - 1).build();
@@ -210,7 +213,7 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
                 WriteRequest newPickupsRequest = WriteRequest.newBuilder().setName(stationId + STATION_PICKUPS).setIntValue(pickups).build();
                 _rec.write(newPickupsRequest);
 
-                WriteRequest newBalanceRequest = WriteRequest.newBuilder().setName(stationId + USER_BALANCE).setIntValue(balance).build();
+                WriteRequest newBalanceRequest = WriteRequest.newBuilder().setName(userName + USER_BALANCE).setIntValue(balance).build();
                 _rec.write(newBalanceRequest);
                 response = BikeResponse.newBuilder().setStatus(OK).build();
             } else response = BikeResponse.newBuilder().setStatus(ERROR).build();

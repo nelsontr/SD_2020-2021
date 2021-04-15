@@ -52,19 +52,18 @@ public class TopUpIT extends BaseIT {
         StatusRuntimeException sre = assertThrows(StatusRuntimeException.class, () -> frontend.topUp(topUp1));
 
         assertEquals(NOT_FOUND.getCode(), sre.getStatus().getCode());
-        assertEquals("No " + topUp1.getUserName() + " was found!",
-                sre.getStatus().getDescription());
+        assertEquals("UserName not registered!",sre.getStatus().getDescription());
     }
 
     @Test
     public void addingTenBTCSForEmptyUser() {
         int MONEY = 10;
-        TopUpRequest topUp1 = TopUpRequest.newBuilder().setUserName(USER_ID_NOT_REGISTED).
+        TopUpRequest topUp1 = TopUpRequest.newBuilder().setUserName("").
                 setStake(MONEY).setPhoneNumber(USER_PHONE_1).build();
         StatusRuntimeException sre = assertThrows(StatusRuntimeException.class, () -> frontend.topUp(topUp1));
 
         assertEquals(INVALID_ARGUMENT.getCode(), sre.getStatus().getCode());
-        assertEquals("Request cannot be empty!", sre.getStatus().getDescription());
+        assertEquals("UserName cannot be empty!", sre.getStatus().getDescription());
     }
 
     @Test

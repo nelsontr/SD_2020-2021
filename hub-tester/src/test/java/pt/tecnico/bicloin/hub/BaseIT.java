@@ -39,11 +39,18 @@ public class BaseIT {
     final static int STATION_AVAILABLEBIKES_1 = 12;
     public static final int STATION_COMPENSATION_1 = 4;
 
+    public static final String STATION_ID_2 = "stao";
+
+    public static final String STATION_NAME_2 = "Sto. Amaro Oeiras";
+    final static double STATION_LAT_2 = 38.6867;
+    final static double STATION_LONG_2 = -9.3124;
+    final static int STATION_DOCK_CAPACITY_2 = 30;
+    final static int STATION_AVAILABLEBIKES_2 = 20;
+    public static final int STATION_COMPENSATION_2 = 3;
 
     public static final String STATION_ID_0 = "sdis";
-    public static final String STATION_ID_2 = "ista";
-    public static final String STATION_ID_3 = "ocea";
-    public static final String STATION_NAME_2 = "IST Alameda";
+    public static final String STATION_ID_3 = "ista";
+
     public static final String STATION_NAME_3 = "Oceanário";
 
     public static final String USER_PHONE_1 = "+35191102030";

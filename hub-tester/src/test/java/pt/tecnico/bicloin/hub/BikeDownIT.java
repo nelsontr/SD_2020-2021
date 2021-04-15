@@ -18,7 +18,7 @@ public class BikeDownIT extends BaseIT {
         String response = frontend.bikeDown(bikeRequest1).getStatus();
         assertEquals("OK", response);
         int balanceAfter = frontend.balance(balanceRequest).getBalance();
-        assertEquals(balanceBefore + COMPENSATION_1, balanceAfter);
+        assertEquals(balanceBefore + STATION_COMPENSATION_1, balanceAfter);
     }
 
     @Test
@@ -45,7 +45,7 @@ public class BikeDownIT extends BaseIT {
         int balanceAfter = frontend.balance(balanceRequest).getBalance();
 
         assertEquals("OK", response);
-        assertEquals(balanceBefore + COMPENSATION_1, balanceAfter);
+        assertEquals(balanceBefore + STATION_COMPENSATION_1, balanceAfter);
     }
 
 }

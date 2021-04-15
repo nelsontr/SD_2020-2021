@@ -83,7 +83,7 @@ public class BalanceIT extends BaseIT {
 
         int balanceAfter = frontend.balance(requestBalance).getBalance();
 
-        assertEquals(balanceBefore + COMPENSATION_1, balanceAfter);
+        assertEquals(balanceBefore + STATION_COMPENSATION_1, balanceAfter);
     }
 
 }

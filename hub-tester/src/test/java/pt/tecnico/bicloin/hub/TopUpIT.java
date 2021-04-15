@@ -5,12 +5,6 @@ import org.junit.jupiter.api.*;
 
 import pt.tecnico.bicloin.hub.grpc.*;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Scanner;
-
 import static io.grpc.Status.INVALID_ARGUMENT;
 import static io.grpc.Status.NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -18,59 +12,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TopUpIT extends BaseIT {
 
-	private static String data = "";
-	private static final String USER_DATA_FILE = "/users.csv";
-	private static final String STATION_DATA_FILE = "/stations.csv";
-
-	@BeforeAll
-	public static void oneTimeSetUp() throws FileNotFoundException {
-		/*//users
-		URI uri = BalanceIT.class.getResource(USER_DATA_FILE).toURI();
-		try (Scanner fileScanner = new Scanner(new File(uri))) {
-			while (fileScanner.hasNextLine()) {
-				data = data.concat(fileScanner.nextLine() + "\n");
-			}
-		} catch (FileNotFoundException fife) {
-			System.out.println(String.format("Could not find file '%s'", USER_DATA_FILE));
-			throw fife;
-		}
-		data = data.concat("---\n");
-		//stations
-		uri = BalanceIT.class.getResource(STATION_DATA_FILE).toURI();
-		try (Scanner fileScanner = new Scanner(new File(uri))) {
-			while (fileScanner.hasNextLine()) {
-				data = data.concat(fileScanner.nextLine() + "\n");
-			}
-		} catch (FileNotFoundException fife) {
-			System.out.println(String.format("Could not find file '%s'", STATION_DATA_FILE));
-			throw fife;
-		}*/
-	}
-
-	@AfterAll
-	public static void oneTimeTearDown() {
-	}
-
-	@BeforeEach
-	public void setUp() {
-		CtrlInitRequest request = CtrlInitRequest.newBuilder().setInput(data).build();
-
-		try {
-			frontend.ctrlInit(request);
-		} catch (Exception e) {
-			System.out.println(String.format("Exception<ctrl_init>: %s", e.getMessage()));
-			throw e;
-		}
-	}
-
-	@AfterEach
-	public void tearDown() {
-		/*CtrlClearRequest request = CtrlClearRequest.newBuilder().build();
-		frontend.ctrlClear(request);*/
-	}
-
-	// -------- Tests --------
-/*
 	@Test
 	public void addingTenBTCS() {
 		int MONEY = 10;
@@ -84,9 +25,9 @@ public class TopUpIT extends BaseIT {
 		int balanceAfter = frontend.balance(request1).getBalance();
 
 		assertEquals(balance, balanceAfter);
-		assertEquals((balanceBefore+MONEY), balanceAfter);
+		assertEquals((balanceBefore+MONEY*10), balanceAfter);
 	}
-
+/*
 	@Test
 	public void addingTwentyBTCS() {
 		int MONEY = 20;

@@ -16,7 +16,7 @@ public class BaseIT {
 
 	private static final String USER_DATA_FILE = "src/test/resources/users.csv";
 	private static final String STATION_DATA_FILE = "src/test/resources/stations.csv";
-	private static String data = "";
+	private static String initialData = "";
 
 	//STRING VARIABLES FOR TEST
 	public static final String USER_ID_1 = "joao";
@@ -44,7 +44,7 @@ public class BaseIT {
 
 	@BeforeEach
 	public void setUp() {
-		CtrlInitRequest request = CtrlInitRequest.newBuilder().setInput(data).setRecInitOption(false).build();
+		CtrlInitRequest request = CtrlInitRequest.newBuilder().setInput(initialData).setRecInitOption(false).build();
 
 		try {
 			frontend.ctrlInit(request);
@@ -76,7 +76,7 @@ public class BaseIT {
 		//users
 		try (Scanner fileScanner = new Scanner(new File(USER_DATA_FILE))) {
 			while (fileScanner.hasNextLine()) {
-				data = data.concat(fileScanner.nextLine() + "\n");
+				initialData = initialData.concat(fileScanner.nextLine() + "\n");
 			}
 		} catch (FileNotFoundException fife) {
 			System.out.println(String.format("Could not find file '%s'", USER_DATA_FILE));
@@ -86,21 +86,21 @@ public class BaseIT {
 		//stations
 		try (Scanner fileScanner = new Scanner(new File(STATION_DATA_FILE))) {
 			while (fileScanner.hasNextLine()) {
-				data = data.concat(fileScanner.nextLine() + "\n");
+				initialData = initialData.concat(fileScanner.nextLine() + "\n");
 			}
 		} catch (FileNotFoundException fife) {
 			System.out.println(String.format("Could not find file '%s'", STATION_DATA_FILE));
 			throw fife;
 		}
 
-		CtrlInitRequest request = CtrlInitRequest.newBuilder().setInput(data).setRecInitOption(false).build();
+		CtrlInitRequest request = CtrlInitRequest.newBuilder().setInput(initialData).setRecInitOption(true).build();
 		frontend.ctrlInit(request);
 	}
 
 	@AfterEach
 	public void tearDown() {
-		/*CtrlClearRequest request = CtrlClearRequest.newBuilder().build();
-		frontend.ctrlClear(request);*/
+		CtrlClearRequest request = CtrlClearRequest.newBuilder().build();
+		frontend.ctrlClear(request);
 	}
 
 	@AfterAll

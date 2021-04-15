@@ -143,7 +143,7 @@ public class HubFrontend {
 			try {
 				return stub.ctrlInit(request);
 			} catch (StatusRuntimeException sre) {
-				errorHandling(sre, "sysStatus", ++tries);
+				errorHandling(sre, "ctrInit", ++tries);
 			}
 		}
 	}
@@ -154,7 +154,7 @@ public class HubFrontend {
 			try {
 				return stub.ctrlClear(request);
 			} catch (StatusRuntimeException sre) {
-				errorHandling(sre, "sysStatus", ++tries);
+				errorHandling(sre, "ctrlClear", ++tries);
 			}
 		}
 	}

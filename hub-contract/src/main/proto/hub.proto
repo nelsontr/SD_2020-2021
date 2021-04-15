@@ -87,8 +87,8 @@ message SysStatusRequest{
 }
 
 message SysStatusResponse{
-  repeated string serverPath = 1;
-  repeated SysStatusResult status = 2;
+  string hubStatus = 1;
+  string recStatus = 2;
 }
 
 message CtrlClearRequest {

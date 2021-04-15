@@ -89,4 +89,13 @@ public class RecordServiceImpl extends RecordGrpc.RecordImplBase {
         observerResponse.onNext(response);
         observerResponse.onCompleted();
     }
+
+    @Override
+    public void sysStat(SysStatRequest request, StreamObserver<SysStatResponse> observerResponse) {
+        
+        SysStatResponse response = SysStatResponse.newBuilder().setStatus("UP").build();
+
+        observerResponse.onNext(response);
+        observerResponse.onCompleted();
+    }
 }

@@ -13,9 +13,6 @@ import java.util.*;
 
 public class App {
 
-  /**
-   *
-   */
   private static final String GOOGLE_COM_MAPS = " em https://www.google.com/maps/place/";
   private String _userId;
   private String _userPhone;
@@ -155,7 +152,13 @@ public class App {
 	}
 
 	void sys_status(){
-		System.out.println("Not implemented in this state");
+    SysStatusRequest request = SysStatusRequest.newBuilder().build();
+    SysStatusResponse response = _hub.sysStatus(request);
+
+    String statusHub = response.getHubStatus().toString();
+    String stautusRec =  response.getRecStatus().toString();
+
+		System.out.println("Hub is: " + statusHub + ". Rec is: " + stautusRec);
 	}
 
 

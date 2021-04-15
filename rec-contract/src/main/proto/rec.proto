@@ -29,9 +29,23 @@ message ClearRequest {
 message ClearResponse {
 }
 
+enum SysStatResult{
+  UP = 0;
+  DOWN = 1;
+}
+
+message SysStatRequest{
+  // Doesn't require any stuff
+}
+
+message SysStatResponse{
+  string status = 2;
+}
+
 service Record {
   rpc ctrl_ping (PingRequest) returns (PingResponse);
   rpc read (ReadRequest) returns (ReadResponse);
   rpc write (WriteRequest) returns (WriteResponse);
   rpc clearRecords (ClearRequest) returns (ClearResponse);
+  rpc sysStat (SysStatRequest) returns (SysStatResponse);
 }

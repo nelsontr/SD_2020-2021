@@ -89,6 +89,18 @@ public class RecFrontend {
         }
     }
 
+    public SysStatResponse sysStat(SysStatRequest request) {
+        int tries = 0;
+
+        while (true) {
+            try {
+                return stub.sysStat(request);
+            } catch (StatusRuntimeException sre) {
+                errorHandling(sre, "clear", ++tries);
+            }
+        }
+    }
+
     public void closeChannel(){
         this.channel.shutdownNow();
     

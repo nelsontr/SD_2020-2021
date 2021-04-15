@@ -6,6 +6,7 @@ import io.grpc.stub.StreamObserver;
 import java.util.*;
 
 import static io.grpc.Status.INVALID_ARGUMENT;
+import static io.grpc.Status.UNKNOWN;
 
 import pt.tecnico.bicloin.hub.grpc.*;
 import pt.tecnico.bicloin.hub.*;
@@ -74,7 +75,7 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
     }
 
     if (userName == null || userName.isBlank()) {
-          responseObserver.onError(INVALID_ARGUMENT.withDescription("UserName cannot be empty!").asRuntimeException());
+      responseObserver.onError(INVALID_ARGUMENT.withDescription("UserName cannot be empty!").asRuntimeException());
     }
 
     if(!data.getUser(userName).getPhoneNumber().equals(phoneNumber)){
@@ -86,6 +87,10 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
 
     balance = balance + stake*10;
     WriteRequest newBalanceRequest = WriteRequest.newBuilder().setName(userName + "/user/Balance").setIntValue(balance).build();
+
+    if (!_rec.write(newBalanceRequest).getResponse().equals("OK")) {
+      responseObserver.onError(UNKNOWN.withDescription("Couldn't write").asRuntimeException());
+    }
 
     TopUpResponse response = TopUpResponse.newBuilder().setBalance(balance).build();
 
@@ -255,7 +260,10 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
   }
 
   public void ctrlClear(CtrlClearRequest request, StreamObserver<CtrlClearResponse> responseObserver){
-    //TODO
+    data.clearAll();
+    CtrlClearResponse response = CtrlClearResponse.newBuilder().build();
+    responseObserver.onNext(response);
+    responseObserver.onCompleted();
   }
 
   private LinkedHashMap<String, Integer> orderedResults(HashMap<String, Integer> toOrder, int number){

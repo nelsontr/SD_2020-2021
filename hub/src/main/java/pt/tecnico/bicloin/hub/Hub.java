@@ -29,4 +29,9 @@ public class Hub {
   public Map<String, Station> getStations() {
     return this._stations;
   }
+
+  public void clearAll(){
+    _users.clear();
+    _stations.clear();
+  }
 }

@@ -42,10 +42,10 @@ public class RecordServiceImpl extends RecordGrpc.RecordImplBase {
 
         String input = request.getName();
 
-        if (input == null || input.isBlank()) {
+        if (input.isBlank()) {
             observerResponse.onError(INVALID_ARGUMENT.withDescription(REQUEST_EMPTY).asRuntimeException());
         } else if (!_records.containsKey(input)) {
-            observerResponse.onError(NOT_FOUND.withDescription(String.format(NO_INPUT_FOUND, input)).asRuntimeException());
+            observerResponse.onError(NOT_FOUND.withDescription("ALO").asRuntimeException());
         }
 
         int output = _records.get(input);

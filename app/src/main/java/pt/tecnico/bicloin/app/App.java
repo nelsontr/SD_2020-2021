@@ -105,9 +105,14 @@ public class App {
 
     for (int i = 0; i < response.getScanCount() ; i++){
       Scan scan = response.getScan(i);
-      String stationId = scan.getStationId(i);
-      String distance = Integer.toString(scan.getDistance(i));
-      System.out.println(stationId + ", " + distance);
+      String stationId = scan.getStationId();
+      String lt = String.valueOf(scan.getLat());
+      String lg = String.valueOf(scan.getLong());
+      String dockCapacity = String.valueOf(scan.getDockCapacity());
+      String prize = String.valueOf(scan.getPrize());
+      String availableBikes = String.valueOf(scan.getAvailableBikes());
+      String distance = String.valueOf(scan.getDistance());
+      System.out.println(stationId + ", lat" + lt + ", " + lg + " long, " + dockCapacity + " docas, " + prize + " BIC prémio," + availableBikes + " bicicletas, a " + distance + " metros");
     }
 	}
 

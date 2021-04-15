@@ -74,12 +74,12 @@ public class BalanceIT extends BaseIT {
 
         BikeRequest request1 = BikeRequest.newBuilder().setUserName(USER_ID_1).
                 setLat(USER_LAT_1).setLong(USER_LONG_1).setStationId(STATION_ID_1).build();
-        BikeResponse response = frontend.bikeUp(request1);
+        //BikeResponse response = frontend.bikeUp(request1);
         int balanceBefore = frontend.balance(requestBalance).getBalance();
 
         request1 = BikeRequest.newBuilder().setUserName(USER_ID_1).
                 setLat(USER_LAT_1).setLong(USER_LONG_1).setStationId(STATION_ID_1).build();
-        response = frontend.bikeDown(request1);
+        BikeResponse response = frontend.bikeDown(request1);
 
         int balanceAfter = frontend.balance(requestBalance).getBalance();
 

@@ -53,8 +53,13 @@ message LocateStationRequest{
 }
 
 message Scan {
-  repeated string stationId = 1;
-  repeated int32 distance = 2;
+  string stationId = 1;
+  double lat = 2;
+  double long = 3;
+  int32 dockCapacity = 4;
+  int32 prize = 5;
+  int32 availableBikes = 6;
+  int32 distance = 7;
 }
 
 message LocateStationResponse{

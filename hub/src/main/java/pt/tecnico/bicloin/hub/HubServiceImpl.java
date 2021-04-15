@@ -7,6 +7,7 @@ import java.util.*;
 
 import static io.grpc.Status.INVALID_ARGUMENT;
 import static io.grpc.Status.UNKNOWN;
+import static io.grpc.Status.NOT_FOUND;
 
 import pt.tecnico.bicloin.hub.grpc.*;
 import pt.tecnico.bicloin.hub.*;
@@ -59,6 +60,10 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
 
         ReadRequest balanceRequest = ReadRequest.newBuilder().setName(userName + USER_BALANCE).build();
         balance = _rec.read(balanceRequest).getValue();
+
+        if (balance == -1) {
+            responseObserver.onError(NOT_FOUND.withDescription("User does not exist in records").asRuntimeException());
+        }
 
         BalanceResponse response = BalanceResponse.newBuilder().setBalance(balance).build();
 

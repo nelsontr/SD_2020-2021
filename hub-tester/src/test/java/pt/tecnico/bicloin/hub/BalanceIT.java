@@ -35,7 +35,7 @@ public class BalanceIT extends BaseIT {
                 StatusRuntimeException.class, () -> frontend.balance(request1));
 
         assertEquals(NOT_FOUND.getCode(), sre.getStatus().getCode());
-        assertEquals("No " + request1.getUserName() + " was found!",
+        assertEquals("User does not exist in records",
                 sre.getStatus().getDescription());
     }
 

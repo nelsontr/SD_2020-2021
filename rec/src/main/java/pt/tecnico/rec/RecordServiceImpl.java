@@ -42,17 +42,21 @@ public class RecordServiceImpl extends RecordGrpc.RecordImplBase {
 
         String input = request.getName();
 
+        ReadResponse response;
+
         if (input.isBlank()) {
             observerResponse.onError(INVALID_ARGUMENT.withDescription(REQUEST_EMPTY).asRuntimeException());
         } else if (!_records.containsKey(input)) {
-            observerResponse.onError(NOT_FOUND.withDescription("ALO").asRuntimeException());
+            response =  ReadResponse.newBuilder().setValue(-1).build();
+            observerResponse.onNext(response);
+            observerResponse.onCompleted();
+        } else {
+            int output = _records.get(input);
+            response =  ReadResponse.newBuilder().setValue(output).build();
+            observerResponse.onNext(response);
+            observerResponse.onCompleted();
         }
-
-        int output = _records.get(input);
-        ReadResponse response =  ReadResponse.newBuilder().setValue(output).build();
-
-        observerResponse.onNext(response);
-        observerResponse.onCompleted();
+    
     }
 
     @Override

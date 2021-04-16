@@ -25,7 +25,8 @@ public class AppMain {
 		"--info Format is 'info %id%'\n"+
 		"--bike-up Format is 'bike-up %id%'\n"+
 		"--bike-down Format is 'bike-down %id%'\n"+
-		"--sys_status Format is 'sys_status'\n";
+		"--sys_status Format is 'sys_status'\n"+
+		"--quit Format is 'quit'\n";
 
 	public static void main(String[] args) throws FileNotFoundException, InterruptedException {
 		System.out.println(AppMain.class.getSimpleName());

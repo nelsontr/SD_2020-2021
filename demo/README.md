@@ -8,6 +8,8 @@ Para testar o sistema e todos os seus componentes, é necessário preparar um am
 
 ### 1.1. Lançar o *registry*
 
+> **NOTA :** Não se encontra implementado nesta fase to projeto, estará brevemente disponível. Saltar esta secção .
+
 Para lançar o *ZooKeeper*, ir à pasta `zookeeper/bin` e correr o comando  
 `./zkServer.sh start` (Linux) ou `zkServer.cmd` (Windows).
 
@@ -51,19 +53,41 @@ Todos os testes devem ser executados sem erros.
 
 ### 1.4. Lançar e testar o *hub*
 
-TODO
+Para proceder aos testes, é preciso em primeiro lugar lançar o servidor *hub* .
+Para isso basta ir à pasta *hub* e executar:
+
+```sh
+$ mvn compile exec:java
+```
+
+Este comando vai colocar o *hub* no endereço *localhost* e na porta *8081*.
+
+Para confirmar o funcionamento do servidor com um *ping*, fazer:
+
+```sh
+$ cd hub-tester
+$ mvn compile exec:java
+```
+
+Para executar toda a bateria de testes de integração, fazer:
+
+```sh
+$ mvn verify
+```
+
+Todos os testes devem ser executados sem erros.
 
 ### 1.5. *App*
 
 Iniciar a aplicação com a utilizadora alice:
 
 ```sh
-$ app localhost 2181 alice +35191102030 38.7380 -9.3000
+$ app localhost 8081 joao +35191102030 38.7380 -9.3000
 ```
 
 **Nota:** Para poder correr o script *app* diretamente é necessário fazer `mvn install` e adicionar ao *PATH* ou utilizar diretamente os executáveis gerados na pasta `target/appassembler/bin/`.
 
-Abrir outra consola, e iniciar a aplicação com o utilizador bruno.
+Abrir outra consola, e iniciar a aplicação com o utilizador maria.
 
 Depois de lançar todos os componentes, tal como descrito acima, já temos o que é necessário para usar o sistema através dos comandos.
 
@@ -74,15 +98,32 @@ Cada subsecção é respetiva a cada operação presente no *hub*.
 
 ### 2.1. *balance*
 
-TODO
+```sh
+#Forma correta (utilizador existente)
+> balance
+joao 0 BIC
 
-(mostrar casos normais e casos de erro)
+#Forma incorreta (utilizador não registado)
+> balance
+
+```
 
 ### 2.2 *top-up*
 
-TODO
+```sh
+#Forma correta (utilizador existente)
+> top-up 5
 
-(idem)
+#Forma incorreta (sem args)
+> top-up
+
+#Forma incorreta (>20 || <1)
+> top-up
+
+#Com user não registado no users.cvs
+> top-up
+
+```
 
 ### 2... TODO
 

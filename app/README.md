@@ -5,6 +5,9 @@
 
 Group T07
 
+- 78631 Maria Sbrancia
+- 90732 João Lopes
+- 93743 Nelson Trindade
 
 
 ### Lead developer 
@@ -41,13 +44,15 @@ mvn install
 To run using appassembler plugin on Linux:
 
 ```
-./target/appassembler/bin/spotter arg0 arg1 arg2
+cd target/appassembler/bin/
+./app localhost 8081 joao +35191102030 38.7380 -9.3000
 ```
 
 To run using appassembler plugin on Windows:
 
 ```
-target\appassembler\bin\spotter arg0 arg1 arg2
+cd target\appassembler\bin\
+app localhost 8081 joao +35191102030 38.7380 -9.3000
 ```
 
 

@@ -6,23 +6,20 @@ Sistemas Distribuídos 2020-2021, segundo semestre.
 
 **Grupo T07**
 
-*(preencher a tabela abaixo com dados da equipa; e depois apagar esta linha)*  
-
 | Número | Nome              | Utilizador                       | Correio eletrónico                  |
 | -------|-------------------|----------------------------------| ------------------------------------|
-| 11111  | Alice Distributed | <https://github.com/AliceUser>   | <mailto:alice@tecnico.ulisboa.pt>   |
-| 22222  | Bob Systems       | <https://github.com/BobUser>     | <mailto:bob@tecnico.ulisboa.pt>     |
-| 93743  | Nelson Trindade     | <https://github.com/nelsontr> | <mailto:nelson.trindade@tecnico.ulisboa.pt> |
+| 78631 | Maria Sbrancia | <https://git.rnl.tecnico.ulisboa.pt/ist178631>   | <mailto:maria.sbrancia@tecnico.ulisboa.pt>   |
+| 90732 | João Lopes       | <https://git.rnl.tecnico.ulisboa.pt/ist190732>     | <mailto:joao.m.gaspar.lopes@tecnico.ulisboa.pt>     |
+| 93743  | Nelson Trindade     | <https://git.rnl.tecnico.ulisboa.pt/ist193743> | <mailto:nelson.trindade@tecnico.ulisboa.pt> |
 
-*(usar imagens com 150px de altura; e depois apagar esta linha)*  
-![Maria Sbrancia](alice.png) ![João Lopes](bob.png) ![Nelson Trindade](nelson.png)
+![Maria Sbrancia](maria.png) ![João Lopes](joao.png) ![Nelson Trindade](nelson.png)
 
 
 ## Melhorias da primeira parte
 
 _(que correções ou melhorias foram feitas ao código da primeira parte -- incluir link para commits no Git onde a alteração foi feita)_
 
-- [descrição da alteração](https://github.com/tecnico-distsys/CXX-Sauron/commit/156e1ac25798e2360b362b3a8fc474f7cfe64d01)
+- [descrição da alteração]()
 
 
 ## Modelo de faltas

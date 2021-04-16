@@ -94,6 +94,10 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
         ReadRequest balanceRequest = ReadRequest.newBuilder().setName(userName + USER_BALANCE).build();
         balance = _rec.read(balanceRequest).getValue();
 
+        if (balance == -1) {
+            balance = 0;
+        }
+
         balance = balance + stake * 10;
         WriteRequest newBalanceRequest = WriteRequest.newBuilder().setName(userName + USER_BALANCE).setIntValue(balance).build();
 

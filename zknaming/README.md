@@ -1,5 +1,7 @@
 # ZK-Naming
 
+> **NOTE:** Currently Unused. Specification will be provided when implemented.
+
 This is a Java library to simplify the access to Apache ZooKeeper, and to provide simple naming services.
 
 

@@ -1,9 +1,12 @@
 # Rec - Tester
 
-
 ## Authors
 
 Group T07
+
+- 78631 Maria Sbrancia
+- 90732 João Lopes
+- 93743 Nelson Trindade
 
 ### Lead developer 
 

@@ -12,7 +12,7 @@ Sistemas Distribuídos 2020-2021, segundo semestre.
 | 90732 | João Lopes       | <https://git.rnl.tecnico.ulisboa.pt/ist190732>     | <mailto:joao.m.gaspar.lopes@tecnico.ulisboa.pt>     |
 | 93743  | Nelson Trindade     | <https://git.rnl.tecnico.ulisboa.pt/ist193743> | <mailto:nelson.trindade@tecnico.ulisboa.pt> |
 
-![Maria Sbrancia](maria.png) ![João Lopes](joao.png) ![Nelson Trindade](nelson.png)
+![Maria Sbrancia](maria.png) ![João Lopes](joao.jpg) ![Nelson Trindade](nelson.png)
 
 
 ## Melhorias da primeira parte

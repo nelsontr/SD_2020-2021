@@ -20,13 +20,14 @@ Distributed Systems 2020-2021, 2nd semester project
 For each module, the README file must identify the lead developer and the contributors.
 The leads should be evenly divided among the group members.
 
-### Code identification
+- **T1** - 93743 Nelson Trindade - https://git.rnl.tecnico.ulisboa.pt/ist193743
+    - read, write procedures from rec and  hub-tester;
+  
+- **T2** - 90732 João Lopes - https://git.rnl.tecnico.ulisboa.pt/ist190732 
+    - balance, top-up, bike-up and bike-down procedures from hub and  rec-tester;
 
-In all the source files (including POMs), please replace __CXX__ with your group identifier.  
-The group identifier is composed by Campus - A (Alameda) or T (Tagus) - and number - always with two digits.
-
-This change is important for code dependency management, to make sure that your code runs using the correct components and not someone else's.
-
+- **T3** - 78631 Maria Sbrancia - https://git.rnl.tecnico.ulisboa.pt/ist178631
+    - info_station, locate_station procedures from hub and app.
 
 ## Getting Started
 

@@ -58,7 +58,7 @@ public class AppMain {
 
 			try (Scanner scanner = new Scanner(new File(args[7]))) {
 					while (scanner.hasNextLine()) {
-						processCommands(scanner.nextLine(), close);
+						processCommands(scanner.nextLine());
 					}
 					scanner.close();
 					System.exit(0);
@@ -73,13 +73,13 @@ public class AppMain {
 			Scanner scanner = new Scanner(System.in);
 
 			try{
-				while(!close){
+				while(true){
 					System.out.print("> ");
 					System.out.flush();
 					input = scanner.nextLine();
 					if (input.equals("")){ continue; }
 
-					processCommands(input, close);
+					processCommands(input);
 				}
 			} catch(StatusRuntimeException e) {
 				System.out.println("Caught exception with description: " + e.getStatus().getDescription());
@@ -90,7 +90,7 @@ public class AppMain {
 		}
 	}
 
-	public static void processCommands(String input, boolean close){
+	public static void processCommands(String input){
 		String[] tokens;
 
 		tokens = input.split(" ");
@@ -126,7 +126,7 @@ public class AppMain {
 				app.tag(Double.parseDouble(tokens[1]), Double.parseDouble(tokens[2]),tokens[3]);
 				break;
 			case "move":
-				if(tokens.length != 2 || tokens.length != 3) {
+				if(!(tokens.length != 2 || tokens.length != 3)) {
 					System.out.println("--move Format is 'move %name%' or 'move %latitude% %longitude%'\n" );
 					break;
 				} else if (tokens.length == 2){ //providing tag
@@ -191,7 +191,7 @@ public class AppMain {
 				}
 				break;
 			case "quit":
-				close = true;
+				System.exit(0);
 				break;
 			default:
 				System.out.println("Command not recognized. Use --help for a list of commands.");

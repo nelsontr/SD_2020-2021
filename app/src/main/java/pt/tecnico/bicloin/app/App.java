@@ -130,7 +130,7 @@ public class App {
     String link = "https://www.google.com/maps/place/";
     link = link + lt + "," + lg;
 
-    System.out.println(stationName + ", lat" + lt  + ", " + lg + " long, " + dockCapacity + " docas, " + prize + " BIC prémio, " +
+    System.out.println(stationName + ", lat " + lt  + ", " + lg + " long, " + dockCapacity + " docas, " + prize + " BIC prémio, " +
       availableBikes + " bicicletas, " + pickups + " levantamentos, " + returns + " devoluções, " + link);
 
   }

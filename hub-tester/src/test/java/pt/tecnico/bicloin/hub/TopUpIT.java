@@ -5,15 +5,15 @@ import pt.tecnico.bicloin.hub.grpc.*;
 import org.junit.jupiter.api.Test;
 import io.grpc.StatusRuntimeException;
 
-import static io.grpc.Status.INVALID_ARGUMENT;
 import static io.grpc.Status.NOT_FOUND;
+import static io.grpc.Status.INVALID_ARGUMENT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TopUpIT extends BaseIT {
 
     @Test
-    public void addingTenBTCS() {
+    public void addingTenBICS() {
         int MONEY = 10; //EUROS
 
         BalanceRequest request1 = BalanceRequest.newBuilder().setUserName(USER_ID_1).build();
@@ -29,7 +29,7 @@ public class TopUpIT extends BaseIT {
     }
 
     @Test
-    public void addingTwentyBTCS() {
+    public void addingTwentyBICS() {
         int MONEY = 20; //EUROS
 
         BalanceRequest request1 = BalanceRequest.newBuilder().setUserName(USER_ID_1).build();
@@ -45,7 +45,7 @@ public class TopUpIT extends BaseIT {
     }
 
     @Test
-    public void addingTenBTCSForUnregisteredUser() {
+    public void addingTenBICSForUnregisteredUser() {
         int MONEY = 10; //EUROS
         TopUpRequest topUp1 = TopUpRequest.newBuilder().setUserName(USER_ID_NOT_REGISTED).
                 setStake(MONEY).setPhoneNumber(USER_PHONE_1).build();
@@ -56,7 +56,7 @@ public class TopUpIT extends BaseIT {
     }
 
     @Test
-    public void addingTenBTCSForEmptyUser() {
+    public void addingTenBICSForEmptyUser() {
         int MONEY = 10; //EUROS
         TopUpRequest topUp1 = TopUpRequest.newBuilder().setUserName("").
                 setStake(MONEY).setPhoneNumber(USER_PHONE_1).build();
@@ -67,7 +67,7 @@ public class TopUpIT extends BaseIT {
     }
 
     @Test
-    public void addingMoreThanTwentyBTCS() {
+    public void addingMoreThanTwentyBICS() {
         int MONEY = 25; //EUROS
         TopUpRequest topUp1 = TopUpRequest.newBuilder().setUserName(USER_ID_NOT_REGISTED).
                 setStake(MONEY).setPhoneNumber(USER_PHONE_1).build();
@@ -78,7 +78,7 @@ public class TopUpIT extends BaseIT {
     }
 
     @Test
-    public void addingTenBTCSWithWrongPhoneNumber() {
+    public void addingTenBICSWithWrongPhoneNumber() {
         TopUpRequest topUp1 = TopUpRequest.newBuilder().setUserName(USER_ID_1).setStake(10)
                 .setPhoneNumber(USER_PHONE_2).build();
 

@@ -1,4 +1,4 @@
-# Server
+# Hub - Server
 
 
 ## Authors
@@ -8,17 +8,13 @@ Group T07
 
 ### Lead developer 
 
-... ... ...
-
-*(fill-in line above with student number, name, and @GitHub identity of module leader; and then delete this line)*
+90732 João Lopes <https://git.rnl.tecnico.ulisboa.pt/ist190732>
 
 ### Contributors
 
-... ... ...
+78631 Maria Sbrancia <https://git.rnl.tecnico.ulisboa.pt/ist178631>
 
-... ... ...
-
-*(fill-in lines above with student number, name, and @GitHub identity of module contributors; and then delete this line)*
+93743 Nelson Trindade <https://git.rnl.tecnico.ulisboa.pt/ist193743>
 
 
 ## About

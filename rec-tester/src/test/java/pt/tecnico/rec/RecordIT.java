@@ -35,10 +35,8 @@ public class RecordIT extends BaseIT {
 	@Test
 	public void readingBalanceWithoutUserTest() {
 		ReadRequest request = ReadRequest.newBuilder().setName(NAME_1 + REQUEST_1).build();
+		ReadResponse response = frontend.read(request);
 
-		assertEquals(NOT_FOUND.getCode(), assertThrows(
-				StatusRuntimeException.class, () -> frontend.read(request))
-				.getStatus()
-				.getCode());
+		assertEquals(-1, response.getValue());
 	}
 }

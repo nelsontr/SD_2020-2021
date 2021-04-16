@@ -22,29 +22,45 @@ public class RecordMain  {
 			System.out.printf("arg[%d] = %s%n", i, args[i]);
 		}
 
-		//Check arguments
-		if (args.length < 5) {
-			System.err.println("Argument(s) missing!");
-			return;
+		if (args.length == 1){
+			int port = Integer.parseInt(args[0]);
+
+			final BindableService impl = new RecordServiceImpl();
+
+			Server server = ServerBuilder.forPort(port).addService(impl).build();
+
+			// Start the server
+			server.start();
+
+			System.out.println("Server started");
+
+			// Do not exit the main thread. Wait until server is terminated.
+			server.awaitTermination();
+		} else {
+			//Check arguments
+			if (args.length < 5) {
+				System.err.println("Argument(s) missing!");
+				return;
+			}
+
+			final String zooHost = args[0];
+			final int zooPort = Integer.parseInt(args[1]);
+			final String host = args[2];
+			final int port = Integer.parseInt(args[3]);
+			final int numberInstances = Integer.parseInt(args[4]);
+
+			final BindableService impl = new RecordServiceImpl();
+
+			Server server = ServerBuilder.forPort(zooPort).addService(impl).build();
+
+			// Start the server
+			server.start();
+
+			System.out.println("Server started");
+
+			// Do not exit the main thread. Wait until server is terminated.
+			server.awaitTermination();
 		}
-
-		final String zooHost = args[0];
-		final int zooPort = Integer.parseInt(args[1]);
-		final String host = args[2];
-		final int port = Integer.parseInt(args[3]);
-		final int numberInstances = Integer.parseInt(args[4]);
-
-		final BindableService impl = new RecordServiceImpl();
-
-		Server server = ServerBuilder.forPort(zooPort).addService(impl).build();
-
-		// Start the server
-		server.start();
-
-		System.out.println("Server started");
-
-		// Do not exit the main thread. Wait until server is terminated.
-		server.awaitTermination();
-
+		
 	}
 }

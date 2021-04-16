@@ -58,8 +58,12 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
         ReadRequest balanceRequest = ReadRequest.newBuilder().setName(userName + USER_BALANCE).build();
         balance = _rec.read(balanceRequest).getValue();
 
-        if (balance == -1) {
+        if (balance == -1 && !data.existingUser(userName)) {
             responseObserver.onError(NOT_FOUND.withDescription("User does not exist in records").asRuntimeException());
+        } else if (balance == -1 && data.existingUser(userName)){
+            balance = 0;
+            WriteRequest balanceReq = WriteRequest.newBuilder().setName(userName + USER_BALANCE).setIntValue(0).build();
+            _rec.write(balanceReq);
         }
 
         BalanceResponse response = BalanceResponse.newBuilder().setBalance(balance).build();
@@ -83,7 +87,7 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
             responseObserver.onError(INVALID_ARGUMENT.withDescription("UserName cannot be empty!").asRuntimeException());
         }
 
-        if (data.getUser(userName) == null) {
+        if (!data.existingUser(userName)) {
             responseObserver.onError(NOT_FOUND.withDescription("UserName not registered!").asRuntimeException());
         }
 
@@ -118,17 +122,25 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
         if (stationId.length() != 4) {
             responseObserver.onError(INVALID_ARGUMENT.withDescription("Station Id must be 4 letters long").asRuntimeException());
         }
+        
+        Station station = null;
+        String stationName = null;
+        double latitude = 0;
+        double longitude = 0;
+        int dockCapacity = 0;
+        int prize = 0;
 
-        Station station = data.getStation(stationId);
-        if (station == null){
-            responseObserver.onError(NOT_FOUND.withDescription("Station Id not found").asRuntimeException());
+        try{
+            station = data.getStation(stationId); 
+            stationName = station.getName();
+            latitude = station.getLat();
+            longitude = station.getLong();
+            dockCapacity = station.getDockCapacity();
+            prize = station.getPrize();
+        } catch( RuntimeException e) {
+            responseObserver.onError(NOT_FOUND.withDescription(e.getMessage()).asRuntimeException());
         }
-
-        String stationName = station.getName();
-        double latitude = station.getLat();
-        double longitude = station.getLong();
-        int dockCapacity = station.getDockCapacity();
-        int prize = station.getPrize();
+        
         //VERIFICAR COMO FOI IMPLEMENTADO O READ + probably should have try catchs
         ReadRequest bikesRequest = ReadRequest.newBuilder().setName(stationId + STATION_BIKES_AVAILABLE).build();
         ReadRequest pickupsRequest = ReadRequest.newBuilder().setName(stationId + STATION_PICKUPS).build();
@@ -136,6 +148,10 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
         int availableBikes = _rec.read(bikesRequest).getValue();
         int pickups = _rec.read(pickupsRequest).getValue();
         int returns = _rec.read(returnsRequest).getValue();
+
+        if(availableBikes == -1) {availableBikes = 0;}
+        if(pickups == -1) {pickups = 0;}
+        if(returns == -1) {returns = 0;}
 
         InfoStationResponse response = InfoStationResponse.newBuilder().setName(stationName).setLat(latitude).setLong(longitude).setDockCapacity(dockCapacity).setPrize(prize).setAvailableBikes(availableBikes).setPickups(pickups).setReturns(returns).build();
 
@@ -177,6 +193,7 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
             int prize = data.getStation(key).getPrize();
             ReadRequest availableBikes = ReadRequest.newBuilder().setName(key + STATION_BIKES_AVAILABLE).build();
             int bikesAvailable = _rec.read(availableBikes).getValue();
+            if(bikesAvailable == -1) { bikesAvailable = 0;}
             int distance = orderedResults.get(key);
             b.addScan(Scan.newBuilder().setStationId(key).setLat(lt).setLong(lg).setDockCapacity(dockCapacity).setPrize(prize).setAvailableBikes(bikesAvailable).setDistance(distance).build());
         }
@@ -212,7 +229,9 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
                 WriteRequest newAvailableBikesRequest = WriteRequest.newBuilder().setName(stationId + STATION_BIKES_AVAILABLE).setIntValue(availableBikes - 1).build();
                 _rec.write(newAvailableBikesRequest);
                 ReadRequest pickupsRequest = ReadRequest.newBuilder().setName(stationId + STATION_PICKUPS).build();
-                int pickups = _rec.read(pickupsRequest).getValue() + 1;
+                int pickups = _rec.read(pickupsRequest).getValue(); 
+                if(pickups == -1) {pickups = 0;}
+                pickups++;
 
                 WriteRequest newPickupsRequest = WriteRequest.newBuilder().setName(stationId + STATION_PICKUPS).setIntValue(pickups).build();
                 _rec.write(newPickupsRequest);
@@ -246,10 +265,14 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
             int prize = station.getPrize();
 
             ReadRequest returnsRequest = ReadRequest.newBuilder().setName(stationId + STATION_RETURNS).build();
-            int returns = _rec.read(returnsRequest).getValue() + 1;
+            int returns = _rec.read(returnsRequest).getValue();
+            if (returns == -1) {returns = 0;}
+            returns++;
 
             ReadRequest balanceRequest = ReadRequest.newBuilder().setName(userName + USER_BALANCE).build();
-            int balance = _rec.read(balanceRequest).getValue() + prize;
+            int balance = _rec.read(balanceRequest).getValue();
+            if(balance == -1) {balance = 0;}
+            balance += prize;
 
             ReadRequest availableBikesRequest = ReadRequest.newBuilder().setName(stationId + STATION_BIKES_AVAILABLE).build();
             int availableBikes = _rec.read(availableBikesRequest).getValue() + 1;

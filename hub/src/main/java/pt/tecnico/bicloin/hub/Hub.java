@@ -14,7 +14,18 @@ public class Hub {
   }
 
   public User getUser(String id) {
-    return this._users.get(id);
+    if (!_users.containsKey(id))
+      throw new RuntimeException("Specified user doesn't exist in map");
+    else
+      return this._users.get(id);
+  }
+
+  public boolean existingUser(String id) {
+    if (!_users.containsKey(id)){
+      return false;
+    } else {
+      return true;
+    }
   }
 
   public void addStation(String stationName, String id, double latitude, double longitude, int dockCapacity, int prize) {
@@ -23,7 +34,10 @@ public class Hub {
   }
 
   public Station getStation(String id) {
-    return this._stations.get(id);
+    if (!_stations.containsKey(id))
+      throw new RuntimeException("Specified station doesn't exist in map");
+    else
+      return this._stations.get(id);
   }
 
   public Map<String, Station> getStations() {

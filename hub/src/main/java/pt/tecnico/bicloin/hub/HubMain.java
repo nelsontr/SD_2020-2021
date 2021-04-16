@@ -24,58 +24,76 @@ public class HubMain {
 			System.out.printf("arg[%d] = %s%n", i, args[i]);
 		}
 
-		//Check arguments
-		if (args.length > 8 ||  args.length < 7) {
-			System.err.println("Argument(s) missing!");
-			return;
+		if(args.length == 1){
+			
+			int port = Integer.parseInt(args[0]);
+
+			final HubServiceImpl impl = new HubServiceImpl();
+
+			Server server = ServerBuilder.forPort(port).addService((BindableService) impl).build();
+
+			// Start the server
+			server.start();
+
+			System.out.println("Server started");
+
+			// Do not exit the main thread. Wait until server is terminated.
+			server.awaitTermination();
+		} else {
+				//Check arguments
+			if (args.length > 8 ||  args.length < 7) {
+				System.err.println("Argument(s) missing!");
+				return;
+			}
+
+			final String zooHost = args[0];
+			final String host = args[2];
+			final int port = Integer.parseInt(args[3]);
+			final int numberInstances = Integer.parseInt(args[4]);
+			final String users = args[5];
+			final String stations = args[6];
+			boolean initOption = false;
+			if (args.length == 8) {
+				initOption = true;
+			}
+
+			final int zooPort = Integer.parseInt(args[1]);
+			final HubServiceImpl impl = new HubServiceImpl();
+
+			Server server = ServerBuilder.forPort(zooPort).addService((BindableService) impl).build();
+
+			// Start the server
+			server.start();
+
+			// Init with users + stations
+			//  Users
+			String initialData = "";
+			try (Scanner fileScanner = new Scanner(new File(users))) {
+					while (fileScanner.hasNextLine()) {
+							initialData = initialData.concat(fileScanner.nextLine() + "\n");
+					}
+			} catch (FileNotFoundException fife) {
+					System.out.println(String.format("Could not find file '%s'", users));
+					throw fife;
+			}
+
+			//  Stations
+			try (Scanner fileScanner = new Scanner(new File(stations))) {
+					while (fileScanner.hasNextLine()) {
+							initialData = initialData.concat(fileScanner.nextLine() + "\n");
+					}
+			} catch (FileNotFoundException fife) {
+					System.out.println(String.format("Could not find file '%s'", stations));
+					throw fife;
+			}
+
+			impl.initData(initialData, initOption);
+
+			System.out.println("Server started");
+
+			// Do not exit the main thread. Wait until server is terminated.
+			server.awaitTermination();
 		}
-
-		final String zooHost = args[0];
-		final String host = args[2];
-		final int port = Integer.parseInt(args[3]);
-		final int numberInstances = Integer.parseInt(args[4]);
-		final String users = args[5];
-		final String stations = args[6];
-		boolean initOption = false;
-		if (args.length == 8) {
-			initOption = true;
-		}
-
-		final int zooPort = Integer.parseInt(args[1]);
-		final HubServiceImpl impl = new HubServiceImpl();
-
-		Server server = ServerBuilder.forPort(zooPort).addService((BindableService) impl).build();
-
-		// Start the server
-		server.start();
-
-		// Init with users + stations
-		//  Users
-		String initialData = "";
-		try (Scanner fileScanner = new Scanner(new File(users))) {
-				while (fileScanner.hasNextLine()) {
-						initialData = initialData.concat(fileScanner.nextLine() + "\n");
-				}
-		} catch (FileNotFoundException fife) {
-				System.out.println(String.format("Could not find file '%s'", users));
-				throw fife;
-		}
-
-		//  Stations
-		try (Scanner fileScanner = new Scanner(new File(stations))) {
-				while (fileScanner.hasNextLine()) {
-						initialData = initialData.concat(fileScanner.nextLine() + "\n");
-				}
-		} catch (FileNotFoundException fife) {
-				System.out.println(String.format("Could not find file '%s'", stations));
-				throw fife;
-		}
-
-		impl.initData(initialData, initOption);
-
-		System.out.println("Server started");
-
-		// Do not exit the main thread. Wait until server is terminated.
-		server.awaitTermination();
+		
 	}
 }

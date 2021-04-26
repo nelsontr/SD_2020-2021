@@ -63,14 +63,15 @@ public class RecordServiceImpl extends RecordGrpc.RecordImplBase {
 
         if (input == null || input.isBlank()) {
             observerResponse.onError(INVALID_ARGUMENT.withDescription(REQUEST_EMPTY).asRuntimeException());
+            return;
         } else if (inputValue < 0) {
             observerResponse.onError(INVALID_ARGUMENT.withDescription(INTEGER_BELOW_ZERO).asRuntimeException());
+            return;
         }
 
         _records.put(input, inputValue);
 
-        output = OK_RESPONSE;
-        WriteResponse response = WriteResponse.newBuilder().setResponse(output).build();
+        WriteResponse response = WriteResponse.newBuilder().setResponse(OK_RESPONSE).build();
 
         observerResponse.onNext(response);
         observerResponse.onCompleted();

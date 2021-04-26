@@ -3,6 +3,7 @@ package pt.tecnico.bicloin.hub;
 import io.grpc.stub.StreamObserver;
 
 import java.util.*;
+
 import static io.grpc.Status.UNKNOWN;
 import static io.grpc.Status.NOT_FOUND;
 import static io.grpc.Status.INVALID_ARGUMENT;
@@ -36,6 +37,7 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
 
         if (input == null || input.isBlank()) {
             responseObserver.onError(INVALID_ARGUMENT.withDescription("Input cannot be empty!").asRuntimeException());
+            return;
         }
 
         String output = "Hello " + input + "!";
@@ -49,25 +51,25 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
     @Override
     public void balance(BalanceRequest request, StreamObserver<BalanceResponse> responseObserver) {
         String userName = request.getUserName();
-        int balance = -1;
 
         if (userName == null || userName.isBlank()) {
             responseObserver.onError(INVALID_ARGUMENT.withDescription("UserName cannot be empty!").asRuntimeException());
+            return;
         }
 
         ReadRequest balanceRequest = ReadRequest.newBuilder().setName(userName + USER_BALANCE).build();
-        balance = _rec.read(balanceRequest).getValue();
+        int balance = _rec.read(balanceRequest).getValue();
 
         if (balance == -1 && !data.existingUser(userName)) {
             responseObserver.onError(NOT_FOUND.withDescription("User does not exist in records").asRuntimeException());
-        } else if (balance == -1 && data.existingUser(userName)){
+            return;
+        } else if (balance == -1 && data.existingUser(userName)) {
             balance = 0;
             WriteRequest balanceReq = WriteRequest.newBuilder().setName(userName + USER_BALANCE).setIntValue(0).build();
             _rec.write(balanceReq);
         }
 
         BalanceResponse response = BalanceResponse.newBuilder().setBalance(balance).build();
-
         responseObserver.onNext(response);
         responseObserver.onCompleted();
     }
@@ -77,40 +79,34 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
         String userName = request.getUserName();
         int stake = request.getStake();
         String phoneNumber = request.getPhoneNumber();
-        int balance = -1;
 
         if (stake < 1 || stake > 20) {
             responseObserver.onError(INVALID_ARGUMENT.withDescription("Stake has to be in range [1, 20]!").asRuntimeException());
-        }
-
-        if (userName == null || userName.isBlank()) {
+            return;
+        } else if (userName == null || userName.isBlank()) {
             responseObserver.onError(INVALID_ARGUMENT.withDescription("UserName cannot be empty!").asRuntimeException());
-        }
-
-        if (!data.existingUser(userName)) {
+            return;
+        } else if (!data.existingUser(userName)) {
             responseObserver.onError(NOT_FOUND.withDescription("UserName not registered!").asRuntimeException());
-        }
-
-        if (!data.getUser(userName).getPhoneNumber().equals(phoneNumber)) {
+            return;
+        } else if (!data.getUser(userName).getPhoneNumber().equals(phoneNumber)) {
             responseObserver.onError(INVALID_ARGUMENT.withDescription("UserName has a different PhoneNumber linked than the one provided!").asRuntimeException());
+            return;
         }
 
         ReadRequest balanceRequest = ReadRequest.newBuilder().setName(userName + USER_BALANCE).build();
-        balance = _rec.read(balanceRequest).getValue();
+        int balance = _rec.read(balanceRequest).getValue();
 
-        if (balance == -1) {
-            balance = 0;
-        }
+        balance = (balance == -1) ? 0 : balance;
+        balance += stake * 10;
 
-        balance = balance + stake * 10;
         WriteRequest newBalanceRequest = WriteRequest.newBuilder().setName(userName + USER_BALANCE).setIntValue(balance).build();
-
         if (!_rec.write(newBalanceRequest).getResponse().equals("OK")) {
             responseObserver.onError(UNKNOWN.withDescription("Couldn't write").asRuntimeException());
+            return;
         }
 
         TopUpResponse response = TopUpResponse.newBuilder().setBalance(balance).build();
-
         responseObserver.onNext(response);
         responseObserver.onCompleted();
     }
@@ -121,8 +117,9 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
 
         if (stationId.length() != 4) {
             responseObserver.onError(INVALID_ARGUMENT.withDescription("Station Id must be 4 letters long").asRuntimeException());
+            return;
         }
-        
+
         Station station = null;
         String stationName = null;
         double latitude = 0;
@@ -130,34 +127,35 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
         int dockCapacity = 0;
         int prize = 0;
 
-        try{
-            station = data.getStation(stationId); 
+        try {
+            station = data.getStation(stationId);
             stationName = station.getName();
             latitude = station.getLat();
             longitude = station.getLong();
             dockCapacity = station.getDockCapacity();
             prize = station.getPrize();
-        } catch( RuntimeException e) {
+        } catch (RuntimeException e) {
             responseObserver.onError(NOT_FOUND.withDescription(e.getMessage()).asRuntimeException());
+            return;
         }
-        
+
         //VERIFICAR COMO FOI IMPLEMENTADO O READ + probably should have try catchs
-        ReadRequest bikesRequest = ReadRequest.newBuilder().setName(stationId + STATION_BIKES_AVAILABLE).build();
         ReadRequest pickupsRequest = ReadRequest.newBuilder().setName(stationId + STATION_PICKUPS).build();
         ReadRequest returnsRequest = ReadRequest.newBuilder().setName(stationId + STATION_RETURNS).build();
-        int availableBikes = _rec.read(bikesRequest).getValue();
+        ReadRequest bikesRequest = ReadRequest.newBuilder().setName(stationId + STATION_BIKES_AVAILABLE).build();
         int pickups = _rec.read(pickupsRequest).getValue();
         int returns = _rec.read(returnsRequest).getValue();
+        int availableBikes = _rec.read(bikesRequest).getValue();
 
-        if(availableBikes == -1) {availableBikes = 0;}
-        if(pickups == -1) {pickups = 0;}
-        if(returns == -1) {returns = 0;}
+        returns = (returns == -1) ? 0 : returns;
+        pickups = (pickups == -1) ? 0 : pickups;
+        availableBikes = (availableBikes == -1) ? 0 : availableBikes;
 
-        InfoStationResponse response = InfoStationResponse.newBuilder().setName(stationName).setLat(latitude).setLong(longitude).setDockCapacity(dockCapacity).setPrize(prize).setAvailableBikes(availableBikes).setPickups(pickups).setReturns(returns).build();
-
+        InfoStationResponse response = InfoStationResponse.newBuilder().setName(stationName).setLat(latitude)
+                .setLong(longitude).setDockCapacity(dockCapacity).setPrize(prize)
+                .setAvailableBikes(availableBikes).setPickups(pickups).setReturns(returns).build();
         responseObserver.onNext(response);
         responseObserver.onCompleted();
-
     }
 
     @Override
@@ -193,21 +191,21 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
             int prize = data.getStation(key).getPrize();
             ReadRequest availableBikes = ReadRequest.newBuilder().setName(key + STATION_BIKES_AVAILABLE).build();
             int bikesAvailable = _rec.read(availableBikes).getValue();
-            if(bikesAvailable == -1) { bikesAvailable = 0;}
+            bikesAvailable = (bikesAvailable == -1) ? 0 : bikesAvailable;
+
             int distance = orderedResults.get(key);
             b.addScan(Scan.newBuilder().setStationId(key).setLat(lt).setLong(lg).setDockCapacity(dockCapacity).setPrize(prize).setAvailableBikes(bikesAvailable).setDistance(distance).build());
         }
 
         LocateStationResponse response = b.build();
-
         responseObserver.onNext(response);
         responseObserver.onCompleted();
-
     }
 
     @Override
     public void bikeUp(BikeRequest request, StreamObserver<BikeResponse> responseObserver) {
         BikeResponse response;
+
         String userName = request.getUserName();
         double latitude = request.getLat();
         double longitude = request.getLong();
@@ -229,9 +227,8 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
                 WriteRequest newAvailableBikesRequest = WriteRequest.newBuilder().setName(stationId + STATION_BIKES_AVAILABLE).setIntValue(availableBikes - 1).build();
                 _rec.write(newAvailableBikesRequest);
                 ReadRequest pickupsRequest = ReadRequest.newBuilder().setName(stationId + STATION_PICKUPS).build();
-                int pickups = _rec.read(pickupsRequest).getValue(); 
-                if(pickups == -1) {pickups = 0;}
-                pickups++;
+                int pickups = _rec.read(pickupsRequest).getValue();
+                pickups = (pickups == -1) ? 1 : ++pickups;
 
                 WriteRequest newPickupsRequest = WriteRequest.newBuilder().setName(stationId + STATION_PICKUPS).setIntValue(pickups).build();
                 _rec.write(newPickupsRequest);
@@ -266,13 +263,11 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
 
             ReadRequest returnsRequest = ReadRequest.newBuilder().setName(stationId + STATION_RETURNS).build();
             int returns = _rec.read(returnsRequest).getValue();
-            if (returns == -1) {returns = 0;}
-            returns++;
+            returns = (returns == -1) ? 1 : ++returns;
 
             ReadRequest balanceRequest = ReadRequest.newBuilder().setName(userName + USER_BALANCE).build();
             int balance = _rec.read(balanceRequest).getValue();
-            if(balance == -1) {balance = 0;}
-            balance += prize;
+            balance = (balance == -1) ? prize : balance+prize;
 
             ReadRequest availableBikesRequest = ReadRequest.newBuilder().setName(stationId + STATION_BIKES_AVAILABLE).build();
             int availableBikes = _rec.read(availableBikesRequest).getValue() + 1;
@@ -295,25 +290,22 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
 
     public void sysStatus(SysStatusRequest request, StreamObserver<SysStatusResponse> responseObserver) {
 
-      SysStatRequest recRequest = SysStatRequest.newBuilder().build();
-      SysStatResponse recResponse = _rec.sysStat(recRequest);
-      String recStatus = recResponse.getStatus();
+        SysStatRequest recRequest = SysStatRequest.newBuilder().build();
+        SysStatResponse recResponse = _rec.sysStat(recRequest);
+        String recStatus = recResponse.getStatus();
 
 
-      SysStatusResponse response = SysStatusResponse.newBuilder().setHubStatus("UP").setRecStatus(recStatus).build();
+        SysStatusResponse response = SysStatusResponse.newBuilder().setHubStatus("UP").setRecStatus(recStatus).build();
 
-      responseObserver.onNext(response);
-      responseObserver.onCompleted();
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
     }
 
     public void ctrlInit(CtrlInitRequest request, StreamObserver<CtrlInitResponse> responseObserver) {
         String inputData = request.getInput();
+        Boolean initRecOption = request.getRecInitOption();
 
-        if (request.getRecInitOption()) {
-            this.initData(inputData, true);
-        } else {
-            this.initData(inputData, false);
-        }
+        this.initData(inputData, initRecOption);
 
         CtrlInitResponse response = CtrlInitResponse.newBuilder().build();
         responseObserver.onNext(response);
@@ -322,10 +314,10 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
 
     public void ctrlClear(CtrlClearRequest request, StreamObserver<CtrlClearResponse> responseObserver) {
 
-        data.clearAll();
-
         ClearRequest request1 = ClearRequest.newBuilder().build();
         _rec.clear(request1);
+
+        data.clearAll();
 
         CtrlClearResponse response = CtrlClearResponse.newBuilder().build();
         responseObserver.onNext(response);
@@ -406,7 +398,6 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
                 WriteRequest returnsRequest = WriteRequest.newBuilder().setName(tokens[1] + "/station/Returns").setIntValue(0).build();
                 _rec.write(returnsRequest);
             }
-
         }
     }
 
@@ -415,6 +406,5 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
         public void run() {
             _rec.closeChannel();
         }
-
     }
 }

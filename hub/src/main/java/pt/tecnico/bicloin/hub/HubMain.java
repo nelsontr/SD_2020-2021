@@ -7,6 +7,7 @@ import io.grpc.ServerBuilder;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Scanner;
 
 import pt.tecnico.bicloin.hub.grpc.*;
@@ -16,7 +17,6 @@ public class HubMain {
 
     public static void main(String[] args) throws IOException, InterruptedException, FileNotFoundException {
         System.out.println(HubMain.class.getSimpleName()); //
-
         // receive and print arguments
         System.out.printf("Received %d arguments%n", args.length);
         for (int i = 0; i < args.length; i++) {
@@ -63,24 +63,21 @@ public class HubMain {
 
             // Init with users + stations
             //  Users
+            Scanner fileScanner;
             String initialData = "";
-            try (Scanner fileScanner = new Scanner(new File(users))) {
-                while (fileScanner.hasNextLine()) {
-                    initialData = initialData.concat(fileScanner.nextLine() + "\n");
-                }
-            } catch (FileNotFoundException fife) {
-                System.out.println(String.format("Could not find file '%s'", users));
-                throw fife;
-            }
 
-            //  Stations
-            try (Scanner fileScanner = new Scanner(new File(stations))) {
+            if (!users.isBlank()) {
+                fileScanner = new Scanner(Objects.requireNonNull(HubMain.class.getResourceAsStream("/" + users)));
                 while (fileScanner.hasNextLine()) {
                     initialData = initialData.concat(fileScanner.nextLine() + "\n");
                 }
-            } catch (FileNotFoundException fife) {
-                System.out.println(String.format("Could not find file '%s'", stations));
-                throw fife;
+            }
+            //  Stations
+            if (!stations.isBlank()) {
+                fileScanner = new Scanner(Objects.requireNonNull(HubMain.class.getResourceAsStream("/" + stations)));
+                while (fileScanner.hasNextLine()) {
+                    initialData = initialData.concat(fileScanner.nextLine() + "\n");
+                }
             }
 
             impl.initData(initialData, initOption);

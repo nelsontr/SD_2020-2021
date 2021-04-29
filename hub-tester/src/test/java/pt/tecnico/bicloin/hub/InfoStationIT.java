@@ -31,6 +31,6 @@ public class InfoStationIT extends BaseIT {
                 StatusRuntimeException.class, () -> frontend.infoStation(request1));
 
         assertEquals(NOT_FOUND.getCode(), sre.getStatus().getCode());
-        assertEquals("Specified station doesn't exist in map", sre.getStatus().getDescription());
+        assertEquals("Specified station doesn't exist", sre.getStatus().getDescription());
     }
 }

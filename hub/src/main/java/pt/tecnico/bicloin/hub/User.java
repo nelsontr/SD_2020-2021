@@ -11,15 +11,15 @@ public class User {
     _phoneNumber = phoneNumber;
   }
 
-  public String getId(){
+  public synchronized String getId(){
     return this._id;
   }
 
-  public String getName(){
+  public synchronized String getName(){
     return this._name;
   }
 
-  public String getPhoneNumber(){
+  public synchronized String getPhoneNumber(){
     return this._phoneNumber;
   }
 }

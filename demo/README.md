@@ -27,15 +27,17 @@ $ mvn clean install -DskipTests
 ### 1.3. Lançar e testar o *rec*
 
 Para proceder aos testes, é preciso em primeiro lugar lançar o servidor *rec* .
-Para isso basta ir à pasta *rec* e executar:
+Para isso, basta ir à pasta *root* do projeto e correr os seguintes comandos:
 
 ```sh
-$ mvn compile exec:java
+$ cd rec/target/appassembler/bin 
+$ ./rec localhost 8091 localhost 8091 1
 ```
+**Nota:** Para poder correr o script *app* diretamente é necessário fazer `mvn install` e adicionar ao *PATH* ou utilizar diretamente os executáveis gerados na pasta `target/appassembler/bin/`.
 
 Este comando vai colocar o *rec* no endereço *localhost* e na porta *8091*.
 
-Para confirmar o funcionamento do servidor com um *ping*, fazer:
+Para confirmar o funcionamento do servidor com um *ping*, fazer na pasta *root*:
 
 ```sh
 $ cd rec-tester
@@ -53,16 +55,18 @@ Todos os testes devem ser executados sem erros.
 
 ### 1.4. Lançar e testar o *hub*
 
-Para proceder aos testes, é preciso em primeiro lugar lançar o servidor *hub* .
-Para isso basta ir à pasta *hub* e executar:
+Para proceder aos testes, é preciso em primeiro lugar lançar o servidor *hub*.
+Para isso, basta ir à pasta *root* do projeto e correr os seguintes comandos:
 
 ```sh
-$ mvn compile exec:java
+$ cd hub/target/appassembler/bin 
+$ ./hub localhost 8081 localhost 2181 1 users.csv stations.csv initRec
 ```
+**Nota:** Para poder correr o script *app* diretamente é necessário fazer `mvn install` e adicionar ao *PATH* ou utilizar diretamente os executáveis gerados na pasta `target/appassembler/bin/`.
 
 Este comando vai colocar o *hub* no endereço *localhost* e na porta *8081*.
 
-Para confirmar o funcionamento do servidor com um *ping*, fazer:
+Para confirmar o funcionamento do servidor com um *ping*, fazer na pasta *root*:
 
 ```sh
 $ cd hub-tester
@@ -79,10 +83,11 @@ Todos os testes devem ser executados sem erros.
 
 ### 1.5. *App*
 
-Iniciar a aplicação com a utilizadora alice:
+Para isso, basta ir à pasta *root* do projeto e correr os seguintes comandos:
 
 ```sh
-$ app localhost 8081 joao +35191102030 38.7380 -9.3000
+$ cd app/target/appassembler/bin
+$ ./app localhost 8081 joao +35191102030 38.737613 -9.303164
 ```
 
 **Nota:** Para poder correr o script *app* diretamente é necessário fazer `mvn install` e adicionar ao *PATH* ou utilizar diretamente os executáveis gerados na pasta `target/appassembler/bin/`.

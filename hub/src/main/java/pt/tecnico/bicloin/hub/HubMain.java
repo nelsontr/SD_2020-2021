@@ -17,7 +17,6 @@ public class HubMain {
 
     public static void main(String[] args) throws IOException, InterruptedException, FileNotFoundException {
         System.out.println(HubMain.class.getSimpleName()); //
-
         // receive and print arguments
         System.out.printf("Received %d arguments%n", args.length);
         for (int i = 0; i < args.length; i++) {

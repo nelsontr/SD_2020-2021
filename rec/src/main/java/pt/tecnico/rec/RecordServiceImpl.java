@@ -39,19 +39,22 @@ public class RecordServiceImpl extends RecordGrpc.RecordImplBase {
         String input = request.getName();
 
         ReadResponse response;
-
-        if (input.isBlank()) {
-            observerResponse.onError(INVALID_ARGUMENT.withDescription(REQUEST_EMPTY).asRuntimeException());
-        } else if (!_records.containsKey(input)) {
-            response = ReadResponse.newBuilder().setValue(-1).build();
-            observerResponse.onNext(response);
-            observerResponse.onCompleted();
-        } else {
-            int output = _records.get(input);
-            response = ReadResponse.newBuilder().setValue(output).build();
-            observerResponse.onNext(response);
-            observerResponse.onCompleted();
+        
+        synchronized(this) {
+            if (input.isBlank()) {
+                observerResponse.onError(INVALID_ARGUMENT.withDescription(REQUEST_EMPTY).asRuntimeException());
+            } else if (!_records.containsKey(input)) {
+                response = ReadResponse.newBuilder().setValue(-1).build();
+                observerResponse.onNext(response);
+                observerResponse.onCompleted();
+            } else {
+                int output = _records.get(input);
+                response = ReadResponse.newBuilder().setValue(output).build();
+                observerResponse.onNext(response);
+                observerResponse.onCompleted();
+            }
         }
+        
     }
 
     @Override
@@ -69,23 +72,28 @@ public class RecordServiceImpl extends RecordGrpc.RecordImplBase {
             return;
         }
 
-        _records.put(input, inputValue);
+        synchronized(this){
+            _records.put(input, inputValue);
 
-        WriteResponse response = WriteResponse.newBuilder().setResponse(OK_RESPONSE).build();
+            WriteResponse response = WriteResponse.newBuilder().setResponse(OK_RESPONSE).build();
 
-        observerResponse.onNext(response);
-        observerResponse.onCompleted();
+            observerResponse.onNext(response);
+            observerResponse.onCompleted();
+        }
+        
     }
 
     @Override
     public void clearRecords(ClearRequest request, StreamObserver<ClearResponse> observerResponse) {
+        synchronized(this){
+             _records.clear();
 
-        _records.clear();
+            ClearResponse response = ClearResponse.newBuilder().build();
 
-        ClearResponse response = ClearResponse.newBuilder().build();
-
-        observerResponse.onNext(response);
-        observerResponse.onCompleted();
+            observerResponse.onNext(response);
+            observerResponse.onCompleted();
+        }
+       
     }
 
     @Override

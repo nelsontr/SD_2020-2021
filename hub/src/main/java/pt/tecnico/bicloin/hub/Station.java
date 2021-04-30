@@ -18,27 +18,27 @@ public class Station {
     _prize = prize;
   }
 
-  public String getName(){
+  public synchronized String getName(){
     return this._name;
   }
 
-  public String getId(){
+  public synchronized String getId(){
     return this._id;
   }
 
-  public double getLat(){
+  public synchronized double getLat(){
     return this._lat;
   }
 
-  public double getLong(){
+  public synchronized double getLong(){
     return this._long;
   }
 
-  public int getDockCapacity(){
+  public synchronized int getDockCapacity(){
     return this._dockCapacity;
   }
 
-  public int getPrize(){
+  public synchronized int getPrize(){
     return this._prize;
   }
 }

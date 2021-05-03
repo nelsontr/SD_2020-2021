@@ -3,9 +3,18 @@ package pt.tecnico.rec;
 import pt.tecnico.rec.grpc.*;
 
 import io.grpc.Status;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.StatusRuntimeException;
+import pt.ulisboa.tecnico.sdis.zk.ZKNaming;
+import pt.ulisboa.tecnico.sdis.zk.ZKNamingException;
+import pt.ulisboa.tecnico.sdis.zk.ZKRecord;
+
 
 public class RecFrontend {
 
@@ -13,15 +22,54 @@ public class RecFrontend {
     private RecordGrpc.RecordBlockingStub stub;
     private static final int BEST_EFFORT = 3;
 
-    public RecFrontend(String host, String port) {
+    private final ZKNaming zkNaming;
+    private final String path = "/grpc/bicloin/rec";
+
+    public RecFrontend(String zooHost, String zooPort, String instance) {
+        this.zkNaming = new ZKNaming(zooHost, zooPort);
         try {
-            final String target = host + ":" + port;
+            ZKRecord record = this.zkNaming.lookup(this.path + "/" + instance);
+            createNewChannel(record.getURI());
+            createRecFrontend();
+        } catch (ZKNamingException zkne) {
+            throw new IllegalArgumentException("Instance " + instance + " does not exist!");
+        }
+    }
+
+    public RecFrontend(String zooHost, String zooPort) {
+        this.zkNaming = new ZKNaming(zooHost, zooPort);
+
+        try {
+            createNewChannel(findRecInstance());
+            createRecFrontend();
+        } catch (IllegalArgumentException | ZKNamingException zkne) {
+            throw new IllegalArgumentException("No servers available!");
+        }
+    }
+
+
+    private String findRecInstance() throws ZKNamingException {
+
+        List<ZKRecord> records = new ArrayList<>(this.zkNaming.listRecords(this.path));
+
+        int rnd = new Random().nextInt(records.size());
+        System.out.println("Found target: " + records.get(rnd).getURI());
+        return records.get(rnd).getURI();
+    }
+
+
+    private void createNewChannel(String target) {
+        try {
             this.channel = ManagedChannelBuilder.forTarget(target).usePlaintext().build();
             this.stub = RecordGrpc.newBlockingStub(this.channel);
         } catch (StatusRuntimeException sre) {
             System.out.println("ERROR : Frontend createNewChannel : Could not create channel\n"
                     + sre.getStatus().getDescription());
         }
+    }
+
+    private void createRecFrontend() {
+        //Nothing for now
     }
 
     public void errorHandling(StatusRuntimeException sre, String function, int tries) {

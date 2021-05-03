@@ -10,6 +10,11 @@ import pt.tecnico.rec.*;
 import pt.tecnico.rec.RecordServiceImpl;
 import java.io.IOException;
 import java.lang.InterruptedException;
+import pt.ulisboa.tecnico.sdis.zk.ZKNaming;
+import pt.ulisboa.tecnico.sdis.zk.ZKNamingException;
+
+import java.util.Properties;
+import java.util.Scanner;
 
 public class RecordMain  {
 
@@ -43,24 +48,52 @@ public class RecordMain  {
 				return;
 			}
 
+			java.io.InputStream is = RecordMain.class.getResourceAsStream("app.properties");
+			java.util.Properties p = new Properties();
+			p.load(is);
+
 			final String zooHost = args[0];
-			final int zooPort = Integer.parseInt(args[1]);
+			final String zooPort = args[1];
 			final String host = args[2];
-			final int port = Integer.parseInt(args[3]);
+			final String port = args[3];
 			final int numberInstances = Integer.parseInt(args[4]);
+			
+			
+			String path = p.getProperty("server.path");
 
-			final BindableService impl = new RecordServiceImpl();
+			ZKNaming zkNaming = null;
 
-			Server server = ServerBuilder.forPort(zooPort).addService(impl).build();
+			try {
+			
+				zkNaming = new ZKNaming(zooHost, zooPort);
+				// publish
+				zkNaming.rebind(path, host, port);
+			
+				final BindableService impl = new RecordServiceImpl();
 
-			// Start the server
-			server.start();
+				Server server = ServerBuilder.forPort(Integer.parseInt(port)).addService(impl).build();
 
-			System.out.println("Server started");
+				// Start the server
+				server.start();
 
-			// Do not exit the main thread. Wait until server is terminated.
-			server.awaitTermination();
-		}
-		
+				System.out.println("Server started");
+
+				// Do not exit the main thread. Wait until server is terminated.
+				server.awaitTermination();
+			}  catch (Exception e) {
+				System.out.println("Internal Server Error: " + e.getMessage());
+			} finally  {
+				try{
+					if (zkNaming != null) {
+					// remove
+					zkNaming.unbind(path,host,port);
+					}
+				} catch (ZKNamingException zkne) {
+					System.out.println("ERROR : Unbind zknaming SiloServerApp");
+				}
+				System.exit(0);
+				
+			}
+		}	
 	}
 }

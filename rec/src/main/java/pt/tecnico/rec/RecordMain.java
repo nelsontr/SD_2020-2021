@@ -58,7 +58,7 @@ public class RecordMain  {
 			final String port = args[3];
 			final String numberInstances = args[4];
 			
-
+		
 			String path = p.getProperty("server.path");
 
 			ZKNaming zkNaming = null;

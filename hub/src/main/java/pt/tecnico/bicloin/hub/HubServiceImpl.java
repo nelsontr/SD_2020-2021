@@ -13,6 +13,8 @@ import pt.tecnico.rec.grpc.*;
 import pt.tecnico.bicloin.hub.*;
 import pt.tecnico.bicloin.hub.grpc.*;
 
+
+
 public class HubServiceImpl extends HubGrpc.HubImplBase {
 
     final static String OK = "OK";
@@ -26,10 +28,12 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
     Hub data = new Hub();
     RecFrontend _rec;
 
-    HubServiceImpl() {
-        _rec = new RecFrontend("localhost", "8091");
+    
+    HubServiceImpl(String zooHost, String zooPort) {
+        _rec = new RecFrontend(zooHost, zooPort);
         Runtime.getRuntime().addShutdownHook(new CloseServer());
     }
+
 
     @Override
     public void ping(CtrlPingRequest request, StreamObserver<CtrlPingResponse> responseObserver) {

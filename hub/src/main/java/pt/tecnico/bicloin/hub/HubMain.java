@@ -9,6 +9,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Objects;
 import java.util.Scanner;
+import java.util.Properties;
 
 import pt.tecnico.bicloin.hub.grpc.*;
 import pt.tecnico.bicloin.hub.HubServiceImpl;
@@ -23,13 +24,20 @@ public class HubMain {
             System.out.printf("arg[%d] = %s%n", i, args[i]);
         }
 
-        if (args.length == 1) {
+        java.io.InputStream is = HubMain.class.getResourceAsStream("/hub.properties");
+		java.util.Properties p = new Properties();
+		p.load(is);
 
-            int port = Integer.parseInt(args[0]);
+        String hostZoo = p.getProperty("zoo.host");
+        String portZoo = p.getProperty("zoo.port");
 
-            final HubServiceImpl impl = new HubServiceImpl();
+        if (args.length == 5) {
 
-            Server server = ServerBuilder.forPort(port).addService((BindableService) impl).build();
+            String port = p.getProperty("server.port");
+
+            final HubServiceImpl impl = new HubServiceImpl(hostZoo, portZoo);
+
+            Server server = ServerBuilder.forPort(Integer.parseInt(port)).addService((BindableService) impl).build();
 
             // Start the server
             server.start();
@@ -45,7 +53,9 @@ public class HubMain {
                 return;
             }
 
+        
             final String zooHost = args[0];
+            final String zooPort = args[1];
             final String host = args[2];
             final int port = Integer.parseInt(args[3]);
             final int numberInstances = Integer.parseInt(args[4]);
@@ -53,10 +63,10 @@ public class HubMain {
             final String stations = args[6];
             boolean initOption = (args.length == 8);
 
-            final int zooPort = Integer.parseInt(args[1]);
-            final HubServiceImpl impl = new HubServiceImpl();
+            
+            final HubServiceImpl impl = new HubServiceImpl(zooHost, zooPort);
 
-            Server server = ServerBuilder.forPort(zooPort).addService((BindableService) impl).build();
+            Server server = ServerBuilder.forPort(port).addService((BindableService) impl).build();
 
             // Start the server
             server.start();

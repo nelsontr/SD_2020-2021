@@ -48,7 +48,7 @@ public class RecordMain  {
 				return;
 			}
 
-			java.io.InputStream is = RecordMain.class.getResourceAsStream("app.properties");
+			java.io.InputStream is = RecordMain.class.getResourceAsStream("/rec.properties");
 			java.util.Properties p = new Properties();
 			p.load(is);
 
@@ -56,9 +56,9 @@ public class RecordMain  {
 			final String zooPort = args[1];
 			final String host = args[2];
 			final String port = args[3];
-			final int numberInstances = Integer.parseInt(args[4]);
+			final String numberInstances = args[4];
 			
-			
+
 			String path = p.getProperty("server.path");
 
 			ZKNaming zkNaming = null;

@@ -82,7 +82,7 @@
 						</goals>
 						<configuration>
 							<outputFile>
-								${project.build.outputDirectory}/app.properties
+								${project.build.outputDirectory}/rec.properties
 							</outputFile>
 						</configuration>
 					</execution>

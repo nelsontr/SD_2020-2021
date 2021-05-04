@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.Scanner;
 import java.util.Properties;
+import pt.ulisboa.tecnico.sdis.zk.ZKNaming;
+import pt.ulisboa.tecnico.sdis.zk.ZKNamingException;
 
 import pt.tecnico.bicloin.hub.grpc.*;
 import pt.tecnico.bicloin.hub.HubServiceImpl;
@@ -25,8 +27,8 @@ public class HubMain {
         }
 
         java.io.InputStream is = HubMain.class.getResourceAsStream("/hub.properties");
-		java.util.Properties p = new Properties();
-		p.load(is);
+    		java.util.Properties p = new Properties();
+    		p.load(is);
 
         String hostZoo = p.getProperty("zoo.host");
         String portZoo = p.getProperty("zoo.port");
@@ -53,49 +55,72 @@ public class HubMain {
                 return;
             }
 
-        
+
             final String zooHost = args[0];
             final String zooPort = args[1];
             final String host = args[2];
-            final int port = Integer.parseInt(args[3]);
-            final int numberInstances = Integer.parseInt(args[4]);
+            final String port = args[3];
+            final String numberInstances = args[4];
             final String users = args[5];
             final String stations = args[6];
             boolean initOption = (args.length == 8);
 
-            
-            final HubServiceImpl impl = new HubServiceImpl(zooHost, zooPort);
+            String path = "/grpc/bicloin/hub/"+numberInstances;
 
-            Server server = ServerBuilder.forPort(port).addService((BindableService) impl).build();
+            ZKNaming zkNaming = null;
 
-            // Start the server
-            server.start();
+            try{
 
-            // Init with users + stations
-            //  Users
-            Scanner fileScanner;
-            String initialData = "";
+              zkNaming = new ZKNaming(zooHost, zooPort);
+              // publish
+              zkNaming.rebind(path, host, port);
 
-            if (!users.isBlank()) {
-                fileScanner = new Scanner(Objects.requireNonNull(HubMain.class.getResourceAsStream("/" + users)));
-                while (fileScanner.hasNextLine()) {
-                    initialData = initialData.concat(fileScanner.nextLine() + "\n");
-                }
-            }
-            //  Stations
-            if (!stations.isBlank()) {
-                fileScanner = new Scanner(Objects.requireNonNull(HubMain.class.getResourceAsStream("/" + stations)));
-                while (fileScanner.hasNextLine()) {
-                    initialData = initialData.concat(fileScanner.nextLine() + "\n");
-                }
-            }
+              final HubServiceImpl impl = new HubServiceImpl(zooHost, zooPort);
 
-            impl.initData(initialData, initOption);
+              Server server = ServerBuilder.forPort(Integer.parseInt(port)).addService((BindableService) impl).build();
 
-            System.out.println("Server started");
+              // Start the server
+              server.start();
 
-            // Do not exit the main thread. Wait until server is terminated.
-            server.awaitTermination();
+              // Init with users + stations
+              //  Users
+              Scanner fileScanner;
+              String initialData = "";
+
+              if (!users.isBlank()) {
+                  fileScanner = new Scanner(Objects.requireNonNull(HubMain.class.getResourceAsStream("/" + users)));
+                  while (fileScanner.hasNextLine()) {
+                      initialData = initialData.concat(fileScanner.nextLine() + "\n");
+                  }
+              }
+              //  Stations
+              if (!stations.isBlank()) {
+                  fileScanner = new Scanner(Objects.requireNonNull(HubMain.class.getResourceAsStream("/" + stations)));
+                  while (fileScanner.hasNextLine()) {
+                      initialData = initialData.concat(fileScanner.nextLine() + "\n");
+                  }
+              }
+
+              impl.initData(initialData, initOption);
+
+              System.out.println("Server started");
+
+              // Do not exit the main thread. Wait until server is terminated.
+              server.awaitTermination();
+          }catch (Exception e) {
+    				System.out.println("Internal Server Error: " + e.getMessage());
+    			} finally  {
+    				try{
+    					if (zkNaming != null) {
+    					// remove
+    					zkNaming.unbind(path,host,port);
+    					}
+    				} catch (ZKNamingException zkne) {
+    					System.out.println("ERROR : Unbind zknaming SiloServerApp");
+    				}
+    				System.exit(0);
+
+    			}
         }
     }
 }

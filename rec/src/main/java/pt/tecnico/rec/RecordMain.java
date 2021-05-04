@@ -57,18 +57,18 @@ public class RecordMain  {
 			final String host = args[2];
 			final String port = args[3];
 			final String numberInstances = args[4];
-			
-		
-			String path = p.getProperty("server.path");
+
+
+			String path = "/grpc/bicloin/rec/"+numberInstances;
 
 			ZKNaming zkNaming = null;
 
 			try {
-			
+
 				zkNaming = new ZKNaming(zooHost, zooPort);
 				// publish
 				zkNaming.rebind(path, host, port);
-			
+
 				final BindableService impl = new RecordServiceImpl();
 
 				Server server = ServerBuilder.forPort(Integer.parseInt(port)).addService(impl).build();
@@ -92,8 +92,8 @@ public class RecordMain  {
 					System.out.println("ERROR : Unbind zknaming SiloServerApp");
 				}
 				System.exit(0);
-				
+
 			}
-		}	
+		}
 	}
 }

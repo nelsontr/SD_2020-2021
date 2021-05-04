@@ -134,14 +134,38 @@ public class RecFrontend {
         }
     }
 
+    String sysStatusIndividual(ZKRecord record, SysStatRequest request){
+      int tries = 0;
+
+      while(true){
+        try {
+          createNewChannel(record.getURI());
+          return "\n"+record.getPath()+": "+
+                    stub.sysStat(request).getStatus();
+        } catch (StatusRuntimeException sre) {
+            if (++tries == BEST_EFFORT) return "\n"+record.getPath()+": DOWN";
+            else errorHandling(sre, "sysStatusInd", tries);
+        }
+      }
+    }
+
+
     public SysStatResponse sysStat(SysStatRequest request) {
-        int tries = 0;
+        String responseString = "";
+        RecordGrpc.RecordBlockingStub oldStub = this.stub;
 
         while (true) {
             try {
-                return stub.sysStat(request);
-            } catch (StatusRuntimeException sre) {
-                errorHandling(sre, "clear", ++tries);
+              List<ZKRecord> records = new ArrayList<>(this.zkNaming.listRecords(this.path));
+
+              for(ZKRecord record: records){
+                responseString += sysStatusIndividual(record, request);
+              }
+
+              this.stub = oldStub;
+              return SysStatResponse.newBuilder().setStatus(responseString).build();
+            } catch (ZKNamingException sre) {
+                System.out.println("WARN <sysStatus> : Cant connect to server!");
             }
         }
     }

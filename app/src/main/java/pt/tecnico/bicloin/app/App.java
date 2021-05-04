@@ -26,8 +26,8 @@ public class App {
     _userPhone = userPhone;
     _latitude = latitude;
     _longitude = longitude;
-    _hub = new HubFrontend(host, port);
     _tags = new HashMap<String, double[]>();
+    _hub = new HubFrontend(host, port);
     Runtime.getRuntime().addShutdownHook(new CloseServer());
   }
 
@@ -158,9 +158,9 @@ public class App {
     SysStatusResponse response = _hub.sysStatus(request);
 
     String statusHub = response.getHubStatus().toString();
-    String stautusRec =  response.getRecStatus().toString();
+    String statusRec =  response.getRecStatus().toString();
 
-		System.out.println("Hub is: " + statusHub + ". Rec is: " + stautusRec);
+		System.out.println("HUB is: " + statusHub + "\nREC is: " + statusRec);
 	}
 
 

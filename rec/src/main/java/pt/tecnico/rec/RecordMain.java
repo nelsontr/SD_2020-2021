@@ -1,7 +1,5 @@
 package pt.tecnico.rec;
 
-/*import pt.ulisboa.tecnico.sdis.zk.ZKNaming;
-import pt.ulisboa.tecnico.sdis.zk.ZKNamingException;*/
 import io.grpc.BindableService;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;

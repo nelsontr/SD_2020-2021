@@ -31,7 +31,7 @@ Para isso, basta ir à pasta *root* do projeto e correr os seguintes comandos:
 
 ```sh
 $ cd rec/target/appassembler/bin 
-$ ./rec localhost 8091 localhost 8091 1
+$ ./rec localhost 2181 localhost 8091 1
 ```
 **Nota:** Para poder correr o script *app* diretamente é necessário fazer `mvn install` e adicionar ao *PATH* ou utilizar diretamente os executáveis gerados na pasta `target/appassembler/bin/`.
 
@@ -60,7 +60,7 @@ Para isso, basta ir à pasta *root* do projeto e correr os seguintes comandos:
 
 ```sh
 $ cd hub/target/appassembler/bin 
-$ ./hub localhost 8081 localhost 2181 1 users.csv stations.csv initRec
+$ ./hub localhost 2181 localhost 8081 1 users.csv stations.csv initRec
 ```
 **Nota:** Para poder correr o script *app* diretamente é necessário fazer `mvn install` e adicionar ao *PATH* ou utilizar diretamente os executáveis gerados na pasta `target/appassembler/bin/`.
 
@@ -87,7 +87,7 @@ Para isso, basta ir à pasta *root* do projeto e correr os seguintes comandos:
 
 ```sh
 $ cd app/target/appassembler/bin
-$ ./app localhost 8081 joao +35191102030 38.737613 -9.303164
+$ ./app localhost 2181 joao +35191102030 38.737613 -9.303164
 ```
 
 **Nota:** Para poder correr o script *app* diretamente é necessário fazer `mvn install` e adicionar ao *PATH* ou utilizar diretamente os executáveis gerados na pasta `target/appassembler/bin/`.

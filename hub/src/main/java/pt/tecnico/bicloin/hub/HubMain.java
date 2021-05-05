@@ -32,12 +32,13 @@ public class HubMain {
 
         String hostZoo = p.getProperty("zoo.host");
         String portZoo = p.getProperty("zoo.port");
+        String instance = p.getProperty("instance");
 
         if (args.length == 5) {
 
             String port = p.getProperty("server.port");
 
-            final HubServiceImpl impl = new HubServiceImpl(hostZoo, portZoo);
+            final HubServiceImpl impl = new HubServiceImpl(hostZoo, portZoo, instance);
 
             Server server = ServerBuilder.forPort(Integer.parseInt(port)).addService((BindableService) impl).build();
 
@@ -75,7 +76,7 @@ public class HubMain {
               // publish
               zkNaming.rebind(path, host, port);
 
-              final HubServiceImpl impl = new HubServiceImpl(zooHost, zooPort);
+              final HubServiceImpl impl = new HubServiceImpl(zooHost, zooPort, numberInstances);
 
               Server server = ServerBuilder.forPort(Integer.parseInt(port)).addService((BindableService) impl).build();
 

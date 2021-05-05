@@ -120,6 +120,7 @@
 					<killAfter>-1</killAfter>
 					<mainClass>${mainclass}</mainClass>
 					<arguments>
+						<argument>${instance}</argument>
 						<argument>${zoo.host}</argument>
 						<argument>${zoo.port}</argument>
 						<argument>${server.host}</argument>

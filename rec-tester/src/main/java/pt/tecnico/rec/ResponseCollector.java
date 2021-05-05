@@ -36,7 +36,7 @@ public class ResponseCollector<ResponseType> {
         return _okResponses;
     }
 
-    List<ResponseType> getFAILResponses() {
+    List<StatusRuntimeException> getFAILResponses() {
         return _failResponses;
     }
 }

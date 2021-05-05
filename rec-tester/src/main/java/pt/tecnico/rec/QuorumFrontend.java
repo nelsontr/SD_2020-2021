@@ -34,7 +34,7 @@ public class QuorumFrontend {
             _rStub = stub;
         }
     }
-    
+
     private final ZKNaming zkNaming;
     private Map<String, Replica> _replicas = new HashMap<>();
     private String _generalPath = "/grpc/bicloin/rec";
@@ -42,10 +42,10 @@ public class QuorumFrontend {
     private int _maxRecDown;
 
 /*     private ManagedChannel channel;
-    private RecordGrpc.RecordBlockingStub stub;
-    private static final int BEST_EFFORT = 3; */
+    private RecordGrpc.RecordBlockingStub stub;*/
+    private static final int BEST_EFFORT = 3;
 
-    
+
 
     public QuorumFrontend(String zooHost, String zooPort) throws ZKNamingException {
         ManagedChannel channel;
@@ -56,23 +56,18 @@ public class QuorumFrontend {
             List<ZKRecord> records = new ArrayList<>(this.zkNaming.listRecords(this._generalPath));
 
             for(ZKRecord record : records) {
-            
+
                 channel = ManagedChannelBuilder.forTarget(record.getURI()).usePlaintext().build();
                 stub  = RecordGrpc.newStub(channel);
 
-                String response = "";
-                SysStatRequest sysRequest = SysStatRequest.newBuilder().build();
 
-                response += sysStatusIndividual(record, sysRequest);
+                Replica replica = new Replica(record, channel, stub);
+                _replicas.put(record.getPath(), replica);
 
-                if (!response.equals("")) {
-                    Replica replica = new Replica(record, channel, stub);
-                    _replicas.put(record.getPath(), replica);
-                }
             }
 
-            _maxRecDown = records.size() / 2;
-            _minAcks = records.size() / 2  + 1;
+            _maxRecDown = (records.size() - 1) / 2;
+            _minAcks = _maxRecDown + 1;
 
             if (this._replicas.size() == 0) {
                 System.out.println("NO REC SERVER AVAILABLE");
@@ -82,6 +77,8 @@ public class QuorumFrontend {
 
         } catch(ZKNamingException zkne) {
             throw new IllegalArgumentException("No servers available!");
+        } catch (StatusRuntimeException sre) {
+            /**/
         }
     }
 
@@ -107,16 +104,6 @@ public class QuorumFrontend {
     }
  */
 
-    private void createNewChannel(String target) {
-        try {
-            this.channel = ManagedChannelBuilder.forTarget(target).usePlaintext().build();
-            this.stub = RecordGrpc.newBlockingStub(this.channel);
-        } catch (StatusRuntimeException sre) {
-            System.out.println("ERROR : Frontend createNewChannel : Could not create channel\n"
-                    + sre.getStatus().getDescription());
-        }
-    }
-
    /*  private void createRecFrontend() {
         //Nothing for now
     } */
@@ -136,19 +123,34 @@ public class QuorumFrontend {
     }
 
     public PingResponse ping(PingRequest request) {
-        int tries = 0;
+      ResponseCollector<PingResponse> responseCollector = new ResponseCollector<>();
+      final Observer<PingResponse> observer = new Observer<>(responseCollector);
 
-        while (true) {
-            try {
-                return stub.ctrlPing(request);
-            } catch (StatusRuntimeException sre) {
-                errorHandling(sre, "ping", ++tries);
-            }
-        }
+      RecThread<PingResponse> thread = new RecThread<>(_minAcks, _maxRecDown, responseCollector);
+      synchronized (thread) {
+          thread.start();
+          _replicas.values().forEach(replica -> replica._rStub.ctrlPing(request, observer));
+
+          try {
+              thread.wait();
+
+              if (thread.getException() != null) {
+                    throw UNKNOWN.withDescription("Unkown procedure error on Clear Thread").asRuntimeException();
+              }
+
+              List<PingResponse> pingResponses = new ArrayList<>(thread.getResponseCollector().getOKResponses());
+
+              int bestIndex = this.pingFindIndex(pingResponses);
+
+              return pingResponses.get(bestIndex);
+          } catch (InterruptedException ie) {
+              throw UNKNOWN.withDescription("Unkown procedure error on Ping").asRuntimeException();
+          }
+      }
     }
 
     public WriteResponse write(WriteRequest request) throws StatusRuntimeException{
-        
+
         ResponseCollector<WriteResponse> responseCollector = new ResponseCollector<>();
         final Observer<WriteResponse> observer = new Observer<>(responseCollector);
 
@@ -159,6 +161,11 @@ public class QuorumFrontend {
 
             try {
                 thread.wait();
+
+                if (thread.getException() != null) {
+                      throw UNKNOWN.withDescription("Unkown procedure error on Clear Thread").asRuntimeException();
+                }
+
                 final WriteResponse response = WriteResponse.newBuilder().setResponse(OK_RESPONSE).build();
                 return response;
             } catch (InterruptedException ie) {
@@ -168,7 +175,7 @@ public class QuorumFrontend {
     }
 
     public ReadResponse read(ReadRequest request) throws StatusRuntimeException{
-        
+
         ResponseCollector<ReadResponse> responseCollector = new ResponseCollector<>();
         final Observer<ReadResponse> observer = new Observer<>(responseCollector);
 
@@ -180,6 +187,11 @@ public class QuorumFrontend {
 
             try {
                 thread.wait();
+
+                if (thread.getException() != null) {
+                      throw UNKNOWN.withDescription("Unkown procedure error on Clear Thread").asRuntimeException();
+                }
+
                 List<ReadResponse> readResponses = new ArrayList<>(thread.getResponseCollector().getOKResponses());
                 int bestIndex = this.readFindIndex(readResponses);
                 return readResponses.get(bestIndex);
@@ -203,25 +215,49 @@ public class QuorumFrontend {
         return bestIndex;
     }
 
+    private int pingFindIndex(List<PingResponse> responses){
+        int bestIndex = -1;
+        int maxSequence = -1;
 
-    public ClearResponse clear(ClearRequest request) {
-        int tries = 0;
-
-        while (true) {
-            try {
-                return stub.clearRecords(request);
-            } catch (StatusRuntimeException sre) {
-                errorHandling(sre, "clear", ++tries);
+        for(int i = 0 ; i < responses.size(); i++) {
+            if(responses.get(i).getSequence() > maxSequence) {
+                bestIndex = i;
+                maxSequence = responses.get(i).getSequence();
             }
         }
+        return bestIndex;
     }
 
-    String sysStatusIndividual(ZKRecord record, SysStatRequest request){
+
+    public ClearResponse clear(ClearRequest request) {
+      ResponseCollector<ClearResponse> responseCollector = new ResponseCollector<>();
+      final Observer<ClearResponse> observer = new Observer<>(responseCollector);
+
+      RecThread<ClearResponse> thread = new RecThread<>(_minAcks, _maxRecDown, responseCollector);
+      synchronized (thread) {
+          thread.start();
+          _replicas.values().forEach(replica -> replica._rStub.clearRecords(request, observer));
+
+          try {
+              thread.wait();
+
+              if (thread.getException() != null) {
+                    throw UNKNOWN.withDescription("Unkown procedure error on Clear Thread").asRuntimeException();
+              }
+
+              final ClearResponse response = ClearResponse.newBuilder().build();
+              return response;
+          } catch (InterruptedException ie) {
+              throw UNKNOWN.withDescription("Unkown procedure error on Clear").asRuntimeException();
+          }
+      }
+    }
+/*
+    String sysStatusIndividual(ZKRecord record, SysStatRequest request, RecordGrpc.RecordStub stub){
       int tries = 0;
 
       while(true){
         try {
-          createNewChannel(record.getURI());
           return "\n"+record.getPath()+": "+
                     stub.sysStat(request).getStatus();
         } catch (StatusRuntimeException sre) {
@@ -230,29 +266,44 @@ public class QuorumFrontend {
         }
       }
     }
-
+*/
 
     public SysStatResponse sysStat(SysStatRequest request) {
         String responseString = "";
-        RecordGrpc.RecordBlockingStub oldStub = this.stub;
 
-        while (true) {
+        ResponseCollector<SysStatResponse> responseCollector = new ResponseCollector<>();
+        final Observer<SysStatResponse> observer = new Observer<>(responseCollector);
+
+        RecThread<SysStatResponse> thread = new RecThread<>(_minAcks, _maxRecDown, responseCollector);
+
+        synchronized(thread) {
+            thread.start();
+            _replicas.values().forEach(replica -> replica._rStub.sysStat(request, observer));
+
             try {
-              List<ZKRecord> records = new ArrayList<>(this.zkNaming.listRecords(this.path));
+                thread.wait();
 
-              for(ZKRecord record: records){
-                responseString += sysStatusIndividual(record, request);
-              }
+                if (thread.getException() != null) {
+                      throw UNKNOWN.withDescription("Unkown procedure error on SysStat Thread").asRuntimeException();
+                }
 
-              this.stub = oldStub;
-              return SysStatResponse.newBuilder().setStatus(responseString).build();
-            } catch (ZKNamingException sre) {
-                System.out.println("WARN <sysStatus> : Cant connect to server!");
+                List<SysStatResponse> sysStatResponses = new ArrayList<>(thread.getResponseCollector().getOKResponses());
+
+                for(SysStatResponse response : sysStatResponses){
+                  responseString += response.getStatus();
+                }
+
+                SysStatResponse response = SysStatResponse.newBuilder().setStatus(responseString).build();
+
+                return response;
+
+            } catch (InterruptedException ie) {
+                throw UNKNOWN.withDescription("Unkown procedure error on Read").asRuntimeException();
             }
         }
     }
 
     public void closeChannel() {
-        this.channel.shutdownNow();
+        /**/
     }
 }

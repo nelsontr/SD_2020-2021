@@ -1,17 +1,12 @@
 # Guião de Demonstração
 
-(incompleto -- **compete ao grupo completar o guião** -- ver TODOs)
-
 ## 1. Preparação do sistema
 
 Para testar o sistema e todos os seus componentes, é necessário preparar um ambiente com dados para proceder à verificação dos testes.
 
 ### 1.1. Lançar o *registry*
 
-> **NOTA :** Não se encontra implementado nesta fase to projeto, estará brevemente disponível. Saltar esta secção .
-
-Para lançar o *ZooKeeper*, ir à pasta `zookeeper/bin` e correr o comando  
-`./zkServer.sh start` (Linux) ou `zkServer.cmd` (Windows).
+Para lançar o *ZooKeeper*, ir à pasta `zookeeper/bin` e correr o comando `./zkServer.sh start` (Linux) ou `zkServer.cmd` (Windows).
 
 É possível também lançar a consola de interação com o *ZooKeeper*, novamente na pasta `zookeeper/bin` e correr `./zkCli.sh` (Linux) ou `zkCli.cmd` (Windows).
 
@@ -24,18 +19,19 @@ Para isso, basta ir à pasta *root* do projeto e correr o seguinte comando:
 $ mvn clean install -DskipTests
 ```
 
-### 1.3. Lançar e testar o *rec*
+### 1.3. Lançar o *rec*
 
 Para proceder aos testes, é preciso em primeiro lugar lançar o servidor *rec* .
 Para isso, basta ir à pasta *root* do projeto e correr os seguintes comandos:
 
 ```sh
-$ cd rec/target/appassembler/bin 
-$ ./rec localhost 2181 localhost 8091 1
+$ ./rec/target/appassembler/bin/rec localhost 2181 localhost 8091 1
 ```
-**Nota:** Para poder correr o script *app* diretamente é necessário fazer `mvn install` e adicionar ao *PATH* ou utilizar diretamente os executáveis gerados na pasta `target/appassembler/bin/`.
+**Nota:** Para poder correr o script *rec* diretamente é necessário fazer `mvn install` e adicionar ao *PATH* ou utilizar diretamente os executáveis gerados na pasta `target/appassembler/bin/`.
 
 Este comando vai colocar o *rec* no endereço *localhost* e na porta *8091*.
+
+#### 1.3.1 Testar o *rec*
 
 Para confirmar o funcionamento do servidor com um *ping*, fazer na pasta *root*:
 
@@ -50,21 +46,23 @@ Para executar toda a bateria de testes de integração, fazer:
 $ mvn verify
 ```
 
-Todos os testes devem ser executados sem erros.
+Todos os testes devem ser executados sem erros. O(s) **único(s)** erro(s) que pode acontecer é no terminal do *rec*, uma vez que ao correr os testes origina erros de servidor.
 
+> ⚠ **IMPORTANTE** ⚠ <br/>É necessário reiniciar o *rec* (demonstração na secção [1.3](#1-3-lançar-o-rec)) após compilar o *rec-tester* e após executar o comando `mvn verify`.
 
-### 1.4. Lançar e testar o *hub*
+### 1.4. Lançar o *hub*
 
 Para proceder aos testes, é preciso em primeiro lugar lançar o servidor *hub*.
 Para isso, basta ir à pasta *root* do projeto e correr os seguintes comandos:
 
 ```sh
-$ cd hub/target/appassembler/bin 
-$ ./hub localhost 2181 localhost 8081 1 users.csv stations.csv initRec
+$ ./hub/target/appassembler/bin/hub localhost 2181 localhost 8081 1 users.csv stations.csv initRec
 ```
 **Nota:** Para poder correr o script *app* diretamente é necessário fazer `mvn install` e adicionar ao *PATH* ou utilizar diretamente os executáveis gerados na pasta `target/appassembler/bin/`.
 
 Este comando vai colocar o *hub* no endereço *localhost* e na porta *8081*.
+
+#### 1.4.1 Testar o *hub*
 
 Para confirmar o funcionamento do servidor com um *ping*, fazer na pasta *root*:
 
@@ -79,15 +77,16 @@ Para executar toda a bateria de testes de integração, fazer:
 $ mvn verify
 ```
 
-Todos os testes devem ser executados sem erros.
+Todos os testes devem ser executados sem erros. O(s) **único(s)** erro(s) que pode acontecer é no terminal do *hub*, uma vez que ao correr os testes origina erros de servidor.
+
+> ⚠ **IMPORTANTE** ⚠ <br/>É necessário reiniciar o *hub* e *rec* (demonstração na secção [1.3](#1-3-lançar-o-rec) para o *rec* e na secção [1.4](#1-4-lançar-o-hub) para o *hub*) após compilar o *hub-tester* e/ou após executar o comando `mvn verify`.
 
 ### 1.5. *App*
 
 Para isso, basta ir à pasta *root* do projeto e correr os seguintes comandos:
 
 ```sh
-$ cd app/target/appassembler/bin
-$ ./app localhost 2181 joao +35191102030 38.737613 -9.303164
+$ ./app/target/appassembler/bin/app localhost 2181 joao +35191102030 38.737613 -9.303164
 ```
 
 **Nota:** Para poder correr o script *app* diretamente é necessário fazer `mvn install` e adicionar ao *PATH* ou utilizar diretamente os executáveis gerados na pasta `target/appassembler/bin/`.
@@ -102,6 +101,7 @@ Nesta secção vamos correr os comandos necessários para testar todas as opera�
 Cada subsecção é respetiva a cada operação presente no *hub*.
 
 > **Nota Importante**
+>
 > * Quando aparece '>' após a linha executada, significa que executou e está a espera de mais comandos;
 > * Quando aparece '$' após a linha executada, significa que executou e saiu do programa.
 

@@ -21,6 +21,8 @@ import pt.ulisboa.tecnico.sdis.zk.ZKRecord;
 
 public class QuorumFrontend {
 
+    private final String OK_RESPONSE = "OK";
+
     private static class Replica {
         private ZKRecord _zkRecord;
         private ManagedChannel _rChannel;
@@ -145,21 +147,27 @@ public class QuorumFrontend {
         }
     }
 
-    public WriteResponse write(WriteRequest request) {
-        int tries = 0;
+    public WriteResponse write(WriteRequest request) throws StatusRuntimeException{
+        
+        ResponseCollector<WriteResponse> responseCollector = new ResponseCollector<>();
+        final Observer<WriteResponse> observer = new Observer<>(responseCollector);
 
-        while (true) {
+        RecThread<WriteResponse> thread = new RecThread<>(_minAcks, _maxRecDown, responseCollector);
+        synchronized (thread) {
+            thread.start();
+            _replicas.values().forEach(replica -> replica._rStub.write(request, observer));
+
             try {
-                return stub.write(request);
-            } catch (StatusRuntimeException sre) {
-                errorHandling(sre, "write", ++tries);
+                thread.wait();
+                final WriteResponse response = WriteResponse.newBuilder().setResponse(OK_RESPONSE).build();
+                return response;
+            } catch (InterruptedException ie) {
+                throw UNKNOWN.withDescription("Unkown procedure error on Write").asRuntimeException();
             }
         }
     }
 
     public ReadResponse read(ReadRequest request) throws StatusRuntimeException{
-       
-        String recName = request.getName();
         
         ResponseCollector<ReadResponse> responseCollector = new ResponseCollector<>();
         final Observer<ReadResponse> observer = new Observer<>(responseCollector);

@@ -16,7 +16,6 @@ message ReadRequest {
 message ReadResponse {
   int32 value = 1;
   int32 sequence = 2;
-  int32 cid = 3;
 }
 
 message WriteRequest {

@@ -56,7 +56,7 @@ public class RecordServiceImpl extends RecordGrpc.RecordImplBase {
             }
 
             ReadResponse response = ReadResponse.newBuilder().setValue(readRecord.getValue())
-                    .setSequence(readRecord.getSequence()).setCid(readRecord.getCid()).build();
+                    .setSequence(readRecord.getSequence()).build();
             responseObserver.onNext(response);
             responseObserver.onCompleted();
         }

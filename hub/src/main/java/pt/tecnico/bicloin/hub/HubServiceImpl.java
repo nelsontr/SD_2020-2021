@@ -10,7 +10,6 @@ import static io.grpc.Status.INVALID_ARGUMENT;
 
 import pt.tecnico.rec.*;
 import pt.tecnico.rec.grpc.*;
-import pt.tecnico.bicloin.hub.*;
 import pt.tecnico.bicloin.hub.grpc.*;
 
 
@@ -62,20 +61,22 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
         }
 
         ReadRequest balanceRequest = ReadRequest.newBuilder().setName(userName + USER_BALANCE).build();
-        int balance = _rec.read(balanceRequest).getValue();
+        synchronized(this) {
+            int balance = _rec.read(balanceRequest).getValue();
 
-        if (balance == -1 && !data.existingUser(userName)) {
-            responseObserver.onError(NOT_FOUND.withDescription("User does not exist in records").asRuntimeException());
-            return;
-        } else if (balance == -1 && data.existingUser(userName)) {
-            balance = 0;
-            WriteRequest balanceReq = WriteRequest.newBuilder().setName(userName + USER_BALANCE).setIntValue(0).build();
-            _rec.write(balanceReq);
+            if (balance == -1 && !data.existingUser(userName)) {
+                responseObserver.onError(NOT_FOUND.withDescription("User does not exist in records").asRuntimeException());
+                return;
+            } else if (balance == -1 && data.existingUser(userName)) {
+                balance = 0;
+                WriteRequest balanceReq = WriteRequest.newBuilder().setName(userName + USER_BALANCE).setIntValue(0).build();
+                _rec.write(balanceReq);
+            }
+
+            BalanceResponse response = BalanceResponse.newBuilder().setBalance(balance).build();
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
         }
-
-        BalanceResponse response = BalanceResponse.newBuilder().setBalance(balance).build();
-        responseObserver.onNext(response);
-        responseObserver.onCompleted();
     }
 
     @Override
@@ -98,21 +99,23 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
             return;
         }
 
-        ReadRequest balanceRequest = ReadRequest.newBuilder().setName(userName + USER_BALANCE).build();
-        int balance = _rec.read(balanceRequest).getValue();
+        synchronized (this) {
+            ReadRequest balanceRequest = ReadRequest.newBuilder().setName(userName + USER_BALANCE).build();
+            int balance = _rec.read(balanceRequest).getValue();
 
-        balance = (balance == -1) ? 0 : balance;
-        balance += stake * 10;
+            balance = (balance == -1) ? 0 : balance;
+            balance += stake * 10;
 
-        WriteRequest newBalanceRequest = WriteRequest.newBuilder().setName(userName + USER_BALANCE).setIntValue(balance).build();
-        if (!_rec.write(newBalanceRequest).getResponse().equals("OK")) {
-            responseObserver.onError(UNKNOWN.withDescription("Couldn't write").asRuntimeException());
-            return;
+            WriteRequest newBalanceRequest = WriteRequest.newBuilder().setName(userName + USER_BALANCE).setIntValue(balance).build();
+            if (!_rec.write(newBalanceRequest).getResponse().equals("OK")) {
+                responseObserver.onError(UNKNOWN.withDescription("Couldn't write").asRuntimeException());
+                return;
+            }
+
+            TopUpResponse response = TopUpResponse.newBuilder().setBalance(balance).build();
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
         }
-
-        TopUpResponse response = TopUpResponse.newBuilder().setBalance(balance).build();
-        responseObserver.onNext(response);
-        responseObserver.onCompleted();
     }
 
     @Override
@@ -143,23 +146,25 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
             return;
         }
 
-        //VERIFICAR COMO FOI IMPLEMENTADO O READ + probably should have try catchs
-        ReadRequest pickupsRequest = ReadRequest.newBuilder().setName(stationId + STATION_PICKUPS).build();
-        ReadRequest returnsRequest = ReadRequest.newBuilder().setName(stationId + STATION_RETURNS).build();
-        ReadRequest bikesRequest = ReadRequest.newBuilder().setName(stationId + STATION_BIKES_AVAILABLE).build();
-        int pickups = _rec.read(pickupsRequest).getValue();
-        int returns = _rec.read(returnsRequest).getValue();
-        int availableBikes = _rec.read(bikesRequest).getValue();
+        synchronized (this) {
+            //VERIFICAR COMO FOI IMPLEMENTADO O READ + probably should have try catchs
+            ReadRequest pickupsRequest = ReadRequest.newBuilder().setName(stationId + STATION_PICKUPS).build();
+            ReadRequest returnsRequest = ReadRequest.newBuilder().setName(stationId + STATION_RETURNS).build();
+            ReadRequest bikesRequest = ReadRequest.newBuilder().setName(stationId + STATION_BIKES_AVAILABLE).build();
+            int pickups = _rec.read(pickupsRequest).getValue();
+            int returns = _rec.read(returnsRequest).getValue();
+            int availableBikes = _rec.read(bikesRequest).getValue();
 
-        returns = (returns == -1) ? 0 : returns;
-        pickups = (pickups == -1) ? 0 : pickups;
-        availableBikes = (availableBikes == -1) ? 0 : availableBikes;
+            returns = (returns == -1) ? 0 : returns;
+            pickups = (pickups == -1) ? 0 : pickups;
+            availableBikes = (availableBikes == -1) ? 0 : availableBikes;
 
-        InfoStationResponse response = InfoStationResponse.newBuilder().setName(stationName).setLat(latitude)
-                .setLong(longitude).setDockCapacity(dockCapacity).setPrize(prize)
-                .setAvailableBikes(availableBikes).setPickups(pickups).setReturns(returns).build();
-        responseObserver.onNext(response);
-        responseObserver.onCompleted();
+            InfoStationResponse response = InfoStationResponse.newBuilder().setName(stationName).setLat(latitude)
+                    .setLong(longitude).setDockCapacity(dockCapacity).setPrize(prize)
+                    .setAvailableBikes(availableBikes).setPickups(pickups).setReturns(returns).build();
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+        }
     }
 
     @Override
@@ -188,7 +193,8 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
         Set<String> keys = orderedResults.keySet();
         LocateStationResponse.Builder b = LocateStationResponse.newBuilder();
 
-        for (String key : keys) {
+        synchronized (this) {
+             for (String key : keys) {
             double lt = data.getStation(key).getLat();
             double lg = data.getStation(key).getLong();
             int dockCapacity = data.getStation(key).getDockCapacity();
@@ -199,11 +205,12 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
 
             int distance = orderedResults.get(key);
             b.addScan(Scan.newBuilder().setStationId(key).setLat(lt).setLong(lg).setDockCapacity(dockCapacity).setPrize(prize).setAvailableBikes(bikesAvailable).setDistance(distance).build());
-        }
+            }
 
-        LocateStationResponse response = b.build();
-        responseObserver.onNext(response);
-        responseObserver.onCompleted();
+            LocateStationResponse response = b.build();
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+        }  
     }
 
     @Override
@@ -220,31 +227,34 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
         int distance = getDistance(latitude, longitude, stationLat, stationLong);
 
         ReadRequest availableBikesRequest = ReadRequest.newBuilder().setName(stationId + STATION_BIKES_AVAILABLE).build();
-        int availableBikes = _rec.read(availableBikesRequest).getValue();
 
-        if (distance >= 200 || availableBikes == 0) {
-            response = BikeResponse.newBuilder().setStatus(ERROR).build();
-        } else {
-            ReadRequest balanceRequest = ReadRequest.newBuilder().setName(userName + USER_BALANCE).build();
-            int balance = _rec.read(balanceRequest).getValue() - 10;
-            if (balance >= 0) {
-                WriteRequest newAvailableBikesRequest = WriteRequest.newBuilder().setName(stationId + STATION_BIKES_AVAILABLE).setIntValue(availableBikes - 1).build();
-                _rec.write(newAvailableBikesRequest);
-                ReadRequest pickupsRequest = ReadRequest.newBuilder().setName(stationId + STATION_PICKUPS).build();
-                int pickups = _rec.read(pickupsRequest).getValue();
-                pickups = (pickups == -1) ? 1 : ++pickups;
+        synchronized (this){
+            int availableBikes = _rec.read(availableBikesRequest).getValue();
 
-                WriteRequest newPickupsRequest = WriteRequest.newBuilder().setName(stationId + STATION_PICKUPS).setIntValue(pickups).build();
-                _rec.write(newPickupsRequest);
+            if (distance >= 200 || availableBikes == 0) {
+                response = BikeResponse.newBuilder().setStatus(ERROR).build();
+            } else {
+                ReadRequest balanceRequest = ReadRequest.newBuilder().setName(userName + USER_BALANCE).build();
+                int balance = _rec.read(balanceRequest).getValue() - 10;
+                if (balance >= 0) {
+                    WriteRequest newAvailableBikesRequest = WriteRequest.newBuilder().setName(stationId + STATION_BIKES_AVAILABLE).setIntValue(availableBikes - 1).build();
+                    _rec.write(newAvailableBikesRequest);
+                    ReadRequest pickupsRequest = ReadRequest.newBuilder().setName(stationId + STATION_PICKUPS).build();
+                    int pickups = _rec.read(pickupsRequest).getValue();
+                    pickups = (pickups == -1) ? 1 : ++pickups;
 
-                WriteRequest newBalanceRequest = WriteRequest.newBuilder().setName(userName + USER_BALANCE).setIntValue(balance).build();
-                _rec.write(newBalanceRequest);
-                response = BikeResponse.newBuilder().setStatus(OK).build();
-            } else response = BikeResponse.newBuilder().setStatus(ERROR_NO_MONEY).build();
+                    WriteRequest newPickupsRequest = WriteRequest.newBuilder().setName(stationId + STATION_PICKUPS).setIntValue(pickups).build();
+                    _rec.write(newPickupsRequest);
+
+                    WriteRequest newBalanceRequest = WriteRequest.newBuilder().setName(userName + USER_BALANCE).setIntValue(balance).build();
+                    _rec.write(newBalanceRequest);
+                    response = BikeResponse.newBuilder().setStatus(OK).build();
+                } else response = BikeResponse.newBuilder().setStatus(ERROR_NO_MONEY).build();
+            }
+
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
         }
-
-        responseObserver.onNext(response);
-        responseObserver.onCompleted();
     }
 
     @Override
@@ -260,35 +270,37 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
         double stationLong = station.getLong();
         int distance = getDistance(latitude, longitude, stationLat, stationLong);
 
-        if (distance >= 200) {
+        synchronized (this) {
+            if (distance >= 200) {
             response = BikeResponse.newBuilder().setStatus(ERROR).build();
-        } else {
-            int prize = station.getPrize();
+            } else {
+                int prize = station.getPrize();
 
-            ReadRequest returnsRequest = ReadRequest.newBuilder().setName(stationId + STATION_RETURNS).build();
-            int returns = _rec.read(returnsRequest).getValue();
-            returns = (returns == -1) ? 1 : ++returns;
+                ReadRequest returnsRequest = ReadRequest.newBuilder().setName(stationId + STATION_RETURNS).build();
+                int returns = _rec.read(returnsRequest).getValue();
+                returns = (returns == -1) ? 1 : ++returns;
 
-            ReadRequest balanceRequest = ReadRequest.newBuilder().setName(userName + USER_BALANCE).build();
-            int balance = _rec.read(balanceRequest).getValue();
-            balance = (balance == -1) ? prize : balance+prize;
+                ReadRequest balanceRequest = ReadRequest.newBuilder().setName(userName + USER_BALANCE).build();
+                int balance = _rec.read(balanceRequest).getValue();
+                balance = (balance == -1) ? prize : balance+prize;
 
-            ReadRequest availableBikesRequest = ReadRequest.newBuilder().setName(stationId + STATION_BIKES_AVAILABLE).build();
-            int availableBikes = _rec.read(availableBikesRequest).getValue() + 1;
+                ReadRequest availableBikesRequest = ReadRequest.newBuilder().setName(stationId + STATION_BIKES_AVAILABLE).build();
+                int availableBikes = _rec.read(availableBikesRequest).getValue() + 1;
 
-            WriteRequest newReturnsRequest = WriteRequest.newBuilder().setName(stationId + STATION_RETURNS).setIntValue(returns).build();
-            _rec.write(newReturnsRequest);
-            WriteRequest newBalanceRequest = WriteRequest.newBuilder().setName(userName + USER_BALANCE).setIntValue(balance).build();
-            _rec.write(newBalanceRequest);
-            WriteRequest newAvailableBikesRequest = WriteRequest.newBuilder().setName(stationId + STATION_BIKES_AVAILABLE)
-                    .setIntValue(availableBikes).build();
-            _rec.write(newAvailableBikesRequest);
+                WriteRequest newReturnsRequest = WriteRequest.newBuilder().setName(stationId + STATION_RETURNS).setIntValue(returns).build();
+                _rec.write(newReturnsRequest);
+                WriteRequest newBalanceRequest = WriteRequest.newBuilder().setName(userName + USER_BALANCE).setIntValue(balance).build();
+                _rec.write(newBalanceRequest);
+                WriteRequest newAvailableBikesRequest = WriteRequest.newBuilder().setName(stationId + STATION_BIKES_AVAILABLE)
+                        .setIntValue(availableBikes).build();
+                _rec.write(newAvailableBikesRequest);
 
-            response = BikeResponse.newBuilder().setStatus(OK).build();
+                response = BikeResponse.newBuilder().setStatus(OK).build();
+            }
+
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
         }
-
-        responseObserver.onNext(response);
-        responseObserver.onCompleted();
     }
 
 

@@ -102,7 +102,6 @@ public class RecordServiceImpl extends RecordGrpc.RecordImplBase {
             responseObserver.onNext(response);
             responseObserver.onCompleted();
         }
-        
     }
 
     @Override

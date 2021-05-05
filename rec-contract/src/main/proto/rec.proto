@@ -18,6 +18,7 @@ message ReadResponse {
   int32 sequence = 2;
   int32 cid = 3;
 }
+
 message WriteRequest {
   string name = 1;
   int32 intValue = 2;

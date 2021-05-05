@@ -12,7 +12,6 @@ public class Record {
         this._value = value;
         this._sequence = sequence;
         this._cid = cid;
-
     }
 
     public String getName() {

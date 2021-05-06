@@ -14,11 +14,11 @@ public class RecordIT extends BaseIT {
 	@Test
 	public void creatingFirstBalanceTest() {
 		WriteRequest request = WriteRequest.newBuilder().setName(NAME_1 + REQUEST_1).setIntValue(BALANCE_1).build();
-		WriteResponse response = frontend.write(request);
+		WriteResponse response = Qfrontend.write(request);
 		assertEquals("OK", response.getResponse());
 
 		ReadRequest request2 = ReadRequest.newBuilder().setName(NAME_1 + REQUEST_1).build();
-		ReadResponse response2 = frontend.read(request2);
+		ReadResponse response2 = Qfrontend.read(request2);
 		assertEquals(BALANCE_1, response2.getValue());
 	}
 
@@ -27,7 +27,7 @@ public class RecordIT extends BaseIT {
 		WriteRequest request = WriteRequest.newBuilder().setName(NAME_1 + REQUEST_1)
 				.setIntValue(BALANCE_BELLOW_ZERO).build();
 		assertEquals(INVALID_ARGUMENT.getCode(), assertThrows(
-				StatusRuntimeException.class, () -> frontend.write(request))
+				StatusRuntimeException.class, () -> Qfrontend.write(request))
 				.getStatus()
 				.getCode());
 	}
@@ -35,7 +35,7 @@ public class RecordIT extends BaseIT {
 	@Test
 	public void readingBalanceWithoutUserTest() {
 		ReadRequest request = ReadRequest.newBuilder().setName(NAME_1 + REQUEST_1).build();
-		ReadResponse response = frontend.read(request);
+		ReadResponse response = Qfrontend.read(request);
 
 		assertEquals(-1, response.getValue());
 	}

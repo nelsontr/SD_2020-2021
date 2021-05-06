@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeAll;
 public class BaseIT {
 
 	static RecFrontend frontend;
+	static QuorumFrontend Qfrontend;
 	protected static Properties testProps;
 	private static final String TEST_PROP_FILE = "/test.properties";
 
@@ -33,7 +34,10 @@ public class BaseIT {
 
 			final String host = testProps.getProperty("server.host");
 			final String port = testProps.getProperty("server.port");
-			frontend = new RecFrontend(host, port);
+			frontend = new RecFrontend(host, port, "1");
+			final String zoohost = testProps.getProperty("zoo.host");
+			final String zooport = testProps.getProperty("zoo.port");
+			Qfrontend = new QuorumFrontend(zoohost, zooport);
 		} catch (IOException e) {
 			final String msg = String.format("Could not load properties file {}", TEST_PROP_FILE);
 			System.out.println(msg);

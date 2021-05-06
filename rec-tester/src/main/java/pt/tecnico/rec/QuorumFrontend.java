@@ -74,11 +74,14 @@ public class QuorumFrontend {
 
             _maxRecDown = (records.size() - 1) / 2;
             _minAcks = _maxRecDown + 1;
-            
+
             if (replicas.size() == 0) {
                 System.out.println("NO REC SERVER AVAILABLE");
                 System.exit(-1);
-            }    
+            } else if (replicas.size()%2 == 0){
+              System.out.println("REPLICAS SIZE NOT A ODD NUMBER");
+              System.exit(-1);
+            }
 
         } catch(ZKNamingException zkne) {
             throw new IllegalArgumentException("No servers available!");
@@ -103,7 +106,7 @@ public class QuorumFrontend {
         }
     }
 
-  
+
     public WriteResponse write(WriteRequest request) throws StatusRuntimeException{
         _replicas = null;
         _replicas = this.findReplicas();

@@ -449,6 +449,7 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
     private final class CloseServer extends Thread {
         @Override
         public void run() {
+            _rec.closeChannel();
             _recQuorum.closeChannel();
         }
     }

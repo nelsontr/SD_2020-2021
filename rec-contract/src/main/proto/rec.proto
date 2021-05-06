@@ -9,7 +9,6 @@ message PingRequest {
 }
 message PingResponse {
 	string output = 1;
-  int32 sequence = 2;
 }
 message ReadRequest {
   string name = 1;

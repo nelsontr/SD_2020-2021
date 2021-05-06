@@ -50,8 +50,8 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
 
         PingRequest newRequest = PingRequest.newBuilder().setInput(input).build();
 
-        String output = "Hub says hello  " + input + "!" + "\n";
-        output += "Rec says hello  " + _rec.ping(newRequest).getOutput() + "!" + "\n";
+        String output = "Hub says hello " + input + "!" + "\n";
+        output += "Rec says hello " + _rec.ping(newRequest).getOutput() + "!" + "\n";
 
 
         CtrlPingResponse response = CtrlPingResponse.newBuilder().setOutput(output).build();

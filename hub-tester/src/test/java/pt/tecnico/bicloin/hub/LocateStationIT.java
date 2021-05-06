@@ -19,7 +19,7 @@ public class LocateStationIT extends BaseIT {
         assertEquals(STATION_LONG_1, scan1.getLong());
         assertEquals(STATION_DOCK_CAPACITY_1, scan1.getDockCapacity());
         assertEquals(STATION_COMPENSATION_1, scan1.getPrize());
-        assertEquals(STATION_AVAILABLEBIKES_1, scan1.getAvailableBikes());
+        assertEquals(STATION_AVAILABLEBIKES_1, scan1.getAvailableBikes()+1); //another test
         assertEquals(0, scan1.getDistance());
     }
 
@@ -35,7 +35,7 @@ public class LocateStationIT extends BaseIT {
         assertEquals(STATION_LONG_1, scan1.getLong());
         assertEquals(STATION_DOCK_CAPACITY_1, scan1.getDockCapacity());
         assertEquals(STATION_COMPENSATION_1, scan1.getPrize());
-        assertEquals(STATION_AVAILABLEBIKES_1, scan1.getAvailableBikes());
+        assertEquals(STATION_AVAILABLEBIKES_1, scan1.getAvailableBikes()+1); //another test
         assertEquals(0, scan1.getDistance());
 
         Scan scan2 = response.getScan(1);

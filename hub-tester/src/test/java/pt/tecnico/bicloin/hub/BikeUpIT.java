@@ -40,8 +40,8 @@ public class BikeUpIT extends BaseIT {
 
 	@Test
 	public void bikeUpWithoutMoney() {
-		BalanceRequest balanceRequest = BalanceRequest.newBuilder().setUserName(USER_ID_1).build();
-		BikeRequest bikeRequest1 = BikeRequest.newBuilder().setUserName(USER_ID_1)
+		BalanceRequest balanceRequest = BalanceRequest.newBuilder().setUserName(USER_ID_2).build();
+		BikeRequest bikeRequest1 = BikeRequest.newBuilder().setUserName(USER_ID_2)
 				.setLat(USER_LAT_1).setLong(USER_LONG_1).setStationId(STATION_ID_1).build();
 
 		int balanceBefore = frontend.balance(balanceRequest).getBalance();

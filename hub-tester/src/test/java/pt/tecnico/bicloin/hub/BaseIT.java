@@ -57,14 +57,7 @@ public class BaseIT {
 
     @BeforeEach
     public void setUp() {
-        CtrlInitRequest request = CtrlInitRequest.newBuilder().setInput(initialData).setRecInitOption(true).build();
-
-        try {
-            frontend.ctrlInit(request);
-        } catch (Exception e) {
-            System.out.println(String.format("Exception<ctrl_init>: %s", e.getMessage()));
-            throw e;
-        }
+        /* EMPTY */
     }
 
     @BeforeAll
@@ -78,7 +71,7 @@ public class BaseIT {
 
             final String zoohost = testProps.getProperty("zoo.host");
             final String zooport = testProps.getProperty("zoo.port");
-            frontend = new HubFrontend(zoohost, zooport);
+            frontend = new HubFrontend(zoohost, zooport, "1");
 
         } catch (IOException e) {
             final String msg = String.format("Could not load properties file {}", TEST_PROP_FILE);
@@ -112,8 +105,7 @@ public class BaseIT {
 
     @AfterEach
     public void tearDown() {
-        CtrlClearRequest request = CtrlClearRequest.newBuilder().build();
-        frontend.ctrlClear(request);
+        /* EMPTY */
     }
 
     @AfterAll

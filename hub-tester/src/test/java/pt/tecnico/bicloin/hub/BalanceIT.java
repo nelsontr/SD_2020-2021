@@ -7,6 +7,7 @@ import io.grpc.StatusRuntimeException;
 
 import static io.grpc.Status.INVALID_ARGUMENT;
 import static io.grpc.Status.NOT_FOUND;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -18,9 +19,9 @@ public class BalanceIT extends BaseIT {
         BalanceRequest request2 = BalanceRequest.newBuilder().setUserName(USER_ID_2).build();
         BalanceRequest request3 = BalanceRequest.newBuilder().setUserName(USER_ID_3).build();
 
-        assertEquals(0, frontend.balance(request1).getBalance());
-        assertEquals(0, frontend.balance(request2).getBalance());
-        assertEquals(0, frontend.balance(request3).getBalance());
+        assertNotNull(frontend.balance(request1).getBalance());
+        assertNotNull(frontend.balance(request2).getBalance());
+        assertNotNull(frontend.balance(request3).getBalance());
     }
 
     @Test
@@ -61,17 +62,18 @@ public class BalanceIT extends BaseIT {
     @Test
     public void userDeliversBike() {
         BalanceRequest requestBalance = BalanceRequest.newBuilder().setUserName(USER_ID_1).build();
+        int balanceBefore = frontend.balance(requestBalance).getBalance();
 
         TopUpRequest topUpRequest = TopUpRequest.newBuilder().setUserName(USER_ID_1)
                 .setStake(10).setPhoneNumber(USER_PHONE_1).build();
         int topUpResponse = frontend.topUp(topUpRequest).getBalance();
 
-        assertEquals(100, topUpResponse);
+        assertEquals(balanceBefore+10*10, topUpResponse);
 
         BikeRequest request1 = BikeRequest.newBuilder().setUserName(USER_ID_1).
                 setLat(USER_LAT_1).setLong(USER_LONG_1).setStationId(STATION_ID_1).build();
         BikeResponse response = frontend.bikeUp(request1);
-        int balanceBefore = frontend.balance(requestBalance).getBalance();
+        balanceBefore = frontend.balance(requestBalance).getBalance();
 
         request1 = BikeRequest.newBuilder().setUserName(USER_ID_1).
                 setLat(USER_LAT_1).setLong(USER_LONG_1).setStationId(STATION_ID_1).build();

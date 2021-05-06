@@ -47,10 +47,12 @@ public class BaseIT {
 	public void tearDown() {
 		ClearRequest request = ClearRequest.newBuilder().build();
 		frontend.clear(request);
+		Qfrontend.clear(request);
 	}
 
 	@AfterAll
 	public static void cleanup() {
 		frontend.closeChannel();
+		Qfrontend.closeChannel();
 	}
 }

@@ -76,9 +76,9 @@ public class BaseIT {
             System.out.println("Test properties:");
             System.out.println(testProps);
 
-            final String host = testProps.getProperty("server.host");
-            final String port = testProps.getProperty("server.port");
-            frontend = new HubFrontend(host, port);
+            final String zoohost = testProps.getProperty("zoo.host");
+            final String zooport = testProps.getProperty("zoo.port");
+            frontend = new HubFrontend(zoohost, zooport);
 
         } catch (IOException e) {
             final String msg = String.format("Could not load properties file {}", TEST_PROP_FILE);

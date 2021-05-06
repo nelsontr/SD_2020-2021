@@ -25,17 +25,25 @@ public class RecordIT extends BaseIT {
 	@Test
 	public void writingBalanceBelowZeroTest() {
 		WriteRequest request = WriteRequest.newBuilder().setName(NAME_1 + REQUEST_1)
+			.setIntValue(BALANCE_BELLOW_ZERO).build();
+		WriteResponse response = Qfrontend.write(request);
+		ReadRequest request2 = ReadRequest.newBuilder().setName(NAME_1 + REQUEST_1).build();
+		ReadResponse response2 = Qfrontend.read(request2);
+		assertEquals(-1, response2.getValue());
+
+		/*WriteRequest request = WriteRequest.newBuilder().setName(NAME_1 + REQUEST_1)
 				.setIntValue(BALANCE_BELLOW_ZERO).build();
+
 		assertEquals(INVALID_ARGUMENT.getCode(), assertThrows(
 				StatusRuntimeException.class, () -> Qfrontend.write(request))
 				.getStatus()
-				.getCode());
+				.getCode());*/
 	}
 
 	@Test
 	public void readingBalanceWithoutUserTest() {
-		ReadRequest request = ReadRequest.newBuilder().setName(NAME_1 + REQUEST_1).build();
-		ReadResponse response = Qfrontend.read(request);
+		ReadResponse response = Qfrontend.read(
+			ReadRequest.newBuilder().setName(NAME_1 + REQUEST_1).build());
 
 		assertEquals(-1, response.getValue());
 	}

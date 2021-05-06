@@ -15,7 +15,7 @@ public class PingIT extends BaseIT {
     public void pingOKTest() {
         CtrlPingRequest request = CtrlPingRequest.newBuilder().setInput("friend").build();
         CtrlPingResponse response = frontend.ping(request);
-        assertEquals("Hello friend!", response.getOutput());
+        assertEquals("Hub says hello friend!\nRec says hello friend!\n", response.getOutput());
     }
 
     @Test

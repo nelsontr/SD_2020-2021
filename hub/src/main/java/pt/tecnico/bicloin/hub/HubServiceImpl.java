@@ -32,15 +32,10 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
 
 
     HubServiceImpl(String zooHost, String zooPort, String cid) {
-        try{
           _recQuorum = new QuorumFrontend(zooHost, zooPort);
           _rec = new RecFrontend(zooHost, zooPort);
           _cid = Integer.parseInt(cid);
           Runtime.getRuntime().addShutdownHook(new CloseServer());
-        }
-        catch (ZKNamingException zke){
-          System.out.println(zke.getMessage());
-        }
     }
 
 
@@ -53,8 +48,11 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
             return;
         }
 
+        PingRequest newRequest = PingRequest.newBuilder().setInput(input).build();
+
         String output = "Hub says hello  " + input + "!" + "\n";
-        
+        output += "Rec says hello  " + _rec.ping(newRequest).getOutput() + "!" + "\n";
+
 
         CtrlPingResponse response = CtrlPingResponse.newBuilder().setOutput(output).build();
 

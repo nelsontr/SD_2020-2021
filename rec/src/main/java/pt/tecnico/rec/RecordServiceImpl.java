@@ -29,7 +29,7 @@ public class RecordServiceImpl extends RecordGrpc.RecordImplBase {
             return;
         }
 
-        String output = "Hello " + input + "!";
+        String output = input;
         PingResponse response = PingResponse.newBuilder().setOutput(output).build();
 
         responseObserver.onNext(response);
@@ -86,7 +86,7 @@ public class RecordServiceImpl extends RecordGrpc.RecordImplBase {
         synchronized(this){
 
             Record readRecord = _records.get(input);
-            
+
             if(readRecord == null) {
                 readRecord = new Record(input, inputValue, inputSequente, inputCid);
                 _records.put(input, readRecord);
@@ -114,7 +114,7 @@ public class RecordServiceImpl extends RecordGrpc.RecordImplBase {
             responseObserver.onNext(response);
             responseObserver.onCompleted();
         }
-       
+
     }
 
     @Override

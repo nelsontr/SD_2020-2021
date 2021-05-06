@@ -12,6 +12,7 @@ import pt.tecnico.rec.*;
 import pt.tecnico.rec.grpc.*;
 import pt.tecnico.bicloin.hub.grpc.*;
 
+import pt.ulisboa.tecnico.sdis.zk.ZKNamingException;
 
 
 public class HubServiceImpl extends HubGrpc.HubImplBase {
@@ -25,14 +26,19 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
     final static String STATION_RETURNS = "/station/Returns";
 
     private Hub data = new Hub();
-    private RecFrontend _rec;
+    private QuorumFrontend _rec;
     private int _cid;
 
 
     HubServiceImpl(String zooHost, String zooPort, String cid) {
-        _rec = new RecFrontend(zooHost, zooPort);
-        _cid = Integer.parseInt(cid);
-        Runtime.getRuntime().addShutdownHook(new CloseServer());
+        try{
+          _rec = new QuorumFrontend(zooHost, zooPort);
+          _cid = Integer.parseInt(cid);
+          Runtime.getRuntime().addShutdownHook(new CloseServer());
+        }
+        catch (ZKNamingException zke){
+          System.out.println(zke.getMessage());
+        }
     }
 
 

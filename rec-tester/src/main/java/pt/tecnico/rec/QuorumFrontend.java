@@ -83,10 +83,8 @@ public class QuorumFrontend {
               System.exit(-1);
             }
 
-        } catch(ZKNamingException zkne) {
+        } catch(StatusRuntimeException | ZKNamingException zkne) {
             throw new IllegalArgumentException("No servers available!");
-        } catch (StatusRuntimeException sre) {
-            /**/
         }
 
         return replicas;
@@ -108,7 +106,7 @@ public class QuorumFrontend {
 
 
     public WriteResponse write(WriteRequest request) throws StatusRuntimeException{
-        _replicas = null;
+        _replicas.values().forEach(replica -> replica._rChannel.shutdown());
         _replicas = this.findReplicas();
 
         ResponseCollector<WriteResponse> responseCollector = new ResponseCollector<>();
@@ -136,7 +134,7 @@ public class QuorumFrontend {
 
     public ReadResponse read(ReadRequest request) throws StatusRuntimeException{
 
-        _replicas = null;
+        _replicas.values().forEach(replica -> replica._rChannel.shutdown());
         _replicas = this.findReplicas();
 
         ResponseCollector<ReadResponse> responseCollector = new ResponseCollector<>();
@@ -205,8 +203,6 @@ public class QuorumFrontend {
 
 
     public void closeChannel() {
-        _replicas = null;
-        _replicas = this.findReplicas();
-        _replicas.values().forEach(replica -> replica._rChannel.shutdownNow());
+        _replicas.values().forEach(replica -> replica._rChannel.shutdown());
     }
 }

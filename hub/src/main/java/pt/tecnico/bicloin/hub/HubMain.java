@@ -41,8 +41,6 @@ public class HubMain {
 
             final HubServiceImpl impl = new HubServiceImpl(hostZoo, portZoo, instance);
 
-            Runtime.getRuntime().addShutdownHook(new impl.CloseServer());
-
             Server server = ServerBuilder.forPort(Integer.parseInt(port)).addService((BindableService) impl).build();
 
             // Start the server
@@ -80,8 +78,6 @@ public class HubMain {
               zkNaming.rebind(path, host, port);
 
               final HubServiceImpl impl = new HubServiceImpl(zooHost, zooPort, numberInstances);
-
-              Runtime.getRuntime().addShutdownHook(new impl.CloseServer());
 
               Server server = ServerBuilder.forPort(Integer.parseInt(port)).addService((BindableService) impl).build();
 

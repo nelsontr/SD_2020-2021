@@ -120,7 +120,7 @@ public class QuorumFrontend {
                 if (thread.getException() != null) {
                     throw UNKNOWN.withDescription("Unkown procedure error on Clear Thread").asRuntimeException();
                 }
-
+                System.out.println("Quorum frontend received an OK response from a write procedure.");
                 final WriteResponse response = WriteResponse.newBuilder().setResponse(OK_RESPONSE).build();
                 return response;
             } catch (InterruptedException ie) {
@@ -152,6 +152,7 @@ public class QuorumFrontend {
 
                 List<ReadResponse> readResponses = new ArrayList<>(thread.getResponseCollector().getOKResponses());
                 int bestIndex = this.readFindIndex(readResponses);
+                System.out.println("Quorum frontend received a response from a read procedure with tag : " +  readResponses.get(bestIndex).getSequence() + "!" );
                 return readResponses.get(bestIndex);
 
             } catch (InterruptedException ie) {

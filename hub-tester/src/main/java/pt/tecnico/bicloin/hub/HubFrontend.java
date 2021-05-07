@@ -95,15 +95,7 @@ public class HubFrontend {
 
 		while (true) {
 			try {
-				Instant start = Instant.now();
-				BalanceResponse response = stub.balance(request);
-				Instant end = Instant.now();
-				Duration duration = Duration.between(start, end);
-				System.out.println(String.format("%d:%02d:%02d",
-						duration.toMinutes(),
-						duration.toSeconds(),
-						duration.toMillis()));
-				return response;
+				return stub.balance(request);
 			} catch (StatusRuntimeException sre) {
 				errorHandling(sre, "balance", ++tries);
 			}
@@ -115,15 +107,7 @@ public class HubFrontend {
 
 		while (true) {
 			try {
-				Instant start = Instant.now();
-				TopUpResponse response = stub.topUp(request);
-				Instant end = Instant.now();
-				Duration duration = Duration.between(start, end);
-				System.out.println(String.format("%d:%02d:%02d",
-						duration.toMinutes(),
-						duration.toSeconds(),
-						duration.toMillis()));
-				return response;
+				return stub.topUp(request);
 			} catch (StatusRuntimeException sre) {
 				errorHandling(sre, "topUp", ++tries);
 			}
@@ -135,15 +119,7 @@ public class HubFrontend {
 
 		while (true) {
 			try {
-				Instant start = Instant.now();
-				InfoStationResponse response = stub.infoStation(request);
-				Instant end = Instant.now();
-				Duration duration = Duration.between(start, end);
-				System.out.println(String.format("%d:%02d:%02d",
-						duration.toMinutes(),
-						duration.toSeconds(),
-						duration.toMillis()));
-				return response;
+				return stub.infoStation(request);
 			} catch (StatusRuntimeException sre) {
 				errorHandling(sre, "infoStation", ++tries);
 			}
@@ -155,15 +131,7 @@ public class HubFrontend {
 
 		while (true) {
 			try {
-				Instant start = Instant.now();
-				LocateStationResponse response = stub.locateStation(request);
-				Instant end = Instant.now();
-				Duration duration = Duration.between(start, end);
-				System.out.println(String.format("%d:%02d:%02d",
-						duration.toMinutes(),
-						duration.toSeconds(),
-						duration.toMillis()));
-				return response;
+				return stub.locateStation(request);
 			} catch (StatusRuntimeException sre) {
 				errorHandling(sre, "locateStation", ++tries);
 			}
@@ -175,15 +143,7 @@ public class HubFrontend {
 
 		while (true) {
 			try {
-				Instant start = Instant.now();
-				BikeResponse response = stub.bikeUp(request);
-				Instant end = Instant.now();
-				Duration duration = Duration.between(start, end);
-				System.out.println(String.format("%d:%02d:%02d",
-						duration.toMinutes(),
-						duration.toSeconds(),
-						duration.toMillis()));
-				return response;
+				return stub.bikeUp(request);
 			} catch (StatusRuntimeException sre) {
 				errorHandling(sre, "bikeUp", ++tries);
 			}
@@ -195,15 +155,7 @@ public class HubFrontend {
 
 		while (true) {
 			try {
-				Instant start = Instant.now();
-				BikeResponse response = stub.bikeDown(request);
-				Instant end = Instant.now();
-				Duration duration = Duration.between(start, end);
-				System.out.println(String.format("%d:%02d:%02d",
-						duration.toMinutes(),
-						duration.toSeconds(),
-						duration.toMillis()));
-				return response;
+				return stub.bikeDown(request);
 			} catch (StatusRuntimeException sre) {
 				errorHandling(sre, "bikeDown", ++tries);
 			}
@@ -251,15 +203,7 @@ public class HubFrontend {
 
 		while (true) {
 			try {
-				Instant start = Instant.now();
-				CtrlInitResponse response = stub.ctrlInit(request);
-				Instant end = Instant.now();
-				Duration duration = Duration.between(start, end);
-				System.out.println(String.format("%d:%02d:%02d",
-						duration.toMinutes(),
-						duration.toSeconds(),
-						duration.toMillis()));
-				return response;
+				return stub.ctrlInit(request);
 			} catch (StatusRuntimeException sre) {
 				errorHandling(sre, "ctrInit", ++tries);
 			}
@@ -271,15 +215,7 @@ public class HubFrontend {
 
 		while (true) {
 			try {
-				Instant start = Instant.now();
-				CtrlClearResponse response = stub.ctrlClear(request);
-				Instant end = Instant.now();
-				Duration duration = Duration.between(start, end);
-				System.out.println(String.format("%d:%02d:%02d",
-						duration.toMinutes(),
-						duration.toSeconds(),
-						duration.toMillis()));
-				return response;
+				return stub.ctrlClear(request);
 			} catch (StatusRuntimeException sre) {
 				errorHandling(sre, "ctrlClear", ++tries);
 			}

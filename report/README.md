@@ -28,7 +28,7 @@ O seguinte projeto apresenta uma versão do protocolo de registo coerente. O sis
 
  Seja `N` o total das réplicas existentes do servidor rec, e tendo que `N = 2f + 1`, o protocolo de registo coerente tolera no máximo `f` servidores. Isto implica que só poderão falhar `(N-1)/2` servidores, ou seja, uma minoria de gestores de rec em falha em simultâneo. Na implementação adotada, só é aceite um número de réplicas ímpar, de forma a simplificar o cálculo das faltas toleradas. 
 
-Não são toleradas incoerências de informação. Os quorums Q representam no mínimo a maioria das réplicas existentes. Relembremos que tendo `N = 2f +1` , o tamanho de um dado quórum será `f + 1`. 
+Não são toleradas incoerências de informação. Os quóruns Q representam no mínimo a maioria das réplicas existentes. Relembremos que tendo `N = 2f +1` , o tamanho de um dado quórum será `f + 1`. 
 
 Não são toleradas faltas arbitrárias/bizantinas. Existem faltas silenciosas que são toleradas. O fecho da janela do terminal , a invocação do comando `Ctrl+C` ou `kill -9` , desencadeia um sinal `SIGKILL` que fechará os canais de todas as réplicas existentes. O processo pode ser colocado em pausa através de um `Ctrl+Z` ou do comando `kill -20` e a sua atividade poderá ser resolvida por meio do `fg` ou do comando `kill -18`.
 
@@ -39,28 +39,28 @@ A implementação permite um número de réplicas dinâmico, desde que o total d
 
 O protocolo de registo coerente com uso de quóruns garante que cada quórum de escrita tem pelo menos uma réplica em comum com cada quórum de leitura ou quórum de escrita. Isto é garantido, pois  o tamanho de um quórum para um dado sistema é sempre maior que a metade das réplicas existentes no mesmo . 
 
-As tags dos registos são compostas por:
+As *tags* dos registos são compostas por:
 
-* seq - número de sequência da escrita que deu origem à versão. Incrementado a cada atualização do registo.
+* *seq* - número de sequência da escrita que deu origem à versão. Incrementado a cada atualização do registo.
 
-* cid - identificador do cliente que escreveu essa versão (assume-se que cada cliente tem um cid único). O cid do cliente corresponderá à instância que o cliente representa. 
+* *cid* - identificador do cliente que escreveu essa versão (assume-se que cada cliente tem um cid único). O *cid* do cliente corresponderá à instância que o cliente representa. 
 
-Uma tag é maior que outra se seq1 > seq2 . Caso seq1 = seq2 , a maior tag será a que possua o maior cid. 
+Uma *tag* é maior que outra se *seq1* > *seq2* . Caso *seq1* = *seq2* , a maior *tag* será a que possua o maior *cid*. 
 
-Na leitura:
+**Na leitura:**
 
-Cliente:	
+Cliente:
 
 1. Envia read() para todas as réplicas
 2. Aguarda por respostas de um quórum (ou seja, f+1 respostas) 
 3. Seja maxVal o valor que recebeu associado à maior tag 
 4. Retorna maxVal
 
-Na escrita:
+**Na escrita:**
 
 Cliente: 	
-1. Executa leitura para obter a maior tag maxtag = <seq,cid>
-2. Atualiza a versão da tag : newtag =  <seq +1, my_cid>
+1. Executa leitura para obter a maior *tag* maxtag = <*seq*,*cid*>
+2. Atualiza a versão da *tag* : newtag =  <*seq* +1, *my_cid*>
 3. Envia write(val, newtag) a todas as réplicas 
 4. Espera por respostas de um quórum (ou seja, f+1 respostas) 
 5. Retorna ao cliente.
@@ -87,17 +87,31 @@ Na solução apresentada, não foi necessário implementar a política de `write
 
 ## Medições de desempenho
 
-_(Tabela-resumo)_
+### Testes manuais
 
-_(explicação)_
+|            Test | Write | Read | Total (W+R) | Elapsed Time | Average Time (W+R) |
+| --------------: | :---: | :--: | :---------: | :----------: | :----------------: |
+| tripleCMD.txt |  117  | 144  |     261     |   1.350 s    |    0.005 s/ Ins    |
+| balance.txt |  102  | 102  |     204     |   1.140 s    |    0.006 s/ Ins    |
+| comands.txt |  39   |  48  |     87      |   1.380 s    |    0.016 s/ Ins    |
+
+> Estes testes encontram-se na pasta [app](../app/), que está na diretoria *root* do nosso projeto.
+
+### Testes automáticos
+
+|            Test | Write | Read | Total (W+R) | Elapsed Time | Average Time (W+R) |
+| --------------: | :---: | :--: | :---------: | :----------: | :----------------: |
+|      hub-tester |  828  | 159  |     987     |   52.542 s   |    0.053 s/ Ins    |
+|      rec-tester |   6   |  9   |     15      |   6.830 s    |   0.455 s / Ins    |
+
+### Explicações
+
+A distinção entre manuais e automáticos foi feita, uma vez que os automáticos são verificados a partir do sistema maven, que leva ao tempo de compilação maior por este informar o cliente do estado do seu processo.
+
+Tanto nos testes manuais como nos testes automáticos, foi possível ver uma melhoria nos tempos médios com o aumento do numero total de instruções. Nos testes manuais o maior tempo por instrução foi tido pelo teste com menor numero total de instruções ([commands.txt](../app/commands.txt)); O mesmo verifica-se nos testes automáticos, tendo menor numero de instruções nos testes automáticos, o rec-tester foi o que teve maior *average time*.
 
 ## Opções de implementação
 
 Decidimos implementar a versão completa do protocolo de registo coerente sem uso da política write-back. De forma a encapsular lógicas diferentes no que diz respeito aos pedidos realizados nas réplicas do rec, existem dois front-ends para o mesmo. O RecFrontend efetua os pedidos de diagnóstico do sistema `ping` e `sys_status`. O `QuorumFrontend` é onde se encontra implementado o protocolo para as leituras e as escritas. 
 
- Não nos foi possível efetuar optimizações, pelo que não serão apresentados dados comparativos entre versões. Se tivéssemos chegado a esta instância teríamos experiementado a variante ao protocolo com pesos variáveis, que permite dar mais peso a réplicas com alguma característica desejável. Uma vez que são efetuadas mais leituras que escritas, teríamos testado o impacto de atribuir mais peso a quóruns de leitura. 
-
-
-## Notas finais
-
-_(Algo mais a dizer?)_
+Não nos foi possível efetuar optimizações, pelo que não serão apresentados dados comparativos entre versões. Se tivéssemos chegado a esta instância teríamos experimentado a variante ao protocolo com pesos variáveis, que permite dar mais peso a réplicas com alguma característica desejável.

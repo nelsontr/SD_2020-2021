@@ -56,7 +56,7 @@ Para proceder aos testes, é preciso em primeiro lugar lançar o servidor *hub*.
 Para isso, basta ir à pasta *root* do projeto e correr os seguintes comandos:
 
 ```sh
-$ ./hub/target/appassembler/bin/hub localhost 2181 localhost 8081 1 users.csv stations.csv initRec
+$ ./hub/target/appassembler/bin/hub localhost 2181 localhost 8081 1 users.csv stations.csv
 ```
 **Nota:** Para poder correr o script *app* diretamente é necessário fazer `mvn install` e adicionar ao *PATH* ou utilizar diretamente os executáveis gerados na pasta `target/appassembler/bin/`.
 

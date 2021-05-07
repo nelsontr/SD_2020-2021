@@ -1,8 +1,9 @@
 package pt.tecnico.bicloin.hub;
 
-import org.junit.jupiter.api.Test;
-import pt.tecnico.bicloin.hub.grpc.*;
 import io.grpc.StatusRuntimeException;
+import org.junit.jupiter.api.Test;
+import pt.tecnico.bicloin.hub.grpc.InfoStationRequest;
+import pt.tecnico.bicloin.hub.grpc.InfoStationResponse;
 
 import static io.grpc.Status.NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.assertEquals;

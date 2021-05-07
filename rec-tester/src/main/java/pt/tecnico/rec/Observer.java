@@ -1,14 +1,14 @@
 package pt.tecnico.rec;
 
-import static io.grpc.Status.UNKNOWN;
-
 import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
+
+import static io.grpc.Status.UNKNOWN;
 
 
 public class Observer<ResponseType> implements StreamObserver<ResponseType> {
 
-    private ResponseCollector<ResponseType>  _responseCollector;
+    private ResponseCollector<ResponseType> _responseCollector;
 
     Observer(ResponseCollector<ResponseType> responses) {
         _responseCollector = responses;
@@ -26,7 +26,7 @@ public class Observer<ResponseType> implements StreamObserver<ResponseType> {
         StatusRuntimeException sre;
         try {
             sre = (StatusRuntimeException) throwable;
-        } catch ( ClassCastException cce) {
+        } catch (ClassCastException cce) {
             sre = UNKNOWN.asRuntimeException();
         }
         synchronized (_responseCollector) {
@@ -39,5 +39,5 @@ public class Observer<ResponseType> implements StreamObserver<ResponseType> {
     public void onCompleted() {
         System.out.println("Finished procedure.");
     }
-    
+
 }

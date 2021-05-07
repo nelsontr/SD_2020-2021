@@ -1,7 +1,9 @@
 package pt.tecnico.bicloin.hub;
 
 import org.junit.jupiter.api.Test;
-import pt.tecnico.bicloin.hub.grpc.*;
+import pt.tecnico.bicloin.hub.grpc.BalanceRequest;
+import pt.tecnico.bicloin.hub.grpc.BikeRequest;
+import pt.tecnico.bicloin.hub.grpc.TopUpRequest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

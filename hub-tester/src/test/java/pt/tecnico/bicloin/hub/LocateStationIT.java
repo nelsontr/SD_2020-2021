@@ -1,10 +1,12 @@
 package pt.tecnico.bicloin.hub;
 
 import org.junit.jupiter.api.Test;
-import pt.tecnico.bicloin.hub.grpc.*;
+import pt.tecnico.bicloin.hub.grpc.LocateStationRequest;
+import pt.tecnico.bicloin.hub.grpc.LocateStationResponse;
+import pt.tecnico.bicloin.hub.grpc.Scan;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LocateStationIT extends BaseIT {
 

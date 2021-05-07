@@ -1,9 +1,9 @@
 package pt.tecnico.bicloin.hub;
 
-import pt.tecnico.bicloin.hub.grpc.*;
-
 import io.grpc.StatusRuntimeException;
 import org.junit.jupiter.api.Test;
+import pt.tecnico.bicloin.hub.grpc.CtrlPingRequest;
+import pt.tecnico.bicloin.hub.grpc.CtrlPingResponse;
 
 import static io.grpc.Status.INVALID_ARGUMENT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -22,7 +22,7 @@ public class PingIT extends BaseIT {
     public void emptyPingTest() {
         CtrlPingRequest request = CtrlPingRequest.newBuilder().setInput("").build();
         assertEquals(INVALID_ARGUMENT.getCode(),
-        assertThrows(StatusRuntimeException.class, () -> frontend.ping(request))
+                assertThrows(StatusRuntimeException.class, () -> frontend.ping(request))
                         .getStatus()
                         .getCode());
     }

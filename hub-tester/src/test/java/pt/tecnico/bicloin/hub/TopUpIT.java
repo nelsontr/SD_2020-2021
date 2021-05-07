@@ -1,12 +1,12 @@
 package pt.tecnico.bicloin.hub;
 
-import pt.tecnico.bicloin.hub.grpc.*;
-
-import org.junit.jupiter.api.Test;
 import io.grpc.StatusRuntimeException;
+import org.junit.jupiter.api.Test;
+import pt.tecnico.bicloin.hub.grpc.BalanceRequest;
+import pt.tecnico.bicloin.hub.grpc.TopUpRequest;
 
-import static io.grpc.Status.NOT_FOUND;
 import static io.grpc.Status.INVALID_ARGUMENT;
+import static io.grpc.Status.NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 

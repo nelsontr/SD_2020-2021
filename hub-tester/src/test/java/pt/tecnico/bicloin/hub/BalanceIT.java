@@ -1,15 +1,15 @@
 package pt.tecnico.bicloin.hub;
 
-import pt.tecnico.bicloin.hub.grpc.*;
-
-import org.junit.jupiter.api.Test;
 import io.grpc.StatusRuntimeException;
+import org.junit.jupiter.api.Test;
+import pt.tecnico.bicloin.hub.grpc.BalanceRequest;
+import pt.tecnico.bicloin.hub.grpc.BikeRequest;
+import pt.tecnico.bicloin.hub.grpc.BikeResponse;
+import pt.tecnico.bicloin.hub.grpc.TopUpRequest;
 
 import static io.grpc.Status.INVALID_ARGUMENT;
 import static io.grpc.Status.NOT_FOUND;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BalanceIT extends BaseIT {
 
@@ -68,7 +68,7 @@ public class BalanceIT extends BaseIT {
                 .setStake(10).setPhoneNumber(USER_PHONE_1).build();
         int topUpResponse = frontend.topUp(topUpRequest).getBalance();
 
-        assertEquals(balanceBefore+10*10, topUpResponse);
+        assertEquals(balanceBefore + 10 * 10, topUpResponse);
 
         BikeRequest request1 = BikeRequest.newBuilder().setUserName(USER_ID_1).
                 setLat(USER_LAT_1).setLong(USER_LONG_1).setStationId(STATION_ID_1).build();

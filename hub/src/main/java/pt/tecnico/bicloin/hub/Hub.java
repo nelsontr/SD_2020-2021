@@ -1,7 +1,7 @@
 package pt.tecnico.bicloin.hub;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 public class Hub {
     private Map<String, User> _users = new HashMap<>();

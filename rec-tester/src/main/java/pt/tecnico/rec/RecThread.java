@@ -4,15 +4,14 @@ package pt.tecnico.rec;
 public class RecThread<ResponseType> extends Thread {
     private int _failsAllowed;
     private int _acksNeeded;
-    ResponseCollector<ResponseType> _responseCollector;
     Exception _exception;
-
+    ResponseCollector<ResponseType> _responseCollector;
 
 
     RecThread(int maxFails, int minAcks, ResponseCollector<ResponseType> results) {
-        _responseCollector = results;
-        _failsAllowed = maxFails;
         _acksNeeded = minAcks;
+        _failsAllowed = maxFails;
+        _responseCollector = results;
     }
 
     public ResponseCollector<ResponseType> getResponseCollector() {
@@ -20,17 +19,17 @@ public class RecThread<ResponseType> extends Thread {
     }
 
     public Exception getException() {
-		synchronized(this) {
-			return this._exception;
-		}
-	}
+        synchronized (this) {
+            return this._exception;
+        }
+    }
 
     @Override
     public void run() {
         try {
             waitNeededAcks();
 
-            synchronized(this) {
+            synchronized (this) {
                 this.notifyAll();
             }
         } catch (InterruptedException e) {
@@ -39,8 +38,8 @@ public class RecThread<ResponseType> extends Thread {
     }
 
     private void waitNeededAcks() throws InterruptedException {
-        synchronized(_responseCollector) {
-            while ( _responseCollector.getFails() <= _failsAllowed && _responseCollector.getAcks() < _acksNeeded)
+        synchronized (_responseCollector) {
+            while (_responseCollector.getFails() <= _failsAllowed && _responseCollector.getAcks() < _acksNeeded)
                 _responseCollector.wait();
         }
     }

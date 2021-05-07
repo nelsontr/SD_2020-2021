@@ -1,10 +1,10 @@
 package pt.tecnico.rec;
 
-import pt.tecnico.rec.grpc.*;
 import io.grpc.stub.StreamObserver;
+import pt.tecnico.rec.grpc.*;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 import static io.grpc.Status.INVALID_ARGUMENT;
 
@@ -13,7 +13,6 @@ public class RecordServiceImpl extends RecordGrpc.RecordImplBase {
     private final Map<String, Record> _records = new HashMap<>();
 
     private final String OK_RESPONSE = "OK";
-    private final String ERROR_RESPONSE = "ERROR";
     private final String READ_ERROR_RESPONSE = "Read operation requires a Rec name";
     private final String REQUEST_EMPTY = "Request cannot be empty!";
     private final String INTEGER_BELOW_ZERO = "Request came with a inputValue lower than zero!";
@@ -23,7 +22,7 @@ public class RecordServiceImpl extends RecordGrpc.RecordImplBase {
         String input = request.getInput();
 
         if (input == null || input.isBlank()) {
-            synchronized(responseObserver) {
+            synchronized (responseObserver) {
                 responseObserver.onError(INVALID_ARGUMENT.withDescription(REQUEST_EMPTY).asRuntimeException());
             }
             return;
@@ -48,9 +47,9 @@ public class RecordServiceImpl extends RecordGrpc.RecordImplBase {
             return;
         }
 
-        synchronized(this) {
+        synchronized (this) {
             Record readRecord = _records.get(input);
-            if(readRecord == null) {
+            if (readRecord == null) {
                 readRecord = new Record(input, -1, 0, 0);
                 _records.put(input, readRecord);
             }
@@ -83,11 +82,11 @@ public class RecordServiceImpl extends RecordGrpc.RecordImplBase {
         final int inputSequente = request.getSequence();
         final int inputCid = request.getCid();
 
-        synchronized(this){
+        synchronized (this) {
 
             Record readRecord = _records.get(input);
 
-            if(readRecord == null) {
+            if (readRecord == null) {
                 readRecord = new Record(input, inputValue, inputSequente, inputCid);
                 _records.put(input, readRecord);
             } else if (inputSequente > readRecord.getSequence() || (inputSequente == readRecord.getSequence() && inputCid > readRecord.getCid())) {
@@ -106,8 +105,8 @@ public class RecordServiceImpl extends RecordGrpc.RecordImplBase {
 
     @Override
     public void clearRecords(ClearRequest request, StreamObserver<ClearResponse> responseObserver) {
-        synchronized(this){
-             _records.clear();
+        synchronized (this) {
+            _records.clear();
 
             ClearResponse response = ClearResponse.newBuilder().build();
 

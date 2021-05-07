@@ -1,11 +1,10 @@
 package pt.tecnico.bicloin.hub;
 
-import pt.tecnico.bicloin.hub.grpc.*;
-
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import pt.tecnico.bicloin.hub.grpc.CtrlInitRequest;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -43,7 +42,6 @@ public class BaseIT {
     public static final int STATION_COMPENSATION_1 = 4;
 
     public static final String STATION_ID_2 = "stao";
-
     public static final String STATION_NAME_2 = "Sto. Amaro Oeiras";
     final static double STATION_LAT_2 = 38.6867;
     final static double STATION_LONG_2 = -9.3124;
@@ -55,10 +53,6 @@ public class BaseIT {
     public static final String STATION_ID_3 = "ista";
     public static final String STATION_NAME_3 = "Oceanário";
 
-    @BeforeEach
-    public void setUp() {
-        /* EMPTY */
-    }
 
     @BeforeAll
     public static void oneTimeSetup() throws IOException {
@@ -103,12 +97,8 @@ public class BaseIT {
         frontend.ctrlInit(request);
     }
 
-    @AfterEach
-    public void tearDown() {
-    }
-
     @AfterAll
     public static void cleanup() {
-      frontend.closeChannel();
+        frontend.closeChannel();
     }
 }

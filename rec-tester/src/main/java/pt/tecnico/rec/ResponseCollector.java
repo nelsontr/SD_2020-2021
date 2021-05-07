@@ -1,9 +1,9 @@
 package pt.tecnico.rec;
 
+import io.grpc.StatusRuntimeException;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import io.grpc.StatusRuntimeException;
 
 public class ResponseCollector<ResponseType> {
 

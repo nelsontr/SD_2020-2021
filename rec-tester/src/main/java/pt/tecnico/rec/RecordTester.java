@@ -1,7 +1,8 @@
 package pt.tecnico.rec;
 
-import pt.tecnico.rec.grpc.*;
 import io.grpc.StatusRuntimeException;
+import pt.tecnico.rec.grpc.PingRequest;
+import pt.tecnico.rec.grpc.PingResponse;
 
 public class RecordTester {
 

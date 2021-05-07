@@ -3,20 +3,15 @@ package pt.tecnico.rec;
 import io.grpc.BindableService;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
-import pt.tecnico.rec.*;
-
-import pt.tecnico.rec.RecordServiceImpl;
-import java.io.IOException;
-import java.lang.InterruptedException;
 import pt.ulisboa.tecnico.sdis.zk.ZKNaming;
 import pt.ulisboa.tecnico.sdis.zk.ZKNamingException;
 
+import java.io.IOException;
 import java.util.Properties;
-import java.util.Scanner;
 
-public class RecordMain  {
+public class RecordMain {
 
-	public static void main(String[] args) throws IOException , InterruptedException{
+	public static void main(String[] args) throws IOException, InterruptedException {
 		System.out.println(RecordMain.class.getSimpleName());
 
 		// receive and print arguments
@@ -25,7 +20,7 @@ public class RecordMain  {
 			System.out.printf("arg[%d] = %s%n", i, args[i]);
 		}
 
-		if (args.length == 1){
+		if (args.length == 1) {
 			int port = Integer.parseInt(args[0]);
 
 			final BindableService impl = new RecordServiceImpl();
@@ -57,7 +52,7 @@ public class RecordMain  {
 			final String numberInstances = args[4];
 
 
-			String path = "/grpc/bicloin/rec/"+numberInstances;
+			String path = "/grpc/bicloin/rec/" + numberInstances;
 
 			ZKNaming zkNaming = null;
 
@@ -78,13 +73,13 @@ public class RecordMain  {
 
 				// Do not exit the main thread. Wait until server is terminated.
 				server.awaitTermination();
-			}  catch (Exception e) {
+			} catch (Exception e) {
 				System.out.println("Internal Server Error: " + e.getMessage());
-			} finally  {
-				try{
+			} finally {
+				try {
 					if (zkNaming != null) {
-					// remove
-					zkNaming.unbind(path,host,port);
+						// remove
+						zkNaming.unbind(path, host, port);
 					}
 				} catch (ZKNamingException zkne) {
 					System.out.println("ERROR : Unbind zknaming SiloServerApp");

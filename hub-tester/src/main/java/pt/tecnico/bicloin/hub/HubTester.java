@@ -1,7 +1,8 @@
 package pt.tecnico.bicloin.hub;
 
-import pt.tecnico.bicloin.hub.grpc.*;
 import io.grpc.StatusRuntimeException;
+import pt.tecnico.bicloin.hub.grpc.CtrlPingRequest;
+import pt.tecnico.bicloin.hub.grpc.CtrlPingResponse;
 
 public class HubTester {
 

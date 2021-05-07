@@ -1,36 +1,33 @@
 package pt.tecnico.rec;
 
-import pt.tecnico.rec.grpc.*;
-
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
 import io.grpc.Status;
+import io.grpc.StatusRuntimeException;
+import pt.tecnico.rec.grpc.*;
+import pt.ulisboa.tecnico.sdis.zk.ZKNaming;
+import pt.ulisboa.tecnico.sdis.zk.ZKNamingException;
+import pt.ulisboa.tecnico.sdis.zk.ZKRecord;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import io.grpc.ManagedChannel;
-import io.grpc.ManagedChannelBuilder;
-import io.grpc.StatusRuntimeException;
-import pt.ulisboa.tecnico.sdis.zk.ZKNaming;
-import pt.ulisboa.tecnico.sdis.zk.ZKNamingException;
-import pt.ulisboa.tecnico.sdis.zk.ZKRecord;
-
 
 public class RecFrontend {
 
     private ManagedChannel channel;
+    private final ZKNaming zkNaming;
     private RecordGrpc.RecordBlockingStub stub;
     private static final int BEST_EFFORT = 3;
-
-    private final ZKNaming zkNaming;
     private final String path = "/grpc/bicloin/rec";
 
     public RecFrontend(String zooHost, String zooPort, String instance) {
         this.zkNaming = new ZKNaming(zooHost, zooPort);
+
         try {
             ZKRecord record = this.zkNaming.lookup(this.path + "/" + instance);
             createNewChannel(record.getURI());
-            createRecFrontend();
         } catch (ZKNamingException zkne) {
             throw new IllegalArgumentException("Instance " + instance + " does not exist!");
         }
@@ -41,7 +38,6 @@ public class RecFrontend {
 
         try {
             createNewChannel(findRecInstance());
-            createRecFrontend();
         } catch (IllegalArgumentException | ZKNamingException zkne) {
             throw new IllegalArgumentException("No servers available!");
         }
@@ -49,7 +45,6 @@ public class RecFrontend {
 
 
     private String findRecInstance() throws ZKNamingException {
-
         List<ZKRecord> records = new ArrayList<>(this.zkNaming.listRecords(this.path));
 
         int rnd = new Random().nextInt(records.size());
@@ -66,10 +61,6 @@ public class RecFrontend {
             System.out.println("ERROR : Frontend createNewChannel : Could not create channel\n"
                     + sre.getStatus().getDescription());
         }
-    }
-
-    private void createRecFrontend() {
-        //Nothing for now
     }
 
     public void errorHandling(StatusRuntimeException sre, String function, int tries) {
@@ -98,30 +89,6 @@ public class RecFrontend {
         }
     }
 
-    public WriteResponse write(WriteRequest request) {
-        int tries = 0;
-
-        while (true) {
-            try {
-                return stub.write(request);
-            } catch (StatusRuntimeException sre) {
-                errorHandling(sre, "write", ++tries);
-            }
-        }
-    }
-
-    public ReadResponse read(ReadRequest request) {
-        int tries = 0;
-
-        while (true) {
-            try {
-                return stub.read(request);
-            } catch (StatusRuntimeException sre) {
-                errorHandling(sre, "read", ++tries);
-            }
-        }
-    }
-
     public ClearResponse clear(ClearRequest request) {
         int tries = 0;
 
@@ -134,19 +101,19 @@ public class RecFrontend {
         }
     }
 
-    String sysStatusIndividual(ZKRecord record, SysStatRequest request){
-      int tries = 0;
+    String sysStatusIndividual(ZKRecord record, SysStatRequest request) {
+        int tries = 0;
 
-      while(true){
-        try {
-          createNewChannel(record.getURI());
-          return "\n"+record.getPath()+": "+
-                    stub.sysStat(request).getStatus();
-        } catch (StatusRuntimeException sre) {
-            if (++tries == BEST_EFFORT) return "\n"+record.getPath()+": DOWN";
-            else errorHandling(sre, "sysStatusInd", tries);
+        while (true) {
+            try {
+                createNewChannel(record.getURI());
+                return "\n" + record.getPath() + ": " +
+                        stub.sysStat(request).getStatus();
+            } catch (StatusRuntimeException sre) {
+                if (++tries == BEST_EFFORT) return "\n" + record.getPath() + ": DOWN";
+                else errorHandling(sre, "sysStatusInd", tries);
+            }
         }
-      }
     }
 
 
@@ -156,14 +123,14 @@ public class RecFrontend {
 
         while (true) {
             try {
-              List<ZKRecord> records = new ArrayList<>(this.zkNaming.listRecords(this.path));
+                List<ZKRecord> records = new ArrayList<>(this.zkNaming.listRecords(this.path));
 
-              for(ZKRecord record: records){
-                responseString += sysStatusIndividual(record, request);
-              }
+                for (ZKRecord record : records) {
+                    responseString += sysStatusIndividual(record, request);
+                }
 
-              this.stub = oldStub;
-              return SysStatResponse.newBuilder().setStatus(responseString).build();
+                this.stub = oldStub;
+                return SysStatResponse.newBuilder().setStatus(responseString).build();
             } catch (ZKNamingException sre) {
                 System.out.println("WARN <sysStatus> : Cant connect to server!");
             }

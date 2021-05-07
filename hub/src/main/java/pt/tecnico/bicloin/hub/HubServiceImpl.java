@@ -1,18 +1,14 @@
 package pt.tecnico.bicloin.hub;
 
 import io.grpc.stub.StreamObserver;
+import pt.tecnico.bicloin.hub.grpc.*;
+import pt.tecnico.rec.QuorumFrontend;
+import pt.tecnico.rec.RecFrontend;
+import pt.tecnico.rec.grpc.*;
 
 import java.util.*;
 
-import static io.grpc.Status.UNKNOWN;
-import static io.grpc.Status.NOT_FOUND;
-import static io.grpc.Status.INVALID_ARGUMENT;
-
-import pt.tecnico.rec.*;
-import pt.tecnico.rec.grpc.*;
-import pt.tecnico.bicloin.hub.grpc.*;
-
-import pt.ulisboa.tecnico.sdis.zk.ZKNamingException;
+import static io.grpc.Status.*;
 
 
 public class HubServiceImpl extends HubGrpc.HubImplBase {
@@ -32,9 +28,9 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
 
 
     HubServiceImpl(String zooHost, String zooPort, String cid) {
-          _recQuorum = new QuorumFrontend(zooHost, zooPort);
-          _rec = new RecFrontend(zooHost, zooPort);
-          _cid = Integer.parseInt(cid);
+        _recQuorum = new QuorumFrontend(zooHost, zooPort);
+        _rec = new RecFrontend(zooHost, zooPort);
+        _cid = Integer.parseInt(cid);
     }
 
 
@@ -69,7 +65,7 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
         }
 
         ReadRequest balanceRequest = ReadRequest.newBuilder().setName(userName + USER_BALANCE).build();
-        synchronized(this) {
+        synchronized (this) {
             int balance = _recQuorum.read(balanceRequest).getValue();
 
             if (balance == -1 && !data.existingUser(userName)) {
@@ -117,7 +113,7 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
             balance += stake * 10;
 
             WriteRequest newBalanceRequest = WriteRequest.newBuilder().setName(userName + USER_BALANCE).setIntValue(balance)
-              .setSequence(balanceSequence).setCid(this._cid).build();
+                    .setSequence(balanceSequence).setCid(this._cid).build();
             if (!_recQuorum.write(newBalanceRequest).getResponse().equals("OK")) {
                 responseObserver.onError(UNKNOWN.withDescription("Couldn't write").asRuntimeException());
                 return;
@@ -205,17 +201,17 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
         LocateStationResponse.Builder b = LocateStationResponse.newBuilder();
 
         synchronized (this) {
-             for (String key : keys) {
-            double lt = data.getStation(key).getLat();
-            double lg = data.getStation(key).getLong();
-            int dockCapacity = data.getStation(key).getDockCapacity();
-            int prize = data.getStation(key).getPrize();
-            ReadRequest availableBikes = ReadRequest.newBuilder().setName(key + STATION_BIKES_AVAILABLE).build();
-            int bikesAvailable = _recQuorum.read(availableBikes).getValue();
-            bikesAvailable = (bikesAvailable == -1) ? 0 : bikesAvailable;
+            for (String key : keys) {
+                double lt = data.getStation(key).getLat();
+                double lg = data.getStation(key).getLong();
+                int dockCapacity = data.getStation(key).getDockCapacity();
+                int prize = data.getStation(key).getPrize();
+                ReadRequest availableBikes = ReadRequest.newBuilder().setName(key + STATION_BIKES_AVAILABLE).build();
+                int bikesAvailable = _recQuorum.read(availableBikes).getValue();
+                bikesAvailable = (bikesAvailable == -1) ? 0 : bikesAvailable;
 
-            int distance = orderedResults.get(key);
-            b.addScan(Scan.newBuilder().setStationId(key).setLat(lt).setLong(lg).setDockCapacity(dockCapacity).setPrize(prize).setAvailableBikes(bikesAvailable).setDistance(distance).build());
+                int distance = orderedResults.get(key);
+                b.addScan(Scan.newBuilder().setStationId(key).setLat(lt).setLong(lg).setDockCapacity(dockCapacity).setPrize(prize).setAvailableBikes(bikesAvailable).setDistance(distance).build());
             }
 
             LocateStationResponse response = b.build();
@@ -239,7 +235,7 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
 
         ReadRequest availableBikesRequest = ReadRequest.newBuilder().setName(stationId + STATION_BIKES_AVAILABLE).build();
 
-        synchronized (this){
+        synchronized (this) {
             ReadResponse availableBikesResponse = _recQuorum.read(availableBikesRequest);
             int availableBikes = availableBikesResponse.getValue();
             int availableBikesSequence = availableBikesResponse.getSequence() + 1;
@@ -253,7 +249,7 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
                 int balanceSequence = balanceResponse.getSequence() + 1;
                 if (balance >= 0) {
                     WriteRequest newAvailableBikesRequest = WriteRequest.newBuilder().setName(stationId + STATION_BIKES_AVAILABLE)
-                      .setIntValue(availableBikes - 1).setSequence(availableBikesSequence).setCid(this._cid).build();
+                            .setIntValue(availableBikes - 1).setSequence(availableBikesSequence).setCid(this._cid).build();
                     _recQuorum.write(newAvailableBikesRequest);
                     ReadRequest pickupsRequest = ReadRequest.newBuilder().setName(stationId + STATION_PICKUPS).build();
                     ReadResponse pickupsResponse = _recQuorum.read(pickupsRequest);
@@ -262,11 +258,11 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
                     pickups = (pickups == -1) ? 1 : ++pickups;
 
                     WriteRequest newPickupsRequest = WriteRequest.newBuilder().setName(stationId + STATION_PICKUPS)
-                      .setIntValue(pickups).setSequence(pickupsSequence).setCid(this._cid).build();
+                            .setIntValue(pickups).setSequence(pickupsSequence).setCid(this._cid).build();
                     _recQuorum.write(newPickupsRequest);
 
                     WriteRequest newBalanceRequest = WriteRequest.newBuilder().setName(userName + USER_BALANCE)
-                      .setIntValue(balance).setSequence(balanceSequence).setCid(this._cid).build();
+                            .setIntValue(balance).setSequence(balanceSequence).setCid(this._cid).build();
                     _recQuorum.write(newBalanceRequest);
                     response = BikeResponse.newBuilder().setStatus(OK).build();
                 } else response = BikeResponse.newBuilder().setStatus(ERROR_NO_MONEY).build();
@@ -292,7 +288,7 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
 
         synchronized (this) {
             if (distance >= 200) {
-            response = BikeResponse.newBuilder().setStatus(ERROR).build();
+                response = BikeResponse.newBuilder().setStatus(ERROR).build();
             } else {
                 int prize = station.getPrize();
 
@@ -306,7 +302,7 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
                 ReadResponse balanceResponse = _recQuorum.read(balanceRequest);
                 int balance = balanceResponse.getValue();
                 int balanceSequence = balanceResponse.getSequence() + 1;
-                balance = (balance == -1) ? prize : balance+prize;
+                balance = (balance == -1) ? prize : balance + prize;
 
                 ReadRequest availableBikesRequest = ReadRequest.newBuilder().setName(stationId + STATION_BIKES_AVAILABLE).build();
                 ReadResponse availableBikesResponse = _recQuorum.read(availableBikesRequest);
@@ -314,13 +310,13 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
                 int availableBikesSequence = availableBikesResponse.getSequence() + 1;
 
                 WriteRequest newReturnsRequest = WriteRequest.newBuilder().setName(stationId + STATION_RETURNS)
-                  .setIntValue(returns).setSequence(returnsSequence).setCid(this._cid).build();
+                        .setIntValue(returns).setSequence(returnsSequence).setCid(this._cid).build();
                 _recQuorum.write(newReturnsRequest);
                 WriteRequest newBalanceRequest = WriteRequest.newBuilder().setName(userName + USER_BALANCE)
-                  .setIntValue(balance).setSequence(balanceSequence).setCid(this._cid).build();
+                        .setIntValue(balance).setSequence(balanceSequence).setCid(this._cid).build();
                 _recQuorum.write(newBalanceRequest);
                 WriteRequest newAvailableBikesRequest = WriteRequest.newBuilder().setName(stationId + STATION_BIKES_AVAILABLE)
-                  .setIntValue(availableBikes).setSequence(availableBikesSequence).setCid(this._cid).build();
+                        .setIntValue(availableBikes).setSequence(availableBikesSequence).setCid(this._cid).build();
                 _recQuorum.write(newAvailableBikesRequest);
 
                 response = BikeResponse.newBuilder().setStatus(OK).build();
@@ -448,10 +444,10 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
     final class CloseServer extends Thread {
         @Override
         public void run() {
-          synchronized (this){
-            _rec.closeChannel();
-            _recQuorum.closeChannel();
-          }
+            synchronized (this) {
+                _rec.closeChannel();
+                _recQuorum.closeChannel();
+            }
         }
     }
 }

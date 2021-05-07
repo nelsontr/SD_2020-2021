@@ -10,6 +10,8 @@ Para lançar o *ZooKeeper*, ir à pasta `zookeeper/bin` e correr o comando `./zk
 
 É possível também lançar a consola de interação com o *ZooKeeper*, novamente na pasta `zookeeper/bin` e correr `./zkCli.sh` (Linux) ou `zkCli.cmd` (Windows).
 
+> Antes de começar a utilizar o sistema, é necessário verificar que não existem nós na consola do cliente do zookeper (`/grpc/bicloin/hub` e `/grpc/bicloin/rec`).
+
 ### 1.2. Compilar o projeto
 
 Primeiramente, é necessário compilar e instalar todos os módulos e suas dependências --  *rec*, *hub*, *app*, etc.
@@ -31,6 +33,8 @@ $ ./rec/target/appassembler/bin/rec localhost 2181 localhost 8091 1
 
 Este comando vai colocar o *rec* no endereço *localhost* e na porta *8091*.
 
+É necessário iniciar um número ímpar de servidores *rec*, em terminais diferentes. Cada servidor tem de ter uma porta diferente. Por exemplo: instância 1 na porta 8091, instância 2 na porta 8092, instância 3 na porta 8093, etc...
+
 #### 1.3.1 Testar o *rec*
 
 Para confirmar o funcionamento do servidor com um *ping*, fazer na pasta *root*:
@@ -48,7 +52,7 @@ $ mvn verify
 
 Todos os testes devem ser executados sem erros. O(s) **único(s)** erro(s) que pode acontecer é no terminal do *rec*, uma vez que ao correr os testes origina erros de servidor.
 
-> ⚠ **IMPORTANTE** ⚠ <br/>É necessário reiniciar o *rec* (demonstração na secção [1.3](#1-3-lançar-o-rec)) após compilar o *rec-tester* e após executar o comando `mvn verify`.
+> ⚠ **IMPORTANTE** ⚠ <br/>É necessário reiniciar o *rec* (demonstração na secção [1.3](#1-3-lançar-o-rec)) após compilar o *rec-tester* e/ou após executar o comando `mvn verify`.
 
 ### 1.4. Lançar o *hub*
 
@@ -61,6 +65,8 @@ $ ./hub/target/appassembler/bin/hub localhost 2181 localhost 8081 1 users.csv st
 **Nota:** Para poder correr o script *app* diretamente é necessário fazer `mvn install` e adicionar ao *PATH* ou utilizar diretamente os executáveis gerados na pasta `target/appassembler/bin/`.
 
 Este comando vai colocar o *hub* no endereço *localhost* e na porta *8081*.
+
+É só necessario 1 instância do server *hub*, executando como demonstrado em cima
 
 #### 1.4.1 Testar o *hub*
 
@@ -83,6 +89,8 @@ Todos os testes devem ser executados sem erros. O(s) **único(s)** erro(s) que p
 
 ### 1.5. *App*
 
+> ⚠ **IMPORTANTE** ⚠ <br/>É necessário reiniciar o *hub* e *rec* (demonstração na secção [1.3](#1-3-lançar-o-rec) para o *rec* e na secção [1.4](#1-4-lançar-o-hub) para o *hub*) após compilar o *hub-tester* e/ou após executar o comando `mvn verify`. Caso não o faça, a app poderá não funcionar.
+
 Para isso, basta ir à pasta *root* do projeto e correr os seguintes comandos:
 
 ```sh
@@ -90,8 +98,6 @@ $ ./app/target/appassembler/bin/app localhost 2181 joao +35191102030 38.737613 -
 ```
 
 **Nota:** Para poder correr o script *app* diretamente é necessário fazer `mvn install` e adicionar ao *PATH* ou utilizar diretamente os executáveis gerados na pasta `target/appassembler/bin/`.
-
-Abrir outra consola, e iniciar a aplicação com o utilizador maria.
 
 Depois de lançar todos os componentes, tal como descrito acima, já temos o que é necessário para usar o sistema através dos comandos.
 

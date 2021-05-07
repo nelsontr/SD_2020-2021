@@ -32,7 +32,8 @@ public class QuorumFrontend {
             _rStub = stub;
         }
     }
-
+    private int reads;
+    private int writes;
     private int _minAcks;
     private int _maxRecDown;
     private String _zooHost;
@@ -112,6 +113,9 @@ public class QuorumFrontend {
         RecThread<WriteResponse> thread = new RecThread<>(_minAcks, _maxRecDown, responseCollector);
         synchronized (thread) {
             thread.start();
+            for (Replica x: _replicas.values()){
+                writes++;
+            }
             _replicas.values().forEach(replica -> replica._rStub.write(request, observer));
 
             try {
@@ -122,6 +126,7 @@ public class QuorumFrontend {
                 }
                 System.out.println("Quorum frontend received an OK response from a write procedure.");
                 final WriteResponse response = WriteResponse.newBuilder().setResponse(OK_RESPONSE).build();
+                System.out.println("writes: "+writes+ " reads: "+reads+"\n----");
                 return response;
             } catch (InterruptedException ie) {
                 throw UNKNOWN.withDescription("Unkown procedure error on Write").asRuntimeException();
@@ -141,6 +146,9 @@ public class QuorumFrontend {
 
         synchronized (thread) {
             thread.start();
+            for (Replica x: _replicas.values()){
+                reads++;
+            }
             _replicas.values().forEach(replica -> replica._rStub.read(request, observer));
 
             try {
@@ -153,6 +161,7 @@ public class QuorumFrontend {
                 List<ReadResponse> readResponses = new ArrayList<>(thread.getResponseCollector().getOKResponses());
                 int bestIndex = this.readFindIndex(readResponses);
                 System.out.println("Quorum frontend received a response from a read procedure with tag : " +  readResponses.get(bestIndex).getSequence() + "!" );
+                System.out.println("writes: "+writes+ " reads: "+reads+"\n----");
                 return readResponses.get(bestIndex);
 
             } catch (InterruptedException ie) {

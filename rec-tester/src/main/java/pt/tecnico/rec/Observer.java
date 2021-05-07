@@ -37,7 +37,7 @@ public class Observer<ResponseType> implements StreamObserver<ResponseType> {
 
     @Override
     public void onCompleted() {
-        
+        //System.out.println("Finished procedure.");
     }
 
 }

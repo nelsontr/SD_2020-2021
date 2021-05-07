@@ -1,0 +1,119 @@
+//
+// Protocol buffers definition
+//
+syntax = "proto3";
+package pt.tecnico.bicloin.hub.grpc;
+option java_multiple_files = true;
+
+message CtrlPingRequest {
+  string input = 1;
+}
+
+message CtrlPingResponse {
+	string output = 1;
+}
+
+message BalanceRequest{
+  string userName = 1;
+}
+
+message BalanceResponse{
+  int32 balance = 1;
+}
+
+message TopUpRequest{
+  string userName = 1;
+  int32 stake = 2;
+  string phoneNumber = 3;
+}
+
+message TopUpResponse{
+  int32 balance = 1;
+}
+
+message InfoStationRequest{
+  string stationId = 1;
+}
+
+message InfoStationResponse{
+  string name = 1;
+  double lat = 2;
+  double long = 3;
+  int32 dockCapacity = 4;
+  int32 prize = 5;
+  int32 availableBikes = 6;
+  int32 pickups = 7;
+  int32 returns = 8;
+}
+
+message LocateStationRequest{
+  double lat = 1;
+  double long = 2;
+  int32 numStations = 3;
+}
+
+message Scan {
+  string stationId = 1;
+  double lat = 2;
+  double long = 3;
+  int32 dockCapacity = 4;
+  int32 prize = 5;
+  int32 availableBikes = 6;
+  int32 distance = 7;
+}
+
+message LocateStationResponse{
+  repeated Scan scan = 1;
+}
+
+message BikeRequest{
+  string userName = 1;
+  double lat = 2;
+  double long = 3;
+  string stationId = 4;
+}
+
+message BikeResponse{
+  string status = 1;
+}
+
+enum SysStatusResult{
+  UP = 0;
+  DOWN = 1;
+}
+
+message SysStatusRequest{
+  // Doesn't require any stuff
+}
+
+message SysStatusResponse{
+  string hubStatus = 1;
+  string recStatus = 2;
+}
+
+message CtrlClearRequest {
+}
+message CtrlClearResponse {
+}
+
+message CtrlInitRequest {
+  string input = 1;
+  bool recInitOption = 2;
+}
+
+message CtrlInitResponse {
+
+}
+
+service Hub {
+  rpc ctrlInit(CtrlInitRequest) returns (CtrlInitResponse);
+  rpc ctrlClear(CtrlClearRequest) returns (CtrlClearResponse);
+  rpc ping(CtrlPingRequest) returns (CtrlPingResponse);
+  rpc balance(BalanceRequest) returns (BalanceResponse);
+  rpc topUp(TopUpRequest) returns (TopUpResponse);
+  rpc infoStation(InfoStationRequest) returns (InfoStationResponse);
+  rpc locateStation(LocateStationRequest) returns (LocateStationResponse);
+  rpc bikeUp(BikeRequest) returns (BikeResponse);
+  rpc bikeDown(BikeRequest) returns (BikeResponse);
+  rpc sysStatus(SysStatusRequest) returns (SysStatusResponse);
+}

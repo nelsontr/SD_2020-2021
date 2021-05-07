@@ -93,7 +93,7 @@ public class BaseIT {
             throw fife;
         }
 
-        CtrlInitRequest request = CtrlInitRequest.newBuilder().setInput(initialData).setRecInitOption(true).build();
+        CtrlInitRequest request = CtrlInitRequest.newBuilder().setInput(initialData).setRecInitOption(false).build();
         frontend.ctrlInit(request);
     }
 

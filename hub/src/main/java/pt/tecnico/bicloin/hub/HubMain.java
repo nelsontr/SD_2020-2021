@@ -31,7 +31,7 @@ public class HubMain {
         String portZoo = p.getProperty("zoo.port");
         String instance = p.getProperty("instance");
 
-        if (args.length == 5) {
+        if (args.length == 6) {
 
             String port = p.getProperty("server.port");
 
@@ -48,8 +48,8 @@ public class HubMain {
             server.awaitTermination();
         } else {
             //Check arguments
-            if (args.length > 8 || args.length < 7) {
-                System.err.println("Argument(s) missing!");
+            if (args.length > 8 || args.length < 6) {
+                System.err.println("Invalid length of arguments!");
                 return;
             }
 

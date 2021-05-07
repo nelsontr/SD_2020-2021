@@ -20,7 +20,7 @@ public class InfoStationIT extends BaseIT {
         assertEquals(STATION_LONG_1, response1.getLong());
         assertEquals(STATION_DOCK_CAPACITY_1, response1.getDockCapacity());
         assertEquals(STATION_COMPENSATION_1, response1.getPrize());
-        assertEquals(STATION_AVAILABLEBIKES_1, response1.getAvailableBikes());
+        assertEquals(STATION_AVAILABLEBIKES_1 + 1, response1.getAvailableBikes()); //another test
     }
 
     @Test

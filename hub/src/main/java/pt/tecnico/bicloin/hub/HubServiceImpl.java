@@ -35,7 +35,6 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
           _recQuorum = new QuorumFrontend(zooHost, zooPort);
           _rec = new RecFrontend(zooHost, zooPort);
           _cid = Integer.parseInt(cid);
-          Runtime.getRuntime().addShutdownHook(new CloseServer());
     }
 
 
@@ -446,11 +445,13 @@ public class HubServiceImpl extends HubGrpc.HubImplBase {
         }
     }
 
-    private final class CloseServer extends Thread {
+    final class CloseServer extends Thread {
         @Override
         public void run() {
+          synchronized (this){
             _rec.closeChannel();
             _recQuorum.closeChannel();
+          }
         }
     }
 }

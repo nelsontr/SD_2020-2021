@@ -105,11 +105,10 @@ public class BaseIT {
 
     @AfterEach
     public void tearDown() {
-        /* EMPTY */
     }
 
     @AfterAll
     public static void cleanup() {
-        frontend.closeChannel();
+      frontend.closeChannel();
     }
 }

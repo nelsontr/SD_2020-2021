@@ -26,6 +26,7 @@ public class HubMain {
             System.out.printf("arg[%d] = %s%n", i, args[i]);
         }
 
+
         java.io.InputStream is = HubMain.class.getResourceAsStream("/hub.properties");
     		java.util.Properties p = new Properties();
     		p.load(is);
@@ -39,6 +40,8 @@ public class HubMain {
             String port = p.getProperty("server.port");
 
             final HubServiceImpl impl = new HubServiceImpl(hostZoo, portZoo, instance);
+
+            Runtime.getRuntime().addShutdownHook(new impl.CloseServer());
 
             Server server = ServerBuilder.forPort(Integer.parseInt(port)).addService((BindableService) impl).build();
 
@@ -77,6 +80,8 @@ public class HubMain {
               zkNaming.rebind(path, host, port);
 
               final HubServiceImpl impl = new HubServiceImpl(zooHost, zooPort, numberInstances);
+
+              Runtime.getRuntime().addShutdownHook(new impl.CloseServer());
 
               Server server = ServerBuilder.forPort(Integer.parseInt(port)).addService((BindableService) impl).build();
 

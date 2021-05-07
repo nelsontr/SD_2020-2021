@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-# SD_20-21
-=======
 # T07-Bicloin
 
 Distributed Systems 2020-2021, 2nd semester project
@@ -25,8 +22,8 @@ The leads should be evenly divided among the group members.
 
 - **T1** - 93743 Nelson Trindade - https://git.rnl.tecnico.ulisboa.pt/ist193743
     - read, write procedures from rec and  hub-tester;
-  
-- **T2** - 90732 João Lopes - https://git.rnl.tecnico.ulisboa.pt/ist190732 
+
+- **T2** - 90732 João Lopes - https://git.rnl.tecnico.ulisboa.pt/ist190732
     - balance, top-up, bike-up and bike-down procedures from hub and  rec-tester;
 
 - **T3** - 78631 Maria Sbrancia - https://git.rnl.tecnico.ulisboa.pt/ist178631
@@ -70,5 +67,4 @@ The integration tests are skipped because they require theservers to be running.
 
 ## Versioning
 
-We use [SemVer](http://semver.org/) for versioning. 
->>>>>>> RNL
+We use [SemVer](http://semver.org/) for versioning.
